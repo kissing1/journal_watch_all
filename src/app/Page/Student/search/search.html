@@ -1,0 +1,325 @@
+<div class="search-page">
+
+  <!-- SEARCH HEADER CARD -->
+  <div class="search-card">
+    <div class="search-card-header">
+      <span class="search-icon">🔍</span>
+      <h2 class="search-title">ค้นหาวารสาร</h2>
+    </div>
+
+    <!-- Search Input Row -->
+    <div class="search-input-row">
+      <div class="input-wrap">
+        <span class="input-icon">🔍</span>
+        <input
+          class="search-input"
+          type="text"
+          [(ngModel)]="issn"
+          placeholder="กรอกเลข ISSN เช่น 2319-7064"
+          (keyup.enter)="search()"
+        />
+      </div>
+      <select class="degree-select" [(ngModel)]="degree">
+        <option value="doctoral">ป.เอก (Doctoral)</option>
+        <option value="master">ป.โท (Master)</option>
+      </select>
+      <button class="search-btn" (click)="search()" [disabled]="isLoading()">
+        @if (isLoading()) {
+          <span class="spin">⏳</span> กำลังค้นหา...
+        } @else {
+          🔍 ค้นหา
+        }
+      </button>
+    </div>
+
+    <!-- Method Selector -->
+    <div class="method-section">
+      <div class="method-label">
+        วิธีการดึงข้อมูล
+        <span class="method-badge">Data Fetching Method</span>
+      </div>
+      <div class="method-options">
+        @for (m of methods; track m.id) {
+          <label class="method-option" [class.selected]="method === m.id">
+            <input type="radio" [value]="m.id" [(ngModel)]="method" hidden>
+            <div class="method-radio">
+              <div class="radio-dot" [class.active]="method === m.id"></div>
+            </div>
+            <span class="method-opt-icon">{{ m.icon }}</span>
+            <div class="method-opt-text">
+              <span class="method-opt-label">{{ m.label }}</span>
+              <span class="method-opt-sub">{{ m.sublabel }}</span>
+            </div>
+            <span class="method-opt-badge"
+              [class.badge-amber]="m.badgeColor === 'amber'"
+              [class.badge-red]="m.badgeColor === 'red'">
+              {{ m.badge }}
+            </span>
+          </label>
+        }
+      </div>
+
+      <!-- Method Info -->
+      <div class="method-info">
+        <span class="info-icon">ℹ️</span>
+        <span>{{ methodInfo[method] }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMPARISON CARDS -->
+  <div class="comparison-grid">
+    @for (m of methods; track m.id) {
+      <div class="compare-card" [class.selected]="method === m.id" (click)="method = m.id">
+        <div class="compare-card-header">
+          <span class="compare-icon">{{ m.icon }}</span>
+          <span class="compare-title">{{ m.label }}</span>
+          <span class="compare-badge"
+            [class.badge-amber]="m.badgeColor === 'amber'"
+            [class.badge-red]="m.badgeColor === 'red'">
+            {{ m.badge }}
+          </span>
+        </div>
+        <div class="compare-rows">
+          @for (c of comparison; track c.label) {
+            <div class="compare-row">
+              <span class="compare-label">{{ c.label }}</span>
+              <span class="compare-value"
+                [class.ok]="m.id === 'scraping' ? c.scrapingOk : c.apiOk"
+                [class.bad]="m.id === 'scraping' ? !c.scrapingOk : !c.apiOk">
+                {{ m.id === 'scraping' ? c.scraping : c.api }}
+              </span>
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- LOADING -->
+  @if (isLoading()) {
+    <div class="loading-card">
+      <div class="loading-spinner"></div>
+      <div class="loading-text">กำลังค้นหาข้อมูลวารสาร...</div>
+      <div class="loading-sub">
+        @if (method === 'scraping') {
+          Web Scraping ใช้เวลา 3–8 วินาที กรุณารอ
+        } @else {
+          กำลังเรียก Scopus API...
+        }
+      </div>
+    </div>
+  }
+
+  <!-- RESULT -->
+  @if (hasSearched() && result(); as r) {
+    <div class="result-card" [style.border-left-color]="r.caseColor">
+
+      <!-- Status Banner -->
+      <div class="result-banner" [style.background-color]="r.caseColor">
+        <div class="banner-left">
+          <span class="banner-db-icon">📘</span>
+          <div class="banner-content">
+            <div class="banner-title">✓ {{ r.caseLabel }}</div>
+            <div class="banner-desc">
+              วารสารนี้ได้รับการจัดอยู่ใน Scopus Quartile {{ r.quartile }}
+              มีสถานะ {{ r.status }} ณ ปีปัจจุบัน และไม่ปรากฏในรายการ MSU Unwanted Journals
+              สามารถนำไปยื่น Pre-T3 / T3 ได้
+            </div>
+          </div>
+        </div>
+        <span class="banner-badge" [class.fail]="!passForCurrentDegree">
+          {{ passForCurrentDegree ? '✓ ผ่านเกณฑ์' : '✗ ไม่ผ่านเกณฑ์' }}
+        </span>
+      </div>
+
+      <div class="result-body">
+
+        <!-- Journal Name -->
+        <h3 class="result-journal-name">{{ r.journal }}</h3>
+
+        <!-- Badge Row -->
+        <div class="journal-badge-row">
+          <span class="badge-field">ISSN: {{ r.issn }}</span>
+          @if (r.eissn) {
+            <span class="badge-field">E-ISSN: {{ r.eissn }}</span>
+          }
+          <span class="badge-db">📘 {{ r.database }}</span>
+          @if (r.quartile) {
+            <span class="badge-q">{{ r.quartile }}</span>
+          }
+          <span class="badge-status" [class.active]="r.status === 'Active'">
+            {{ r.status }}
+          </span>
+          <span class="badge-unwanted" [class.ok]="!r.isUnwanted">
+            {{ r.isUnwanted ? '🚫 ติด MSU Unwanted' : '✓ ไม่ติด MSU Unwanted' }}
+          </span>
+        </div>
+
+        <!-- Scopus Core Metrics -->
+        <div class="metrics-box">
+          <div class="section-header">
+            <span class="section-title">📊 Scopus Core Metrics</span>
+            <span class="section-source">source: Scopus API · อัปเดต 2025</span>
+          </div>
+          <div class="metrics-grid">
+            <div class="metric-item">
+              <div class="metric-label">Quartile</div>
+              <div class="metric-value">{{ r.quartile || '—' }}</div>
+              <div class="metric-sub">{{ r.quartileField }}{{ r.quartileYear ? ' · ' + r.quartileYear : '' }}</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-label">SJR Score</div>
+              <div class="metric-value">{{ r.sjr }}</div>
+              <div class="metric-sub">{{ r.quartileField }}{{ r.quartileYear ? ' · ' + r.quartileYear : '' }}</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-label">CiteScore</div>
+              <div class="metric-value">{{ r.citeScore }}</div>
+              <div class="metric-sub">Cite Score {{ r.quartileYear }}</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-label">SNIP</div>
+              <div class="metric-value">{{ r.snip }}</div>
+              <div class="metric-sub">Source Norm. Impact</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-label">Percentile</div>
+              <div class="metric-value">{{ r.percentile }}%ile</div>
+              <div class="metric-sub">ใน Subject Area</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-label">H-Index</div>
+              <div class="metric-value">{{ r.hIndex ?? '—' }}</div>
+              <div class="metric-sub">Hirsch Index</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-label">Cite/Doc (2y)</div>
+              <div class="metric-value">{{ r.citesPerDoc2y ?? '—' }}</div>
+              <div class="metric-sub">Citations per Document</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-label">Total Docs</div>
+              <div class="metric-value">{{ r.totalDocs ?? '—' }}</div>
+              <div class="metric-sub">บทความที่ตีพิมพ์</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ข้อมูลพื้นฐานวารสาร -->
+        <div class="base-box">
+          <div class="section-header">
+            <span class="section-title">📋 ข้อมูลพื้นฐานวารสาร</span>
+            <span class="section-source">source: Scopus Source List</span>
+          </div>
+          <div class="base-grid">
+            <div class="base-field">
+              <div class="base-label">ชื่อวารสาร (เดิม)</div>
+              <div class="base-value">{{ r.journal }}</div>
+            </div>
+            <div class="base-field">
+              <div class="base-label">PUBLISHER</div>
+              <div class="base-value">{{ r.publisher || '—' }}</div>
+            </div>
+            <div class="base-field">
+              <div class="base-label">COVERAGE</div>
+              <div class="base-value">{{ r.coverageStart }} – {{ r.coverageEnd }}</div>
+            </div>
+            @if (r.subjectAreaMain) {
+              <div class="base-field">
+                <div class="base-label">SUBJECT AREA หลัก</div>
+                <div class="base-value">{{ r.subjectAreaMain }}</div>
+              </div>
+            }
+            @if (r.subjectAreaSub) {
+              <div class="base-field">
+                <div class="base-label">SUBJECT AREA รอง</div>
+                <div class="base-value">{{ r.subjectAreaSub }}</div>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- สรุปเกณฑ์ -->
+        <div class="criteria-box" [class.fail]="!passForCurrentDegree">
+          <div class="criteria-title">
+            {{ passForCurrentDegree ? '✓' : '✗' }} สรุปเกณฑ์การยื่นของ มมส. — {{ degreeLabel }}
+          </div>
+          <div class="criteria-list">
+            <div class="criteria-row">
+              <span class="criteria-label">ต้องการ Quartile</span>
+              <span class="criteria-value" [class.ok]="criteriaQuartileOk" [class.bad]="!criteriaQuartileOk">
+                ≤ {{ requiredQuartile }} {{ criteriaQuartileOk ? '✓' : '✗' }} (พบ {{ r.quartile }})
+              </span>
+            </div>
+            <div class="criteria-row">
+              <span class="criteria-label">สถานะ Scopus</span>
+              <span class="criteria-value"
+                [class.ok]="r.status === 'Active'"
+                [class.bad]="r.status !== 'Active'">
+                {{ r.status }} {{ r.status === 'Active' ? '✓' : '✗' }}
+              </span>
+            </div>
+            <div class="criteria-row">
+              <span class="criteria-label">ไม่ติด Blacklist</span>
+              <span class="criteria-value"
+                [class.ok]="!r.isPredatory"
+                [class.bad]="r.isPredatory">
+                {{ r.isPredatory ? 'ไม่ผ่าน ✗' : 'ผ่าน ✓' }}
+              </span>
+            </div>
+            <div class="criteria-row">
+              <span class="criteria-label">ไม่ติด MSU Unwanted</span>
+              <span class="criteria-value"
+                [class.ok]="!r.isUnwanted"
+                [class.bad]="r.isUnwanted">
+                {{ r.isUnwanted ? 'ไม่ผ่าน ✗' : 'ผ่าน ✓' }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Notice -->
+        <div class="notice-box">
+          <span class="notice-icon">🖨️</span>
+          <span class="notice-text">
+            <strong>ข้อมูลที่ต้องมีในหน้าจอสำหรับแบบ Pre-T3 / T3:</strong>
+            ชื่อวารสารเดิม · ISSN · Quartile · SJR · CiteScore · Percentile · สถานะ Active · วันที่ตรวจสอบ · ผล "ผ่านเกณฑ์" · ชื่อนิสิตและระดับการศึกษา
+          </span>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="result-actions">
+          <button class="btn-pre-t3" routerLink="/pre-t3">ยื่น Pre-T3</button>
+          <button class="btn-t3" disabled>ยื่น T3</button>
+          <span class="action-note">ระบบของเราไม่สามารถเปิดให้ยื่น T3 จนกว่า Pre-T3 จะได้รับการ approved</span>
+          <button class="btn-print">พิมพ์/PDF</button>
+        </div>
+
+      </div>
+    </div>
+  }
+
+  <!-- ERROR -->
+  @if (hasSearched() && errorMessage()) {
+    <div class="error-card">
+      <span class="error-icon">⚠️</span>
+      <div class="error-text">{{ errorMessage() }}</div>
+      <button class="btn-secondary" (click)="hasSearched.set(false); errorMessage.set('')">ลองใหม่</button>
+    </div>
+  }
+
+  <!-- LEGEND -->
+  <div class="legend-card">
+    <div class="legend-title">คำอธิบายสีสถานะ</div>
+    <div class="legend-grid">
+      @for (l of legends; track l.label) {
+        <div class="legend-item">
+          <span class="legend-dot" [style.background]="l.color"></span>
+          <span class="legend-label">{{ l.label }}</span>
+        </div>
+      }
+    </div>
+  </div>
+
+</div>

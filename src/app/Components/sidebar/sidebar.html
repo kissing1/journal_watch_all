@@ -1,0 +1,70 @@
+<aside class="sidebar" [class.collapsed]="!isOpen">
+
+  <!-- User Card -->
+  <div class="user-card">
+    <div class="user-avatar">
+      <div class="avatar-ring">
+        @if (userPicture) {
+          <img class="avatar-img" [src]="userPicture" alt="avatar" referrerpolicy="no-referrer"/>
+        } @else {
+          <div class="avatar-fallback">{{ userInitials }}</div>
+        }
+      </div>
+    </div>
+    @if (isOpen) {
+      <div class="user-info">
+        <div class="user-name">{{ userName }}</div>
+        <div class="user-role">
+          <span class="role-icon">🎓</span>
+          <span class="role-text">{{ userRole }}</span>
+        </div>
+        <div class="user-email">{{ userEmail }}</div>
+      </div>
+    }
+  </div>
+
+  @if (isOpen) {
+    <div class="profile-btn-wrap">
+      <a class="profile-btn" routerLink="/profile">
+        <span>ดูโปรไฟร์</span>
+        <span class="profile-arrow">→</span>
+      </a>
+    </div>
+  }
+
+  <!-- Navigation -->
+  <nav class="nav-wrap">
+    <ng-container *ngFor="let group of navGroups">
+      @if (isOpen) {
+        <div class="nav-group-label">{{ group.group }}</div>
+      }
+      <ul class="nav-list">
+        <li *ngFor="let item of group.items">
+          <a class="nav-item"
+             [routerLink]="item.route"
+             [class.active]="isActive(item.route)"
+             [attr.data-label]="item.label">
+            <span class="nav-icon">{{ item.icon }}</span>
+            @if (isOpen) {
+              <span class="nav-label">{{ item.label }}</span>
+              @if (isActive(item.route)) {
+                <span class="nav-indicator"></span>
+              }
+            }
+          </a>
+        </li>
+      </ul>
+    </ng-container>
+  </nav>
+
+  <!-- Logout -->
+  <div class="logout-wrap">
+    <button class="logout-btn" (click)="logout()">
+      <span class="logout-icon">🚪</span>
+      @if (isOpen) {
+        <span>ออกจากระบบ</span>
+      }
+    </button>
+  </div>
+
+</aside>
