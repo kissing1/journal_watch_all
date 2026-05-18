@@ -15,5 +15,5 @@ export interface User {
     firstName:   string;
     lastName:    string;
     msuMail:     string;
-    degreeLevel: null;
+    degreeLevel: string | null;
 }

@@ -1,0 +1,301 @@
+<div class="pre-t3-page">
+
+  <!-- TOP NAV -->
+  <div class="top-nav">
+    <a class="nav-tab active" routerLink="/pre-t3">📋 ยื่น Pre-T3</a>
+    <a class="nav-tab" routerLink="/pre-t3-status">📊 สถานะ Pre-T3 →</a>
+    <a class="nav-tab" routerLink="/history">📁 ประวัติทั้งหมด</a>
+  </div>
+
+  <!-- NOTICE: no journal data -->
+  @if (!hasJournalData) {
+    <div class="notice-box">
+      <span class="notice-icon">⚠️</span>
+      <div class="notice-body">
+        <div class="notice-title">กรอกข้อมูลด้วยตนเอง</div>
+        <div class="notice-desc">
+          หรือกลับไป<span class="notice-link" (click)="goToSearch()">ค้นหาวารสารก่อน</span>
+          เพื่อให้ระบบกรอกข้อมูลวารสารอัตโนมัติ
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- MAIN LAYOUT -->
+  <div class="page-layout">
+
+    <!-- LEFT: FORM -->
+    <div class="form-column">
+
+      <!-- Section 1: ข้อมูลนิสิต -->
+      <div class="form-section">
+        <div class="section-header">
+          <span class="section-icon">🤝</span>
+          <span class="section-title">ข้อมูลนิสิต</span>
+          <span class="auto-badge-header">อัตโนมัติ</span>
+        </div>
+        <div class="section-body">
+          <div class="form-row">
+            <div class="field-group">
+              <label class="field-label">
+                ชื่อ-นามสกุล
+                <span class="auto-badge">Auto</span>
+              </label>
+              <input class="field-input" [value]="studentName" readonly>
+            </div>
+            <div class="field-group">
+              <label class="field-label">
+                รหัสนิสิต
+                <span class="auto-badge">Auto</span>
+              </label>
+              <input class="field-input mono-input" [value]="studentId" readonly>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="field-group">
+              <label class="field-label">เบอร์โทรศัพท์</label>
+              <input class="field-input mono-input" [(ngModel)]="phone" placeholder="0812345678">
+            </div>
+            <div class="field-group">
+              <label class="field-label">
+                ระดับ/แผน
+                <span class="auto-badge">Auto</span>
+              </label>
+              <input class="field-input" [value]="plan" readonly>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="field-group">
+              <label class="field-label">
+                คณะ
+                <span class="auto-badge">Auto</span>
+              </label>
+              <input class="field-input" [value]="faculty" readonly>
+            </div>
+            <div class="field-group">
+              <label class="field-label">
+                สาขาวิชา
+                <span class="auto-badge">Auto</span>
+              </label>
+              <input class="field-input" [value]="major" readonly>
+            </div>
+          </div>
+          <div class="field-group">
+            <label class="field-label">
+              MSU Mail
+              <span class="auto-badge">Auto</span>
+            </label>
+            <input class="field-input mono-input" [value]="studentEmail" readonly>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 2: ข้อมูลวารสารเป้าหมาย -->
+      <div class="form-section">
+        <div class="section-header">
+          <span class="section-icon">📘</span>
+          <span class="section-title">ข้อมูลวารสารเป้าหมาย</span>
+          @if (hasJournalData) {
+            <span class="auto-badge-header">อัตโนมัติ</span>
+          }
+        </div>
+        <div class="section-body">
+          <div class="field-group">
+            <label class="field-label">
+              ชื่อวารสาร (เต็ม) <span class="req-star">*</span>
+            </label>
+            <input class="field-input" [(ngModel)]="journalName"
+              placeholder="ชื่อวารสารภาษาอังกฤษ"
+              [readonly]="hasJournalData">
+          </div>
+          <div class="form-row-3">
+            <div class="field-group">
+              <label class="field-label">ISSN</label>
+              <input class="field-input mono-input" [(ngModel)]="issn"
+                placeholder="XXXX-XXXX" [readonly]="hasJournalData">
+            </div>
+            <div class="field-group">
+              <label class="field-label">E-ISSN</label>
+              <input class="field-input mono-input" [(ngModel)]="eissn"
+                placeholder="XXXX-XXXX" [readonly]="hasJournalData">
+            </div>
+            <div class="field-group">
+              <label class="field-label">ฐานข้อมูล</label>
+              <input class="field-input" [(ngModel)]="database"
+                placeholder="Scopus / TCI" [readonly]="hasJournalData">
+            </div>
+          </div>
+          <div class="form-row-3">
+            <div class="field-group">
+              <label class="field-label">Quartile / Tier</label>
+              <input class="field-input mono-input" [(ngModel)]="quartile"
+                placeholder="Q1" [readonly]="hasJournalData">
+            </div>
+            <div class="field-group">
+              <label class="field-label">SJR Score</label>
+              <input class="field-input mono-input" [(ngModel)]="sjr"
+                placeholder="0.000" [readonly]="hasJournalData">
+            </div>
+            <div class="field-group">
+              <label class="field-label">CiteScore</label>
+              <input class="field-input mono-input" [(ngModel)]="citeScore"
+                placeholder="0.0" [readonly]="hasJournalData">
+            </div>
+          </div>
+          <div class="field-group">
+            <label class="field-label">URL วารสาร <span class="req-star">*</span></label>
+            <input class="field-input mono-input" [(ngModel)]="journalUrl"
+              placeholder="https://www.journal.com">
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 3: ข้อมูลบทความ -->
+      <div class="form-section">
+        <div class="section-header">
+          <span class="section-icon">✍️</span>
+          <span class="section-title">ข้อมูลบทความ</span>
+        </div>
+        <div class="section-body">
+          <div class="field-group">
+            <label class="field-label">ชื่อบทความ (ภาษาอังกฤษ) <span class="req-star">*</span></label>
+            <input class="field-input" [(ngModel)]="articleTitleEn" placeholder="Article Title in English">
+          </div>
+          <div class="field-group">
+            <label class="field-label">ชื่อบทความ (ภาษาไทย)</label>
+            <input class="field-input" [(ngModel)]="articleTitleTh" placeholder="ชื่อบทความภาษาไทย (ถ้ามี)">
+          </div>
+          <div class="form-row">
+            <div class="field-group">
+              <label class="field-label">
+                ชื่อผู้แต่ง
+                <span class="auto-badge">Auto</span>
+              </label>
+              <input class="field-input" [value]="studentName" readonly>
+            </div>
+            <div class="field-group">
+              <label class="field-label">DOI</label>
+              <input class="field-input mono-input" [(ngModel)]="doi" placeholder="10.xxxx/xxxxx">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="field-group">
+              <label class="field-label">
+                ปีที่ตีพิมพ์/คาดว่าจะตีพิมพ์
+                <span class="auto-badge">Auto</span>
+              </label>
+              <input class="field-input mono-input" [(ngModel)]="publishYear">
+            </div>
+          </div>
+          <div class="field-group">
+            <label class="field-label">
+              บทคัดย่อ (Abstract) <span class="req-star">*</span>
+              <span class="field-hint">— กรอก Abstract เพื่อให้ระบบตรวจข้อที่ 1 อัตโนมัติ</span>
+            </label>
+            <textarea class="field-input field-textarea"
+              [(ngModel)]="abstract"
+              (ngModelChange)="checkAbstract()"
+              rows="5"
+              placeholder="กรอก Abstract ภาษาอังกฤษ (อย่างน้อย 50 ตัวอักษร)"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 4: อาจารย์ที่ปรึกษา -->
+      <div class="form-section">
+        <div class="section-header">
+          <span class="section-icon">👨‍🏫</span>
+          <span class="section-title">อาจารย์ที่ปรึกษา</span>
+        </div>
+        <div class="section-body">
+          <div class="form-row">
+            <div class="field-group">
+              <label class="field-label">
+                อาจารย์ที่ปรึกษาหลัก
+                <span class="auto-badge">Auto</span>
+              </label>
+              <input class="field-input" [value]="advisorName" readonly>
+            </div>
+            <div class="field-group">
+              <label class="field-label">
+                ตำแหน่งทางวิชาการ
+                <span class="auto-badge">Auto</span>
+              </label>
+              <input class="field-input" [value]="advisorPosition" readonly>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="field-group">
+              <label class="field-label">อาจารย์ที่ปรึกษาร่วม 1</label>
+              <input class="field-input" [(ngModel)]="coAdvisor1" placeholder="ชื่อ-นามสกุล (ถ้ามี)">
+            </div>
+            <div class="field-group">
+              <label class="field-label">อาจารย์ที่ปรึกษาร่วม 2</label>
+              <input class="field-input" [(ngModel)]="coAdvisor2" placeholder="ชื่อ-นามสกุล (ถ้ามี)">
+            </div>
+          </div>
+          <div class="field-group">
+            <label class="field-label">หมายเหตุเพิ่มเติม</label>
+            <textarea class="field-input field-textarea" [(ngModel)]="note"
+              rows="3" placeholder="หมายเหตุ (ถ้ามี)"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- ACTION BAR -->
+      <div class="action-bar">
+        <button class="btn-submit" [disabled]="!allPassed()" (click)="submit()">
+          ✅ ยื่นคำร้อง Pre-T3
+        </button>
+        <button class="btn-back" (click)="goToSearch()">
+          ← กลับค้นหา
+        </button>
+        <span class="action-hint">// กรอกข้อมูลที่จำเป็น (*) ให้ครบก่อนยื่น</span>
+      </div>
+
+    </div><!-- end form-column -->
+
+    <!-- RIGHT: CHECKLIST -->
+    <div class="checklist-column">
+      <div class="checklist-card">
+
+        <div class="checklist-header">
+          <span class="checklist-title">📋 Pre-T3 Checklist 9 ข้อ</span>
+          <span class="checklist-count">ผ่าน {{ passedCount() }}/9 ข้อ</span>
+        </div>
+
+        @for (item of checklist(); track item.id) {
+          <div class="checklist-item"
+            [class.passed]="item.passed === true"
+            [class.failed]="item.passed === false"
+            [class.pending]="item.passed === null">
+            <div class="check-icon"
+              [class.passed]="item.passed === true"
+              [class.failed]="item.passed === false"
+              [class.pending]="item.passed === null">
+              {{ item.passed === true ? '✓' : item.passed === false ? '✗' : '⏳' }}
+            </div>
+            <div class="check-body">
+              <div class="check-label">{{ item.id }}. {{ item.label }}</div>
+              <div class="check-detail">{{ item.detail }}</div>
+            </div>
+            @if (item.auto) {
+              <span class="auto-tag">อัตโนมัติ</span>
+            }
+          </div>
+        }
+
+        <div class="checklist-footer" [class.all-passed]="allPassed()" [class.pending]="!allPassed()">
+          @if (allPassed()) {
+            <span>✅ ผ่านครบ 9 ข้อ — สามารถยื่น Pre-T3 ได้</span>
+          } @else {
+            <span>⏳ กำลังตรวจสอบ {{ passedCount() }}/9 ข้อ</span>
+          }
+        </div>
+
+      </div>
+    </div><!-- end checklist-column -->
+
+  </div><!-- end page-layout -->
+
+</div>

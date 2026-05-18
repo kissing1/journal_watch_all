@@ -1,0 +1,171 @@
+<div class="status-page">
+
+  <!-- PAGE TITLE -->
+  <div class="page-title-row">
+    <span class="page-icon">📊</span>
+    <div>
+      <h1 class="page-title">สถานะ Pre-T3</h1>
+      <p class="page-sub">ติดตามความคืบหน้าคำร้องของคุณ</p>
+    </div>
+  </div>
+
+  <!-- ── SECTION 1: REQUEST SUMMARY ── -->
+  <div class="summary-card">
+    <div class="summary-top">
+
+      <div class="summary-left">
+        <div class="summary-head">
+          <span class="summary-head-icon">📋</span>
+          <div>
+            <div class="summary-head-title">ข้อมูลคำร้องและวารสาร</div>
+            <div class="summary-id">เลขคำร้อง: <strong>{{ request.id }}</strong></div>
+          </div>
+        </div>
+
+        <div class="student-row">
+          <span class="student-name">{{ request.studentName }}</span>
+          <span class="student-id">รหัส: {{ request.studentId }}</span>
+        </div>
+
+        <div class="article-title">{{ request.articleTitle }}</div>
+
+        <div class="journal-row">
+          <span class="journal-name">{{ request.journalName }}</span>
+          <button class="btn-journal-detail">ดูรายละเอียดวารสาร →</button>
+        </div>
+
+        <div class="status-badges">
+          <span class="sbadge sbadge-blue">Scopus</span>
+          <span class="sbadge sbadge-yellow">{{ request.quartile }}</span>
+          <span class="sbadge sbadge-green">✔ ไม่ติด Unwanted</span>
+          <span class="sbadge sbadge-green">✔ ไม่ติด Blacklist</span>
+        </div>
+
+        <div class="meta-grid">
+          <div class="meta-item">
+            <span class="meta-label">ISSN</span>
+            <span class="meta-value mono">{{ request.issn }}</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Quartile</span>
+            <span class="meta-value">{{ request.quartile }}</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">SJR</span>
+            <span class="meta-value mono">{{ request.sjr }}</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Scopus</span>
+            <span class="meta-value green">{{ request.scopusStatus }}</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">ฐานข้อมูล</span>
+            <span class="meta-value">{{ request.database }}</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">อาจารย์ที่ปรึกษา</span>
+            <span class="meta-value">{{ request.advisor }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="summary-right">
+        <div class="date-box">
+          <div class="date-num">{{ request.submittedDate }}</div>
+          <div class="date-label">วันที่ยื่น</div>
+        </div>
+        <div class="status-pill">
+          <span>⏳</span> {{ request.overallStatus }}
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── SECTION 2: STEPPER ── -->
+  <div class="stepper-card">
+    <div class="card-title">🔄 ขั้นตอนการพิจารณา</div>
+    <div class="stepper-wrap">
+      @for (step of steps; track step.label; let last = $last) {
+        <div class="step-item">
+          <div class="step-top">
+            <div class="step-circle" [class]="step.status">{{ step.icon }}</div>
+            @if (!last) {
+              <div class="step-line" [class.line-done]="step.status === 'done'"></div>
+            }
+          </div>
+          <div class="step-label" [class]="step.status">{{ step.label }}</div>
+          <div class="step-sub">{{ step.sub }}</div>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- ── SECTION 3: CURRENT STATUS ── -->
+  <div class="current-card">
+    <span class="current-icon">⏳</span>
+    <div class="current-body">
+      <div class="current-title">อาจารย์ที่ปรึกษากำลังพิจารณา</div>
+      <div class="current-detail">
+        {{ request.advisor }} รับเรื่องแล้วและกำลังตรวจสอบคำร้อง
+        คาดว่าจะมีผลภายใน 1–2 วันทำการ
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 4: TIMELINE ── -->
+  <div class="section-card">
+    <div class="card-title">📋 บันทึกสถานะ</div>
+    <div class="timeline">
+      @for (item of timeline; track item.actor; let last = $last) {
+        <div class="tl-item">
+          <div class="tl-left">
+            <div class="tl-icon" [class]="'tl-' + item.badgeType">{{ item.icon }}</div>
+            @if (!last) { <div class="tl-line"></div> }
+          </div>
+          <div class="tl-body">
+            <div class="tl-actor-row">
+              <span class="tl-actor">{{ item.actor }}</span>
+              <span class="tl-badge" [class]="'tb-' + item.badgeType">{{ item.badge }}</span>
+              @if (item.time) {
+                <span class="tl-time">{{ item.time }}</span>
+              }
+            </div>
+            <div class="tl-message">{{ item.message }}</div>
+            @if (item.detail) {
+              <div class="tl-detail">{{ item.detail }}</div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- ── SECTION 5: ATTACHMENTS ── -->
+  <div class="section-card">
+    <div class="card-title">📎 เอกสารประกอบ</div>
+    <div class="attach-list">
+      @for (a of attachments; track a.name) {
+        <div class="attach-item">
+          <span class="attach-icon">{{ a.icon }}</span>
+          <div class="attach-body">
+            <div class="attach-name">{{ a.name }}</div>
+            <div class="attach-meta">{{ a.meta }} · {{ a.size }}</div>
+          </div>
+          <button class="btn-download">⬇ ดาวน์โหลด</button>
+        </div>
+      }
+    </div>
+  </div>
+
+  <div class="bar-spacer"></div>
+
+</div>
+
+<!-- ── BOTTOM ACTION BAR ── -->
+<div class="action-bar">
+  <button class="btn-print">🖨 พิมพ์ใบคำร้อง</button>
+  <button class="btn-cancel">❌ ยกเลิกคำร้อง</button>
+  <button class="btn-t3" disabled>🎓 ยื่น T3</button>
+  <span class="bar-hint">// ยื่น T3 ได้เมื่อคำร้องอนุมัติแล้ว</span>
+</div>

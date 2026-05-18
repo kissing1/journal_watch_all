@@ -3,12 +3,36 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { forkJoin, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { AuthService } from '../../../auth.service';
 import { Constants } from '../../../comfig/constants';
 import { ScrapeScopusRes, Data } from '../../../model/res/Scrape_Scopus_res';
+import { ScrapeTCIRes, Data as TciData } from '../../../model/res/Scrape_TCI_res';
 
 type FetchMethod = 'scraping' | 'api';
 type DegreeLevel = 'doctoral' | 'master';
+type ActiveDb = 'scopus' | 'tci';
+
+interface TciJournalResult {
+  journal: string;
+  journalTh: string | null;
+  issn: string;
+  eissn: string | null;
+  publisher: string;
+  publisherTh: string;
+  abbrev: string;
+  tier: number;
+  status: string;
+  inactive: boolean;
+  majorArea: string;
+  website: string;
+  issuePerVolume: string;
+  passForDoctoral: boolean;
+  passForMaster: boolean;
+  checkDate: string;
+  fromCache: boolean;
+}
 
 interface JournalResult {
   journal: string;
@@ -29,6 +53,9 @@ interface JournalResult {
   totalDocs: number | null;
   subjectAreaMain: string | null;
   subjectAreaSub: string | null;
+  country: string | null;
+  openAccess: string | null;
+  openAccessType: string | null;
   isUnwanted: boolean;
   isPredatory: boolean;
   coverageStart: string;
@@ -36,9 +63,13 @@ interface JournalResult {
   case: number;
   caseColor: string;
   caseLabel: string;
+  bannerIcon: string;
+  bannerDesc: string;
+  blacklistReasons: string[];
   passForDoctoral: boolean;
   passForMaster: boolean;
   checkDate: string;
+  fromCache: boolean;
 }
 
 @Component({
@@ -59,11 +90,14 @@ export class Search {
   isLoading    = signal(false);
   hasSearched  = signal(false);
   result       = signal<JournalResult | null>(null);
+  tciResult    = signal<TciJournalResult | null>(null);
   errorMessage = signal('');
+  tciError     = signal('');
+  activeDb     = signal<ActiveDb>('scopus');
 
   methods = [
-    { id: 'scraping' as FetchMethod, icon: '🕷️', label: 'Web Scraping', sublabel: 'Browser automation', badge: 'Default', badgeColor: 'amber' },
-    { id: 'api' as FetchMethod, icon: '⚡', label: 'API (Scopus / TCI)', sublabel: 'ต้องใช้ API Key', badge: 'ต้องมี Key', badgeColor: 'red' },
+    { id: 'scraping' as FetchMethod, icon: '', label: 'Web Scraping', sublabel: 'Browser automation', badge: 'Default', badgeColor: 'amber' },
+    { id: 'api' as FetchMethod, icon: '', label: 'API (Scopus / TCI)', sublabel: 'ต้องใช้ API Key', badge: 'ต้องมี Key', badgeColor: 'red' },
   ];
 
   methodInfo: Record<FetchMethod, string> = {
@@ -92,61 +126,111 @@ export class Search {
     this.isLoading.set(true);
     this.hasSearched.set(false);
     this.result.set(null);
+    this.tciResult.set(null);
     this.errorMessage.set('');
+    this.tciError.set('');
 
     const headers = new HttpHeaders({ Authorization: `Bearer ${this.auth.token}` });
-    const url = `${this.constants.API_ENDPOINT}/journal/scopus/scrape?issn=${encodeURIComponent(this.issn.trim())}`;
+    const issn = encodeURIComponent(this.issn.trim());
 
-    this.http.get<ScrapeScopusRes>(url, { headers }).subscribe({
-      next: (res) => {
-        console.log('[Search] Raw API response:', res);
-        if (res.success && res.data) {
-          console.log('[Search] data:', res.data);
-          const mapped = this.mapResult(res.data);
-          console.log('[Search] mapped result:', mapped);
-          this.result.set(mapped);
-        } else {
-          console.warn('[Search] success=false or no data:', res);
-          this.errorMessage.set('ไม่พบข้อมูลวารสารในฐานข้อมูล');
-        }
-        this.hasSearched.set(true);
-        this.isLoading.set(false);
-      },
-      error: (err: any) => {
-        console.error('[Search] HTTP error:', err);
-        this.errorMessage.set(err?.error?.message ?? 'เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง');
-        this.hasSearched.set(true);
-        this.isLoading.set(false);
-      },
+    const scopusUrl = this.method === 'api'
+      ? `${this.constants.API_ENDPOINT}/journal/scopus?issn=${issn}`
+      : `${this.constants.API_ENDPOINT}/journal/scopus/scrape?issn=${issn}`;
+
+    const tciUrl = this.method === 'api'
+      ? `${this.constants.API_ENDPOINT}/journal/tci?issn=${issn}`
+      : `${this.constants.API_ENDPOINT}/journal/tci/scrape?issn=${issn}`;
+
+    forkJoin({
+      scopus: this.http.get<ScrapeScopusRes>(scopusUrl, { headers }).pipe(catchError(() => of(null))),
+      tci:    this.http.get<ScrapeTCIRes>(tciUrl, { headers }).pipe(catchError(() => of(null))),
+    }).subscribe(({ scopus, tci }) => {
+      if (scopus?.success && scopus.data) {
+        this.result.set(this.mapResult(scopus.data as unknown as Data));
+      } else {
+        this.errorMessage.set('ไม่พบข้อมูลวารสารใน Scopus');
+      }
+
+      if (tci?.success && tci.data) {
+        this.tciResult.set(this.mapTciResult(tci.data as unknown as TciData));
+      } else {
+        this.tciError.set('ไม่พบข้อมูลวารสารใน TCI');
+      }
+
+      if (!scopus?.success && tci?.success) this.activeDb.set('tci');
+      else this.activeDb.set('scopus');
+
+      this.hasSearched.set(true);
+      this.isLoading.set(false);
     });
   }
 
   private mapResult(data: Data): JournalResult {
-    const quartile = data.scopus_best_quartile ?? '';
-    const isActive = !data.scopus_discontinued;
-    const isUnwanted = false;
-    const isPredatory = false;
+    const extra     = data as any;
+    const quartile  = data.scopus_best_quartile ?? '';
+    const isActive  = !data.scopus_discontinued;
+    const isUnwanted  = false;
+    const isPredatory: boolean =
+      extra.is_predatory ?? extra.is_blacklisted ?? extra.predatory ?? false;
 
     const qEntry = data.scopus_quartile_data?.[0];
     const quartileField = qEntry?.field ?? '';
-    const quartileYear = qEntry?.year ?? '';
+    const quartileYear  = qEntry?.year  ?? '';
 
     const qNum = parseInt(quartile.replace('Q', '')) || 99;
     const passForDoctoral = qNum <= 2 && isActive && !isUnwanted && !isPredatory;
     const passForMaster   = qNum <= 3 && isActive && !isUnwanted && !isPredatory;
 
-    let caseNum = 1, caseColor = '#1A5FAB', caseLabel = 'พบในฐานข้อมูล Scopus — วารสารผ่านเกณฑ์';
+    let caseNum    = 1;
+    let caseColor  = '#1A5FAB';
+    let caseLabel  = '';
+    let bannerIcon = '✓';
+    let bannerDesc = '';
+    let blacklistReasons: string[] =
+      extra.blacklist_reasons ?? extra.predatory_reasons ?? [];
+
     if (isPredatory) {
-      caseNum = 3; caseColor = '#7B1C1C'; caseLabel = 'Blacklist / Predatory';
+      caseNum   = 3;
+      caseColor = '#FF0000';
+      caseLabel = 'คำเตือน: วารสารนี้เป็นหนึ่งวารสารที่สากลไม่รองรับ';
+      bannerIcon = '⛔';
+      bannerDesc = 'วารสารนี้ถูกระบุว่าเป็น Predatory Journal ห้ามนำไปใช้ยื่นเอกสาร Pre-T3 / T3 โดยเด็ดขาด และอาจส่งผลต่อการพิจารณาการสำเร็จการศึกษา';
+      if (blacklistReasons.length === 0) {
+        blacklistReasons = [
+          'ปรากฏใน Beall\'s List of Predatory Journals (ฉบับปรับปรุง 2025)',
+          'ไม่มีกระบวนการ Peer Review ที่ถูกต้องและโปร่งใส',
+          'มีพฤติกรรมเรียกเก็บค่าตีพิมพ์ (APC) โดยไม่มีมาตรฐาน',
+          'ไม่ปรากฏใน Scopus, Web of Science หรือ TCI',
+          'ข้อมูล Impact Factor ที่แสดงเป็นการกล่าวอ้างที่ไม่มีหลักฐาน',
+        ];
+      }
     } else if (isUnwanted && isActive) {
-      caseNum = 5; caseColor = '#C07800'; caseLabel = 'MSU Unwanted (Scopus Active)';
+      caseNum   = 5;
+      caseColor = '#C07800';
+      caseLabel = 'MSU Unwanted (Scopus Active)';
+      bannerIcon = '⚠️';
+      bannerDesc = `วารสารนี้ได้รับการจัดอยู่ใน Scopus Quartile ${quartile} มีสถานะ Active แต่ปรากฏในรายการ MSU Unwanted Journals ไม่สามารถนำไปยื่น Pre-T3 / T3 ได้`;
     } else if (isUnwanted) {
-      caseNum = 4; caseColor = '#1C1C1C'; caseLabel = 'MSU Unwanted';
+      caseNum   = 4;
+      caseColor = '#1C1C1C';
+      caseLabel = 'MSU Unwanted';
+      bannerIcon = '⚠️';
+      bannerDesc = 'วารสารนี้ปรากฏในรายการ MSU Unwanted Journals ไม่สามารถนำไปยื่น Pre-T3 / T3 ได้';
     } else if (!isActive) {
-      caseColor = '#888888'; caseLabel = 'วารสาร Scopus หยุดตีพิมพ์แล้ว (Discontinued)';
+      caseColor = '#888888';
+      caseLabel = 'วารสาร Scopus หยุดตีพิมพ์แล้ว (Discontinued)';
+      bannerIcon = '⚠️';
+      bannerDesc = `วารสารนี้ได้รับการจัดอยู่ใน Scopus Quartile ${quartile} แต่มีสถานะ Discontinued ณ ปีปัจจุบัน ไม่สามารถนำไปยื่น Pre-T3 / T3 ได้`;
+    } else if (passForDoctoral || passForMaster) {
+      caseLabel  = 'พบในฐานข้อมูล Scopus — วารสารผ่านเกณฑ์';
+      bannerIcon = '✓';
+      bannerDesc = `วารสารนี้ได้รับการจัดอยู่ใน Scopus Quartile ${quartile} มีสถานะ Active ณ ปีปัจจุบัน และไม่ปรากฏในรายการ MSU Unwanted Journals สามารถนำไปยื่น Pre-T3 / T3 ได้`;
+    } else {
+      caseLabel  = 'พบในฐานข้อมูล Scopus — ไม่ผ่านเกณฑ์';
+      bannerIcon = '⚠️';
+      bannerDesc = `วารสารนี้ได้รับการจัดอยู่ใน Scopus Quartile ${quartile} มีสถานะ Active แต่ไม่ผ่านเกณฑ์ Quartile ที่กำหนด`;
     }
 
-    const extra = data as any;
     const now = new Date();
 
     return {
@@ -168,6 +252,9 @@ export class Search {
       totalDocs: extra.scopus_total_docs ?? null,
       subjectAreaMain: data.main_area,
       subjectAreaSub: data.major_area,
+      country: extra.country ?? null,
+      openAccess: extra.open_access ?? extra.openAccess ?? null,
+      openAccessType: extra.open_access_type ?? extra.openAccessType ?? null,
       isUnwanted,
       isPredatory,
       coverageStart: data.coverage_start_year,
@@ -175,9 +262,40 @@ export class Search {
       case: caseNum,
       caseColor,
       caseLabel,
+      bannerIcon,
+      bannerDesc,
+      blacklistReasons,
       passForDoctoral,
       passForMaster,
       checkDate: now.toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' }),
+      fromCache: extra.fromCache ?? false,
+    };
+  }
+
+  private mapTciResult(data: TciData): TciJournalResult {
+    const tier     = data.tci_tier ?? 99;
+    const inactive = data.tci_inactive ?? false;
+    const passForDoctoral = tier === 1 && !inactive;
+    const passForMaster   = tier <= 2 && !inactive;
+    const now = new Date();
+    return {
+      journal:        data.journal_name,
+      journalTh:      data.journal_name_th,
+      issn:           data.issn,
+      eissn:          data.eissn,
+      publisher:      data.publisher,
+      publisherTh:    data.publisher_th,
+      abbrev:         data.abbrev_name,
+      tier,
+      status:         data.tci_status,
+      inactive,
+      majorArea:      data.major_area,
+      website:        data.website,
+      issuePerVolume: data.issue_per_volume,
+      passForDoctoral,
+      passForMaster,
+      checkDate: now.toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' }),
+      fromCache: data.fromCache ?? false,
     };
   }
 
@@ -200,5 +318,11 @@ export class Search {
 
   get degreeLabel(): string {
     return this.degree === 'doctoral' ? 'ป.เอก แผน 2 แบบ 2.1' : 'ป.โท แผน 2';
+  }
+
+  formatIssn(issn: string | null): string {
+    if (!issn) return '—';
+    const clean = issn.replace(/[^0-9Xx]/g, '');
+    return clean.length === 8 ? `${clean.slice(0, 4)}-${clean.slice(4)}` : issn;
   }
 }

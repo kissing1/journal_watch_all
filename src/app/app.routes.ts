@@ -4,7 +4,8 @@ import { authGuard } from './auth.guard';
 
 import { MsuUnwanted } from './Page/Student/msu-unwanted/msu-unwanted';
 import { Search } from './Page/Student/search/search';
-import { PreT3 } from './Page/Student/pre-t3/pre-t3';
+import { PreT3 } from './Page/Student/pre-t3/Send_Pre-T3/pre-t3';
+import { PreT3Status } from './Page/Student/pre-t3/pre-t3-status/pre-t3-status';
 import { T3 } from './Page/Student/t3/t3';
 import { RequestAdvisor } from './Page/Student/request-advisor/request-advisor';
 import { History } from './Page/Student/history/history';
@@ -21,6 +22,7 @@ export const routes: Routes = [
   { path: 'search', component: Search, canActivate: [authGuard] },
   { path: 'msu-unwanted', component: MsuUnwanted, canActivate: [authGuard] },
   { path: 'pre-t3', component: PreT3, canActivate: [authGuard] },
+  { path: 'pre-t3-status', component: PreT3Status, canActivate: [authGuard] },
   { path: 't3', component: T3, canActivate: [authGuard] },
   { path: 'request-advisor', component: RequestAdvisor, canActivate: [authGuard] },
   { path: 'history', component: History, canActivate: [authGuard] },

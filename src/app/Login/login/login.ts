@@ -82,6 +82,7 @@ export class Login implements OnInit {
       error: (err) => {
         this.loading.set(false);
         this.showSnack(err.error?.message || 'เข้าสู่ระบบไม่สำเร็จ', 'error');
+      
       },
     });
   }
@@ -100,6 +101,27 @@ export class Login implements OnInit {
       script.onload = () => resolve();
       document.head.appendChild(script);
     });
+  }
+
+  // DEV ONLY — ลบออกก่อน deploy
+  devLogin(): void {
+    const mock: LoginRes = {
+      success: true,
+      message: 'dev',
+      data: {
+        accessToken: 'dev-token',
+        user: {
+          userId: 0,
+          role: 'student',
+          firstName: 'Dev',
+          lastName: 'User',
+          msuMail: 'dev@msu.ac.th',
+          degreeLevel: null,
+        },
+      },
+    };
+    this.authService.setLoggedIn(mock);
+    this.router.navigate(['/dashboard']);
   }
 
   private showSnack(message: string, type: 'success' | 'error' | 'info') {
