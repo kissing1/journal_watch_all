@@ -3,7 +3,13 @@
 <div class="app-layout">
 
   @if (authService.isLoggedIn && !isLoginPage) {
-    <app-sidebar [isOpen]="sidebarOpen"></app-sidebar>
+    @if (isAdvisor) {
+      <app-sidebar-advisor [isOpen]="sidebarOpen"></app-sidebar-advisor>
+    } @else if (isStaff) {
+      <app-sidebar-staff [isOpen]="sidebarOpen"></app-sidebar-staff>
+    } @else {
+      <app-sidebar [isOpen]="sidebarOpen"></app-sidebar>
+    }
 
     @if (sidebarOpen) {
       <div class="sidebar-backdrop" (click)="sidebarOpen = false"></div>

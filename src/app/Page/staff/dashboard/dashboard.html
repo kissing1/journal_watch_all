@@ -1,0 +1,44 @@
+<div class="dashboard-page">
+
+  <!-- WELCOME -->
+  <section class="welcome-card">
+    <div class="welcome-left">
+      <div class="welcome-avatar">🏛</div>
+      <div class="welcome-info">
+        <div class="welcome-role">เจ้าหน้าที่บัณฑิตวิทยาลัย</div>
+        <h1 class="welcome-name">{{ staffName }}</h1>
+        <div class="welcome-meta">{{ staffEmail }}</div>
+      </div>
+    </div>
+    <div class="welcome-date">
+      <div class="date-label">วันที่วันนี้</div>
+      <div class="date-value">{{ today }}</div>
+    </div>
+  </section>
+
+  <!-- QUICK ACTIONS -->
+  <section class="section-card">
+    <div class="section-head">
+      <div class="section-title">⚡ Quick Actions</div>
+    </div>
+    <div class="quick-actions">
+      <a class="action-btn action-navy" routerLink="/staff/pre-t3-request">
+        <span class="action-icon">📋</span>
+        <span>คำร้อง Pre-T3</span>
+      </a>
+      <a class="action-btn action-blue" routerLink="/staff/t3-request">
+        <span class="action-icon">📊</span>
+        <span>คำร้อง T3</span>
+      </a>
+      <a class="action-btn action-yellow" routerLink="/search">
+        <span class="action-icon">🔍</span>
+        <span>ค้นหาวารสาร</span>
+      </a>
+      <a class="action-btn action-red" routerLink="/msu-unwanted">
+        <span class="action-icon">🚫</span>
+        <span>จัดการ MSU Unwanted</span>
+      </a>
+    </div>
+  </section>
+
+</div>

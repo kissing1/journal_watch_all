@@ -33,6 +33,7 @@ export class AuthService {
   logout(): void {
     localStorage.removeItem('auth_token');
     localStorage.removeItem('auth_user');
+    localStorage.removeItem('auth_picture');
     this._isLoggedIn.set(false);
     this._user.set(null);
   }

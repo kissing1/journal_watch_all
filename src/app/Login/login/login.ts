@@ -58,8 +58,10 @@ export class Login implements OnInit {
 
   private decodeJwt(token: string): any {
     try {
-      const base64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
-      return JSON.parse(atob(base64));
+      const payload = token.split('.')[1];
+      const base64  = payload.replace(/-/g, '+').replace(/_/g, '/');
+      const padded  = base64 + '='.repeat((4 - base64.length % 4) % 4);
+      return JSON.parse(atob(padded));
     } catch { return {}; }
   }
 
@@ -77,7 +79,11 @@ export class Login implements OnInit {
         this.loading.set(false);
         this.authService.setLoggedIn(res, picture);
         this.showSnack(`ยินดีต้อนรับ ${res.data.user.firstName} ${res.data.user.lastName}`, 'success');
-        this.router.navigate(['/dashboard']);
+        const role = res.data.user.role?.toLowerCase();
+        const target = role === 'supervisor' ? '/advisor/dashboard'
+                     : role === 'staff'      ? '/staff/dashboard'
+                     : '/dashboard';
+        this.router.navigate([target]);
       },
       error: (err) => {
         this.loading.set(false);
@@ -101,27 +107,6 @@ export class Login implements OnInit {
       script.onload = () => resolve();
       document.head.appendChild(script);
     });
-  }
-
-  // DEV ONLY — ลบออกก่อน deploy
-  devLogin(): void {
-    const mock: LoginRes = {
-      success: true,
-      message: 'dev',
-      data: {
-        accessToken: 'dev-token',
-        user: {
-          userId: 0,
-          role: 'student',
-          firstName: 'Dev',
-          lastName: 'User',
-          msuMail: 'dev@msu.ac.th',
-          degreeLevel: null,
-        },
-      },
-    };
-    this.authService.setLoggedIn(mock);
-    this.router.navigate(['/dashboard']);
   }
 
   private showSnack(message: string, type: 'success' | 'error' | 'info') {

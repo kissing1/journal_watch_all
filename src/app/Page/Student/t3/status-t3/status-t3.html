@@ -1,0 +1,81 @@
+<div class="status-t3-page">
+
+  <!-- TAB BAR -->
+  <div class="tab-bar">
+    <a class="tab-item" routerLink="/send-t3" routerLinkActive="tab-active" [routerLinkActiveOptions]="{ exact: true }">
+      <span class="tab-icon">📋</span><span class="tab-label">ยื่น T3</span>
+    </a>
+    <a class="tab-item" routerLink="/status-t3" routerLinkActive="tab-active">
+      <span class="tab-icon">📊</span><span class="tab-label">สถานะ T3</span>
+    </a>
+    <a class="tab-item" routerLink="/t3-history" routerLinkActive="tab-active">
+      <span class="tab-icon">📁</span><span class="tab-label">ประวัติทั้งหมด</span>
+    </a>
+  </div>
+
+  <!-- PAGE TITLE -->
+  <div class="page-title-row">
+    <div>
+      <h1 class="page-title">สถานะ <span class="page-title-highlight">T3</span></h1>
+      <p class="page-sub">ติดตามความคืบหน้าคำร้องของคุณ</p>
+    </div>
+  </div>
+
+  <!-- FILTER CHIPS -->
+  <div class="filter-bar">
+    <button class="filter-btn filter-btn--active">ทั้งหมด</button>
+    <button class="filter-btn">✅ อนุมัติแล้ว</button>
+    <button class="filter-btn">⏳ กำลังดำเนิน</button>
+    <button class="filter-btn">❌ ไม่อนุมัติ</button>
+  </div>
+
+  <!-- CARD LIST -->
+  <div class="card-list">
+
+    <!-- Card: กำลังดำเนิน -->
+    <div class="req-card req-card--pending">
+      <div class="req-card-left">
+        <div class="req-status-icon req-status-icon--pending">⏳</div>
+      </div>
+      <div class="req-card-body">
+        <div class="req-card-meta">T3-2568-001 · ยื่นเมื่อ 2 พ.ค. 68</div>
+        <div class="req-card-title">การพัฒนาระบบ AI สำหรับการตรวจสอบคุณภาพวารสารวิชาการโดยใช้ Machine Learning</div>
+        <div class="req-card-tags">
+          <span class="tag-db">📘 Scopus</span>
+          <span class="tag-q">Q2</span>
+          <span class="tag-issn">ISSN: 2319-7064</span>
+          <span class="tag-degree">ป.เอก · แผน 2.1</span>
+        </div>
+      </div>
+      <div class="req-card-right">
+        <span class="cs-chip cs-pending">⏳ กำลังดำเนิน</span>
+        <span class="req-card-step">ขั้น 3/5 · เจ้าหน้าที่ตรวจ</span>
+      </div>
+      <span class="req-card-arrow">›</span>
+    </div>
+
+    <!-- Card: อนุมัติแล้ว -->
+    <div class="req-card req-card--approved">
+      <div class="req-card-left">
+        <div class="req-status-icon req-status-icon--approved">✅</div>
+      </div>
+      <div class="req-card-body">
+        <div class="req-card-meta">T3-2567-003 · ยื่นเมื่อ 15 ม.ค. 67</div>
+        <div class="req-card-title">Deep Learning Applications in Thai Natural Language Processing: A Comprehensive Survey</div>
+        <div class="req-card-tags">
+          <span class="tag-db">📘 Scopus</span>
+          <span class="tag-q">Q1</span>
+          <span class="tag-issn">ISSN: 2045-2322</span>
+          <span class="tag-degree">ป.เอก · แผน 2.1</span>
+        </div>
+      </div>
+      <div class="req-card-right">
+        <span class="cs-chip cs-approved">✅ อนุมัติแล้ว</span>
+        <span class="req-card-step">อนุมัติ 28 ม.ค. 67</span>
+      </div>
+      <span class="req-card-arrow">›</span>
+    </div>
+
+  </div>
+
+</div>

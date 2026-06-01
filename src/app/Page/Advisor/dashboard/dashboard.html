@@ -1,0 +1,107 @@
+<div class="dashboard-page">
+
+  <!-- WELCOME -->
+  <section class="welcome-card">
+    <div class="welcome-left">
+      <div class="welcome-avatar">🎓</div>
+      <div class="welcome-info">
+        <div class="welcome-role">อาจารย์ที่ปรึกษา</div>
+        <h1 class="welcome-name">{{ advisorName }}</h1>
+        <div class="welcome-meta">{{ advisorEmail }}</div>
+      </div>
+    </div>
+    <div class="welcome-date">
+      <div class="date-label">วันที่วันนี้</div>
+      <div class="date-value">{{ today }}</div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="stats-row">
+    <div class="stat-card stat-pending">
+      <div class="stat-icon">⏳</div>
+      <div class="stat-body">
+        <div class="stat-num">{{ stats.pending }}</div>
+        <div class="stat-label">รอพิจารณา</div>
+      </div>
+    </div>
+    <div class="stat-card stat-approved">
+      <div class="stat-icon">✅</div>
+      <div class="stat-body">
+        <div class="stat-num">{{ stats.approved }}</div>
+        <div class="stat-label">อนุมัติแล้ว</div>
+      </div>
+    </div>
+    <div class="stat-card stat-rejected">
+      <div class="stat-icon">❌</div>
+      <div class="stat-body">
+        <div class="stat-num">{{ stats.rejected }}</div>
+        <div class="stat-label">ไม่อนุมัติ</div>
+      </div>
+    </div>
+    <div class="stat-card stat-students">
+      <div class="stat-icon">👨‍🎓</div>
+      <div class="stat-body">
+        <div class="stat-num">{{ stats.students }}</div>
+        <div class="stat-label">นิสิตในที่ปรึกษา</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PENDING REQUESTS -->
+  <section class="section-card">
+    <div class="section-head">
+      <div class="section-title">⏳ Pre-T3 รอพิจารณา</div>
+      <a class="btn-view-all" routerLink="/advisor/pre-t3-list">ดูทั้งหมด →</a>
+    </div>
+
+    @if (pendingRequests.length === 0) {
+      <div class="empty-state">
+        <div class="empty-icon">🎉</div>
+        <div class="empty-text">ไม่มีคำร้องที่รอพิจารณา</div>
+      </div>
+    } @else {
+      <div class="request-list">
+        @for (req of pendingRequests; track req.id) {
+          <div class="request-item">
+            <div class="request-left">
+              <div class="request-student">{{ req.studentName }}</div>
+              <div class="request-id">รหัส {{ req.studentId }}</div>
+              <div class="request-journal">{{ req.journalName }}</div>
+              <div class="request-meta">
+                <span class="badge-db">{{ req.database }}</span>
+                <span class="badge-q">{{ req.quartile }}</span>
+                <span class="request-date">ยื่นเมื่อ {{ req.submittedDate }}</span>
+              </div>
+            </div>
+            <div class="request-actions">
+              <button class="btn-review" (click)="reviewRequest(req.id)">📋 พิจารณา</button>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </section>
+
+  <!-- QUICK ACTIONS -->
+  <section class="section-card">
+    <div class="section-head">
+      <div class="section-title">⚡ Quick Actions</div>
+    </div>
+    <div class="quick-actions">
+      <a class="action-btn action-navy" routerLink="/advisor/pre-t3-list">
+        <span class="action-icon">📋</span>
+        <span>คำร้อง Pre-T3 ทั้งหมด</span>
+      </a>
+      <a class="action-btn action-blue" routerLink="/advisor/students">
+        <span class="action-icon">👨‍🎓</span>
+        <span>นิสิตในที่ปรึกษา</span>
+      </a>
+      <a class="action-btn action-yellow" routerLink="/search">
+        <span class="action-icon">🔍</span>
+        <span>ค้นหาวารสาร</span>
+      </a>
+    </div>
+  </section>
+
+</div>

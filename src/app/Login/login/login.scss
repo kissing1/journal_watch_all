@@ -344,6 +344,30 @@
   flex-shrink: 0;
 }
 
+/* DEV ONLY */
+.dev-btns {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.dev-btn {
+  flex: 1;
+  padding: 7px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  font-family: 'Sarabun', sans-serif;
+  border: 1.5px dashed #aaa;
+  border-radius: 8px;
+  background: transparent;
+  color: #888;
+  cursor: pointer;
+  transition: all 0.2s;
+  &:hover { border-color: #1C2744; color: #1C2744; background: rgba(28,39,68,0.05); }
+  &.dev-btn--advisor:hover { border-color: #E8A800; color: #92600A; background: rgba(232,168,0,0.08); }
+}
+
 /* ══ RESPONSIVE ══ */
 @media (max-width: 820px) {
   .card-body {

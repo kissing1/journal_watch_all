@@ -47,6 +47,27 @@ $border: #E2DED6;
 
 
 
+.btn-edit-toggle {
+  padding: 6px 16px;
+  border-radius: 99px;
+  border: 1.5px solid $navy;
+  background: transparent;
+  color: $navy;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: 'Sarabun', sans-serif;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &.active {
+    background: rgba(192,57,43,0.08);
+    border-color: #C0392B;
+    color: #C0392B;
+  }
+
+  &:hover:not(.active) { background: rgba(15,29,58,0.06); }
+}
+
 .page-sub {
   font-size: 13px;
   color: rgba(15,29,58,0.5);
@@ -157,7 +178,7 @@ $border: #E2DED6;
   gap: 10px;
 }
 
-.info-icon { font-size: 18px; }
+
 
 .info-label {
   font-size: 13px;
@@ -226,4 +247,197 @@ $border: #E2DED6;
   font-size: 12px;
   color: rgba(15,29,58,0.5);
   margin-top: 2px;
+}
+
+/* STATUS */
+.status-active {
+  color: $green;
+  font-weight: 700;
+}
+
+/* ADVISOR */
+.advisor-card {
+  width: 100%;
+  border: 1.5px solid #E2E6F0;
+  border-radius: 12px;
+  padding: 14px 16px;
+  background: #F8FAFF;
+}
+
+.advisor-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: $navy;
+  margin-bottom: 10px;
+}
+
+.advisor-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px solid #E2E6F0;
+  font-size: 13px;
+
+  &:last-child { border-bottom: none; }
+}
+
+.advisor-type {
+  font-size: 10px;
+  font-weight: 700;
+  background: $navy;
+  color: $yellow;
+  border-radius: 99px;
+  padding: 2px 8px;
+  flex-shrink: 0;
+}
+
+.advisor-name {
+  font-weight: 600;
+  color: $navy;
+  flex: 1;
+}
+
+.advisor-mail {
+  font-size: 11px;
+  color: rgba(15,29,58,0.45);
+}
+
+/* LOADING */
+.loading-card {
+  background: $white;
+  border-radius: 16px;
+  padding: 48px 24px;
+  text-align: center;
+  box-shadow: 0 4px 24px rgba(15,29,58,0.08);
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #E2E6F0;
+  border-top-color: $yellow;
+  border-radius: 50%;
+  margin: 0 auto 16px;
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.loading-text {
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(15,29,58,0.5);
+}
+
+/* EDIT CARD */
+.edit-card {
+  background: $white;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 4px 24px rgba(15,29,58,0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.edit-card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.edit-icon { font-size: 18px; }
+
+.edit-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: $navy;
+  flex: 1;
+}
+
+.edit-note {
+  font-size: 11px;
+  color: rgba(15,29,58,0.4);
+}
+
+.edit-divider {
+  height: 2px;
+  background: linear-gradient(90deg, $yellow 0%, transparent 100%);
+  border-radius: 2px;
+  margin: -4px 0;
+}
+
+.edit-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.edit-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(15,29,58,0.6);
+}
+
+.edit-label-icon { font-size: 15px; }
+
+.edit-input {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1.5px solid #E2E6F0;
+  border-radius: 10px;
+  padding: 11px 14px;
+  font-size: 14px;
+  font-family: 'Sarabun', sans-serif;
+  color: $navy;
+  outline: none;
+  transition: border 0.2s;
+
+  &:focus { border-color: $yellow; }
+  &::placeholder { color: #C4C9D4; }
+}
+
+.save-result {
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-size: 13.5px;
+  font-weight: 600;
+  text-align: center;
+
+  &.success { background: rgba(26,122,66,0.1); color: $green; border: 1px solid rgba(26,122,66,0.25); }
+  &.error   { background: rgba(192,57,43,0.08); color: #C0392B; border: 1px solid rgba(192,57,43,0.2); }
+}
+
+.btn-save {
+  width: 100%;
+  padding: 13px;
+  background: $navy;
+  color: $yellow;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: 'Sarabun', sans-serif;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s;
+
+  &:hover:not(:disabled) { background: lighten(#0F1D3A, 10%); }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+.save-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(245,184,0,0.3);
+  border-top-color: $yellow;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
 }
