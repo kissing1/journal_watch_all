@@ -78,11 +78,18 @@ export class PreT3Request implements OnInit {
   detailData       = signal<PreT3Detail | null>(null);
   decision         = signal<Decision>('approved');
   showAbstract     = signal(false);
+  showConfirm      = signal(false);
   remark           = '';
 
   requests = signal<PreT3Item[]>([]);
 
   ngOnInit(): void {
+    window.scrollTo({ top: 0 });
+    this.loadRequests();
+  }
+
+  loadRequests(): void {
+    this.isLoading.set(true);
     const headers = new HttpHeaders({ Authorization: `Bearer ${this.auth.token}` });
     this.http
       .get<GetPreT3RequestRes>(`${this.constants.API_ENDPOINT}/pre-t3/pending`, { headers })
@@ -194,6 +201,11 @@ export class PreT3Request implements OnInit {
     return true;
   }
 
+  openConfirm(): void {
+    if (!this.canSubmit) return;
+    this.showConfirm.set(true);
+  }
+
   submitDecision(): void {
     const req = this.selectedRequest();
     if (!req || !this.decision() || this.isSubmitting()) return;
@@ -223,6 +235,7 @@ export class PreT3Request implements OnInit {
       .subscribe(res => {
         console.log('[submitDecision] Response:', res);
         this.isSubmitting.set(false);
+        this.showConfirm.set(false);
         if (res === null) {
           console.warn('[submitDecision] API call failed — ไม่ได้อัปเดต status');
           return;

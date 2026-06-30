@@ -1,53 +1,32 @@
 <div class="page">
 
-  <!-- HEADER -->
-  <div class="page-header">
-    <div class="page-title-row">
-      <span class="page-title-icon">☑️</span>
-      <h1 class="page-title">คำร้องของนิสิต</h1>
-    </div>
-    <p class="page-subtitle">ตรวจสอบและลงนามอนุมัติ Pre-T3 และ T3 ของนิสิตที่ท่านเป็นที่ปรึกษา</p>
-  </div>
-
   <!-- TAB BAR -->
   <div class="tab-bar">
-    <a class="tab-item tab-active" routerLink="/advisor/pre-t3-request">
-      <span>📋</span><span>Pre-T3 ที่รอลงนาม</span>
+    <a class="tab-item" routerLink="/advisor/pre-t3-request" routerLinkActive="tab-active" [routerLinkActiveOptions]="{ exact: true }">
+      <span class="tab-icon">☑️</span>
+      <span class="tab-label">Pre-T3 ที่รอลงนาม</span>
     </a>
-    <a class="tab-item" routerLink="/advisor/t3-request">
-      <span>📊</span><span>T3 ที่รอลงนาม</span>
+    <a class="tab-item" routerLink="/advisor/t3-request" routerLinkActive="tab-active" [routerLinkActiveOptions]="{ exact: true }">
+      <span class="tab-icon">📊</span>
+      <span class="tab-label">T3 ที่รอลงนาม</span>
     </a>
-    <a class="tab-item" routerLink="/advisor/history">
-      <span>📋</span><span>ประวัติทั้งหมด</span>
+    <a class="tab-item" routerLink="/advisor/history" routerLinkActive="tab-active" [routerLinkActiveOptions]="{ exact: true }">
+      <span class="tab-icon">📋</span>
+      <span class="tab-label">ประวัติทั้งหมด</span>
     </a>
   </div>
 
-  <!-- STATS ROW -->
-  <div class="stats-row">
-    <div class="stat-pill stat-pill--pending">
-      <span class="stat-num">{{ countPending }}</span>
-      <span class="stat-label">รอลงนาม</span>
+  <!-- HEADER -->
+  <div class="page-title-row">
+    <span class="page-icon">☑️</span>
+    <div class="page-title-group">
+      <h1 class="page-title">คำร้องของนิสิต</h1>
+      <p class="page-sub">ตรวจสอบและลงนามอนุมัติ Pre-T3 และ T3 ของนิสิตที่ท่านเป็นที่ปรึกษา</p>
     </div>
-    <div class="stat-pill stat-pill--approved">
-      <span class="stat-num">{{ countApproved }}</span>
-      <span class="stat-label">อนุมัติ</span>
-    </div>
-    <div class="stat-pill stat-pill--rejected">
-      <span class="stat-num">{{ countRejected }}</span>
-      <span class="stat-label">ไม่อนุมัติ</span>
-    </div>
-    <div class="stat-pill stat-pill--all">
-      <span class="stat-num">{{ countAll }}</span>
-      <span class="stat-label">ทั้งหมด</span>
-    </div>
-  </div>
-
-  <!-- FILTER BUTTONS -->
-  <div class="filter-row">
-    <button class="filter-btn" [class.active]="activeFilter() === 'all'"      (click)="setFilter('all')">ทั้งหมด</button>
-    <button class="filter-btn" [class.active]="activeFilter() === 'pending'"  (click)="setFilter('pending')">รอลงนาม</button>
-    <button class="filter-btn" [class.active]="activeFilter() === 'approved'" (click)="setFilter('approved')">อนุมัติแล้ว</button>
-    <button class="filter-btn" [class.active]="activeFilter() === 'rejected'" (click)="setFilter('rejected')">ไม่อนุมัติ</button>
+    <button class="btn-refresh" (click)="loadRequests()" [disabled]="isLoading()">
+      <span class="refresh-icon" [class.spinning]="isLoading()">↻</span>
+      @if (isLoading()) { กำลังโหลด... } @else { รีเฟรช }
+    </button>
   </div>
 
   <!-- REQUEST CARDS -->
@@ -56,6 +35,12 @@
       <div class="empty-state">
         <div class="loading-spinner"></div>
         <div class="empty-text">กำลังโหลดข้อมูล...</div>
+      </div>
+    }
+    @if (filtered().length === 0 && !isLoading()) {
+      <div class="empty-state">
+        <div class="empty-icon">📭</div>
+        <div class="empty-text">ไม่มีคำร้อง Pre-T3 ในขณะนี้</div>
       </div>
     }
     @for (req of filtered(); track req.id) {
@@ -92,6 +77,7 @@
           }
           <div class="request-id">{{ req.requestId }}</div>
         </div>
+        <span class="card-arrow">›</span>
       </div>
     }
 
@@ -142,7 +128,7 @@
               </div>
               <div class="detail-field">
                 <div class="detail-label">รหัสนิสิต</div>
-                <div class="detail-value">{{ d.student_info.student_id }}</div>
+                <div class="detail-value">{{ d.student_info.msu_mail.replace('@msu.ac.th', '') }}</div>
               </div>
               <div class="detail-field">
                 <div class="detail-label">อีเมล</div>
@@ -296,16 +282,18 @@
                 <input type="radio" name="decision" value="approved"
                   [checked]="decision() === 'approved'"
                   (change)="decision.set('approved')">
-                <span class="dc-radio" [class.dc-radio--approved]="decision() === 'approved'"></span>
-                <span class="dc-check">✅</span>
+                <span class="dc-box" [class.dc-box--approved]="decision() === 'approved'">
+                  @if (decision() === 'approved') { ✓ }
+                </span>
                 <span class="dc-label">เห็นชอบ / อนุมัติ</span>
               </label>
               <label class="decision-card" [class.decision-card--rejected]="decision() === 'rejected'">
                 <input type="radio" name="decision" value="rejected"
                   [checked]="decision() === 'rejected'"
                   (change)="decision.set('rejected')">
-                <span class="dc-radio" [class.dc-radio--rejected]="decision() === 'rejected'"></span>
-                <span class="dc-x">✗</span>
+                <span class="dc-box" [class.dc-box--rejected]="decision() === 'rejected'">
+                  @if (decision() === 'rejected') { ✓ }
+                </span>
                 <span class="dc-label">ไม่เห็นชอบ</span>
               </label>
             </div>
@@ -331,9 +319,8 @@
             <div class="modal-actions">
               <button class="btn-cancel" (click)="closeDetail()">ยกเลิก</button>
               <button class="btn-draft">💾 บันทึกร่าง</button>
-              <button class="btn-approve" (click)="submitDecision()" [disabled]="isSubmitting() || !canSubmit">
-                @if (isSubmitting()) { <span class="btn-spinner"></span> กำลังส่ง... }
-                @else { ✅ ลงนาม }
+              <button class="btn-approve" (click)="openConfirm()" [disabled]="isSubmitting() || !canSubmit">
+                ✅ ลงนาม
               </button>
             </div>
           </div>
@@ -342,4 +329,49 @@
       </div><!-- /modal-body -->
     </div><!-- /modal -->
   </div><!-- /modal-backdrop -->
+}
+
+<!-- ═══ CONFIRM MODAL ═══ -->
+@if (showConfirm() && selectedRequest(); as req) {
+  <div class="confirm-backdrop" (click)="showConfirm.set(false)">
+    <div class="confirm-modal" (click)="$event.stopPropagation()">
+
+      <div class="confirm-icon-wrap" [class.confirm-icon-wrap--approved]="decision() === 'approved'" [class.confirm-icon-wrap--rejected]="decision() === 'rejected'">
+        {{ decision() === 'approved' ? '✅' : '❌' }}
+      </div>
+
+      <div class="confirm-title">
+        {{ decision() === 'approved' ? 'ยืนยันการลงนามอนุมัติ?' : 'ยืนยันการไม่อนุมัติ?' }}
+      </div>
+      <div class="confirm-sub">
+        {{ decision() === 'approved' ? 'คุณต้องการลงนามอนุมัติคำร้อง Pre-T3 นี้ใช่หรือไม่?' : 'คุณต้องการปฏิเสธคำร้อง Pre-T3 นี้ใช่หรือไม่?' }}
+      </div>
+
+      <div class="confirm-detail">
+        <div class="confirm-row">
+          <span class="confirm-label">วารสาร</span>
+          <span class="confirm-value fw">{{ req.journalName }}</span>
+        </div>
+        <div class="confirm-row">
+          <span class="confirm-label">ฐานข้อมูล</span>
+          <span class="confirm-value">{{ req.database }}</span>
+        </div>
+        @if (remark.trim()) {
+          <div class="confirm-row">
+            <span class="confirm-label">หมายเหตุ</span>
+            <span class="confirm-value">{{ remark }}</span>
+          </div>
+        }
+      </div>
+
+      <div class="confirm-actions">
+        <button class="btn-cancel" (click)="showConfirm.set(false)">ยกเลิก</button>
+        <button class="btn-approve" (click)="submitDecision()" [disabled]="isSubmitting()">
+          @if (isSubmitting()) { <span class="btn-spinner"></span> กำลังส่ง... }
+          @else { {{ decision() === 'approved' ? '✅ ยืนยัน ลงนาม' : '❌ ยืนยัน ไม่อนุมัติ' }} }
+        </button>
+      </div>
+
+    </div>
+  </div>
 }

@@ -55,6 +55,7 @@ export class Dashboard implements OnInit {
   }
 
   ngOnInit(): void {
+    window.scrollTo({ top: 0 });
     const headers = new HttpHeaders({ Authorization: `Bearer ${this.auth.token}` });
     const api     = this.constants.API_ENDPOINT;
 

@@ -1,7 +1,7 @@
 import { Component, OnInit, inject, ChangeDetectorRef, NgZone, ApplicationRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { catchError, of } from 'rxjs';
 import { AuthService } from '../../../../auth.service';
@@ -26,6 +26,7 @@ interface PreT3Card {
   journalStatus: 'active' | 'discontinued' | 'unwanted';
   status:        'pending' | 'meeting' | 'approved' | 'rejected' | 'auto-rejected';
   dateLabel:     string;
+  advisorTime?:  string;
   daysAgo?:      number;
   requestId:     string;
   pre_t3_id:     number;
@@ -88,6 +89,7 @@ export class PreT3Request implements OnInit {
   private cdr       = inject(ChangeDetectorRef);
   private ngZone    = inject(NgZone);
   private appRef    = inject(ApplicationRef);
+  private router    = inject(Router);
 
   // ── list state ────────────────────────────────────
   isLoading         = true;
@@ -103,6 +105,16 @@ export class PreT3Request implements OnInit {
   showMeetingModal  = false;
   meetingDecision: 'approved' | 'rejected' | null = null;
   meetingRemark     = '';
+
+  // ── inline review (inside modal-panel) ────────────
+  inlineDecision: 'approved' | 'rejected' | null = 'approved';
+  inlineMeetingNo      = '';
+  inlineMeetingDate    = '';
+  inlineRejectReason   = '';
+  showRejectReasonError = false;
+  isSubmittingDecision  = false;
+  showInlineConfirm     = false;
+  pendingAction: 'approved' | 'rejected' | null = null;
 
   // ── send-to-meeting modal (from card button) ──────
   showSendMeetingModal = false;
@@ -149,8 +161,11 @@ export class PreT3Request implements OnInit {
     return this.cards.filter(c => c.status === this.activeFilter);
   }
 
-  ngOnInit(): void {
-    const headers = new HttpHeaders({ Authorization: `Bearer ${this.auth.token}` });
+  ngOnInit(): void { window.scrollTo({ top: 0 }); this.loadCards(); }
+
+  loadCards(): void {
+    this.isLoading = true;
+    const headers  = new HttpHeaders({ Authorization: `Bearer ${this.auth.token}` });
     this.http
       .get<GetPreT3RequestStaffRes>(`${this.constants.API_ENDPOINT}/pre-t3/pending`, { headers })
       .pipe(catchError(() => of(null)))
@@ -189,6 +204,8 @@ export class PreT3Request implements OnInit {
 
     const fmt = (v: Date | null) =>
       v ? new Date(v).toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: '2-digit' }) : '';
+    const fmtTime = (v: any) =>
+      v ? new Date(v).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }) : '';
     let dateLabel = '';
     if (status === 'approved') {
       dateLabel = facCom?.approved_at ? `อนุมัติ ${fmt(facCom.approved_at as any)}` : 'อนุมัติแล้ว';
@@ -202,6 +219,9 @@ export class PreT3Request implements OnInit {
       const advisorDate = advisor?.approved_at ? fmt(advisor.approved_at as any) : fmt(createdAt);
       dateLabel = `อาจารย์ส่งมา ${advisorDate}`;
     }
+    const advisorTime = advisor?.approved_at
+      ? fmtTime(advisor.approved_at)
+      : (status === 'pending' ? fmtTime(createdAt) : undefined);
 
     const stripped = d.student_name.replace(/^(นาย|น\.ส\.|นาง(?:สาว)?|ดร\.|ผศ\.|รศ\.|ศ\.)\s*/u, '').trim();
     const parts    = stripped.split(/\s+/);
@@ -225,6 +245,7 @@ export class PreT3Request implements OnInit {
       journalStatus,
       status,
       dateLabel,
+      advisorTime,
       daysAgo:       status === 'pending' ? daysAgo : undefined,
       requestId,
       pre_t3_id:     d.pre_t3_id,
@@ -233,8 +254,15 @@ export class PreT3Request implements OnInit {
 
   // ── Detail panel ──────────────────────────────────
   openDetail(card: PreT3Card): void {
-    this.activeCard       = card;
-    this.showMeetingModal = false;
+    this.activeCard           = card;
+    this.showMeetingModal     = false;
+    this.inlineDecision        = 'approved';
+    this.inlineMeetingNo       = '';
+    this.inlineMeetingDate     = '';
+    this.inlineRejectReason    = '';
+    this.showRejectReasonError = false;
+    this.showInlineConfirm     = false;
+    this.pendingAction         = null;
 
     // แสดง fallback ทันทีจาก datumMap (ไม่ต้องรอ API)
     this.selectedDetail  = this.buildDetailFallback(card);
@@ -265,6 +293,70 @@ export class PreT3Request implements OnInit {
     this.selectedDetail   = null;
     this.activeCard       = null;
     this.showMeetingModal = false;
+  }
+
+  submitInlineDecision(action: 'approved' | 'rejected'): void {
+    console.log('[submitInlineDecision] called', action, {
+      meetingNo: this.inlineMeetingNo,
+      meetingDate: this.inlineMeetingDate,
+      rejectReason: this.inlineRejectReason,
+    });
+    if (action === 'approved' && (!this.inlineMeetingNo || !this.inlineMeetingDate)) {
+      console.warn('[submitInlineDecision] blocked — missing meeting info');
+      return;
+    }
+    if (action === 'rejected') {
+      if (!this.inlineRejectReason.trim()) {
+        console.warn('[submitInlineDecision] blocked — missing reject reason');
+        this.showRejectReasonError = true;
+        return;
+      }
+      this.showRejectReasonError = false;
+    }
+    this.pendingAction     = action;
+    this.showInlineConfirm = true;
+    console.log('[submitInlineDecision] showInlineConfirm =', this.showInlineConfirm, 'selectedDetail =', !!this.selectedDetail);
+    this.cdr.detectChanges();
+  }
+
+  cancelInlineConfirm(): void {
+    this.showInlineConfirm = false;
+    this.pendingAction     = null;
+    this.cdr.detectChanges();
+  }
+
+  confirmAndSubmit(): void {
+    const card   = this.activeCard;
+    const action = this.pendingAction;
+    if (!card || !action || this.isSubmittingDecision) return;
+
+    this.isSubmittingDecision = true;
+    const headers = new HttpHeaders({
+      Authorization:  `Bearer ${this.auth.token}`,
+      'Content-Type': 'application/json',
+    });
+    const body: any = action === 'approved'
+      ? { action: 'approve', meeting_no: this.inlineMeetingNo, meeting_date: this.inlineMeetingDate }
+      : { action: 'reject', remark: this.inlineRejectReason };
+
+    this.http
+      .patch(`${this.constants.API_ENDPOINT}/pre-t3/${card.pre_t3_id}/faculty-review`, body, { headers })
+      .pipe(catchError(err => { console.error('[confirmAndSubmit]', err); return of(null); }))
+      .subscribe(res => {
+        this.isSubmittingDecision = false;
+        this.showInlineConfirm    = false;
+        if (res) {
+          this.closeDetail();
+          this.router.navigate(['/staff/history'], {
+            queryParams: {
+              type:   'PreT3',
+              status: action === 'approved' ? 'approved' : 'rejected',
+            },
+          });
+        } else {
+          this.showToast('เกิดข้อผิดพลาด กรุณาลองใหม่', 'error');
+        }
+      });
   }
 
   // ── Record-meeting modal (from detail panel) ──────

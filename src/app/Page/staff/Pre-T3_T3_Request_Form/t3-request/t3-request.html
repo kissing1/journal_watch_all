@@ -5,6 +5,10 @@
     <div class="page-title-row">
       <span class="page-title-icon">📊</span>
       <h1 class="page-title">T3 คำร้อง</h1>
+      <button class="btn-refresh" (click)="loadCards()" [disabled]="isLoading()">
+        <span class="refresh-icon" [class.spinning]="isLoading()">↻</span>
+        <span>รีเฟรช</span>
+      </button>
     </div>
     <p class="page-subtitle">ตรวจสอบและดำเนินการคำร้อง T3 ของนิสิต</p>
   </div>
@@ -22,77 +26,74 @@
     </a>
   </div>
 
-  <!-- STATS ROW -->
-  <div class="stats-row">
-    <div class="stat-pill stat-pill--pending">
-      <span class="stat-num">{{ countPending }}</span>
-      <span class="stat-label">รอดำเนินการ</span>
-    </div>
-    <div class="stat-pill stat-pill--approved">
-      <span class="stat-num">{{ countApproved }}</span>
-      <span class="stat-label">อนุมัติ</span>
-    </div>
-    <div class="stat-pill stat-pill--rejected">
-      <span class="stat-num">{{ countRejected }}</span>
-      <span class="stat-label">ไม่อนุมัติ</span>
-    </div>
-    <div class="stat-pill stat-pill--all">
-      <span class="stat-num">{{ countAll }}</span>
-      <span class="stat-label">ทั้งหมด</span>
-    </div>
-  </div>
-
-  <!-- FILTER BUTTONS -->
-  <div class="filter-row">
-    <button class="filter-btn" [class.active]="activeFilter() === 'all'"      (click)="setFilter('all')">ทั้งหมด</button>
-    <button class="filter-btn" [class.active]="activeFilter() === 'pending'"  (click)="setFilter('pending')">รอดำเนินการ</button>
-    <button class="filter-btn" [class.active]="activeFilter() === 'approved'" (click)="setFilter('approved')">อนุมัติแล้ว</button>
-    <button class="filter-btn" [class.active]="activeFilter() === 'rejected'" (click)="setFilter('rejected')">ไม่อนุมัติ</button>
-  </div>
 
   <!-- REQUEST CARDS -->
   <div class="card-list">
     @if (isLoading()) {
-      <div class="empty-state"><div class="empty-icon">⏳</div><div class="empty-text">กำลังโหลดข้อมูล...</div></div>
+      <div class="empty-state">
+        <div class="loading-spinner"></div>
+      </div>
+    } @else if (filtered().length === 0) {
+      <div class="empty-state">
+        <div class="empty-text">ไม่มีคำร้อง T3 ในหมวดนี้</div>
+      </div>
     }
     @for (req of filtered(); track req.id) {
-      <div class="request-card" (click)="openDetail(req)">
+      <div class="req-card" [class]="'req-card req-card--' + req.status" (click)="openDetail(req)">
+
+        <!-- ═══ LEFT ═══ -->
         <div class="card-left">
           <div class="student-row">
-            <span class="student-name">{{ req.studentName }}</span>
-            <span class="student-id">{{ req.studentId }}</span>
+            <div class="avatar" [style.background]="req.avatarColor">{{ req.initials }}</div>
+            <div class="student-meta">
+              <div class="name-row">
+                <span class="student-name">{{ req.studentName }}</span>
+              </div>
+              <div class="student-id">{{ req.studentId }}</div>
+            </div>
           </div>
-          <div class="article-title-row">
-            <span class="article-label">ชื่อบทความ:</span>
-            <span class="article-title">{{ req.titleThai || req.titleEn }}</span>
-          </div>
+          @if (req.titleThai || req.titleEn) {
+            <div class="article-title">{{ req.titleThai || req.titleEn }}</div>
+          }
           <div class="journal-row">
+            <span class="journal-name">{{ req.journalName }}</span>
             <span class="issn">{{ req.issn }}</span>
-            <span class="badge-db">{{ req.database }}</span>
+            <span class="db-badge" [class]="'db-badge db-' + req.database.toLowerCase()">{{ req.database }}</span>
             <span class="badge-pub-status"
               [class.pub-accepted]="req.pubStatus === 'accepted'"
               [class.pub-published]="req.pubStatus === 'published'">
               {{ req.pubStatus === 'published' ? '📰 ตีพิมพ์แล้ว' : '📩 ตอบรับแล้ว' }}
             </span>
           </div>
+
+          <div class="card-status-row">
+            @if (req.status === 'pending') {
+              <span class="status-chip chip-pending">รอดำเนินการ</span>
+            } @else if (req.status === 'approved') {
+              <span class="status-chip chip-approved">✅ อนุมัติแล้ว</span>
+            } @else {
+              <span class="status-chip chip-rejected">❌ ไม่อนุมัติ</span>
+            }
+          </div>
         </div>
+
+        <!-- ═══ RIGHT ═══ -->
         <div class="card-right">
-          @if (req.status === 'pending') {
-            <span class="status-badge status-pending">⏳ รอดำเนินการ</span>
-            <div class="date-info">ยื่น {{ req.submittedDate }}</div>
-            <div class="days-ago">{{ req.daysAgo }} วันแล้ว</div>
-          } @else if (req.status === 'approved') {
-            <span class="status-badge status-approved">✅ อนุมัติแล้ว</span>
-            <div class="date-info">{{ req.approvedDate }}</div>
-          } @else {
-            <span class="status-badge status-rejected">❌ ไม่อนุมัติ</span>
-          }
+          <div class="date-row">
+            <span class="date-label">{{ req.dateLabel }}</span>
+            @if (req.status === 'pending') {
+              <span class="advisor-time">🕐 {{ req.submittedTime }}</span>
+            }
+            @if (req.status === 'pending' && req.daysAgo) {
+              <span class="days-ago">{{ req.daysAgo }} วันแล้ว</span>
+            }
+          </div>
           <div class="request-id">T3-{{ req.id }}</div>
         </div>
+
+        <span class="card-arrow">›</span>
+
       </div>
-    }
-    @if (filtered().length === 0 && !isLoading()) {
-      <div class="empty-state"><div class="empty-icon">📭</div><div class="empty-text">ไม่มีคำร้อง T3 ในหมวดนี้</div></div>
     }
   </div>
 

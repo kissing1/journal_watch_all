@@ -43,6 +43,9 @@
     <button class="filter-btn" [class.active]="activeFilter() === 'all'"      (click)="setFilter('all')">ทั้งหมด</button>
     <button class="filter-btn" [class.active]="activeFilter() === 'approved'" (click)="setFilter('approved')">✅ อนุมัติแล้ว</button>
     <button class="filter-btn" [class.active]="activeFilter() === 'rejected'" (click)="setFilter('rejected')">❌ ไม่อนุมัติ</button>
+    <span class="filter-divider"></span>
+    <button class="filter-btn filter-btn--type" [class.active]="typeFilter() === 'PreT3'" (click)="setTypeFilter(typeFilter() === 'PreT3' ? 'all' : 'PreT3')">📋 Pre-T3</button>
+    <button class="filter-btn filter-btn--type" [class.active]="typeFilter() === 'T3'"   (click)="setTypeFilter(typeFilter() === 'T3' ? 'all' : 'T3')">📊 T3</button>
   </div>
 
   <!-- CARD LIST -->
@@ -50,12 +53,10 @@
 
     @if (isLoading()) {
       <div class="empty-state">
-        <div class="empty-icon">⏳</div>
-        <div class="empty-text">กำลังโหลดข้อมูล...</div>
+        <div class="loading-spinner"></div>
       </div>
     } @else if (filtered().length === 0) {
       <div class="empty-state">
-        <div class="empty-icon">📭</div>
         <div class="empty-text">ไม่มีข้อมูลในประวัติ</div>
       </div>
     } @else {

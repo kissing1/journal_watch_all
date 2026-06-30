@@ -167,6 +167,75 @@
 </div><!-- /search-bg-band -->
 
 <div class="search-page">
+
+  <!-- ── INTRO (แสดงก่อน search ครั้งแรก) ── -->
+  @if (!hasSearched() && !isLoading()) {
+    <div class="intro-section">
+
+      <div class="intro-header">
+        <div class="intro-title">ระบบตรวจสอบวารสารอัตโนมัติ</div>
+        <div class="intro-sub">กรอก ISSN แล้วกด ค้นหา — ระบบตรวจสอบจาก Scopus และ TCI พร้อมเทียบเกณฑ์ มมส. ให้ทันที</div>
+      </div>
+
+      <div class="intro-db-cards">
+        <div class="intro-db-card intro-db-card--scopus">
+          <div class="intro-db-head">
+            <span class="intro-db-icon">📘</span>
+            <span class="intro-db-name">Scopus</span>
+            <span class="intro-db-badge intro-db-badge--scopus">นานาชาติ</span>
+          </div>
+          <div class="intro-db-desc">ตรวจสอบ Quartile, SJR Score, CiteScore, H-Index และสถานะ Active / Discontinued</div>
+          <div class="intro-db-tags">
+            <span>Q1 – Q4</span>
+            <span>SJR Score</span>
+            <span>CiteScore</span>
+            <span>H-Index</span>
+          </div>
+        </div>
+
+        <div class="intro-db-card intro-db-card--tci">
+          <div class="intro-db-head">
+            <span class="intro-db-icon">📗</span>
+            <span class="intro-db-name">TCI</span>
+            <span class="intro-db-badge intro-db-badge--tci">ไทย</span>
+          </div>
+          <div class="intro-db-desc">ตรวจสอบกลุ่มที่ 1–3, สถานะ Active / Inactive และสาขาวิชาหลักของวารสาร</div>
+          <div class="intro-db-tags">
+            <span>กลุ่มที่ 1 – 3</span>
+            <span>Active / Inactive</span>
+            <span>สาขาวิชา</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="intro-steps-card">
+        <div class="intro-steps-title">วิธีใช้งาน</div>
+        <div class="intro-steps">
+          <div class="intro-step">
+            <div class="intro-step-num">1</div>
+            <div class="intro-step-text">กรอก ISSN<br><span>ของวารสาร</span></div>
+          </div>
+          <div class="intro-step-arrow">›</div>
+          <div class="intro-step">
+            <div class="intro-step-num">2</div>
+            <div class="intro-step-text">เลือกระดับ<br><span>ป.เอก / ป.โท</span></div>
+          </div>
+          <div class="intro-step-arrow">›</div>
+          <div class="intro-step">
+            <div class="intro-step-num">3</div>
+            <div class="intro-step-text">กด ค้นหา<br><span>รอ 3–8 วินาที</span></div>
+          </div>
+          <div class="intro-step-arrow">›</div>
+          <div class="intro-step">
+            <div class="intro-step-num">4</div>
+            <div class="intro-step-text">ดูผล<br><span>แล้วยื่น Pre-T3</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  }
+
   <!-- LOADING -->
   @if (isLoading()) {
     <div class="loading-card">
@@ -521,6 +590,9 @@
           <span class="badge-cache" [class.badge-cache--hit]="r.fromCache" [class.badge-cache--live]="!r.fromCache">
             {{ r.fromCache ? '⚡ จาก Cache' : '🔄 ข้อมูลสด' }}
           </span>
+          <span class="badge-expiry" [class.badge-expiry--warning]="expiryWarning">
+            ⏱ Cache: {{ expiryLabel }}
+          </span>
         </div>
 
         <!-- Scopus Core Metrics -->
@@ -750,6 +822,9 @@
             <span class="badge-date">📅 ตรวจสอบ: {{ t.checkDate }}</span>
             <span class="badge-cache" [class.badge-cache--hit]="t.fromCache" [class.badge-cache--live]="!t.fromCache">
               {{ t.fromCache ? '⚡ จาก Cache' : '🔄 ข้อมูลสด' }}
+            </span>
+            <span class="badge-expiry" [class.badge-expiry--warning]="expiryWarning">
+              ⏱ Cache: {{ expiryLabel }}
             </span>
           </div>
 

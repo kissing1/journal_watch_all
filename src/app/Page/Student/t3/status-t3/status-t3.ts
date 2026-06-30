@@ -22,7 +22,11 @@ interface T3Card {
   pubType:    string;
   pubStatus:  string;
   status:     'pending' | 'approved' | 'rejected';
-  submittedDate: string;
+  submittedDate:     string;
+  submittedDateTime: string;
+  advisorDateTime:   string;
+  facultyDateTime:   string;
+  gradDateTime:      string;
   daysAgo:    number;
   advisorStatus:    ApprovalStatus;
   facultyStatus:    ApprovalStatus;
@@ -81,7 +85,8 @@ interface T3DetailView {
   styleUrl: './status-t3.scss',
 })
 export class StatusT3 implements OnInit {
-  isLoading = signal(true);
+  isLoading    = signal(true);
+  isRefreshing = signal(false);
   cards: T3Card[] = [];
 
   selectedId    = signal<string | null>(null);
@@ -103,6 +108,17 @@ export class StatusT3 implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    window.scrollTo(0, 0);
+    this.loadCards();
+  }
+
+  refresh(): void {
+    if (this.isRefreshing()) return;
+    this.isRefreshing.set(true);
+    this.loadCards(true);
+  }
+
+  private loadCards(isRefresh = false): void {
     const headers = new HttpHeaders({ Authorization: `Bearer ${this.auth.token}` });
     this.http.get<GetT3Res>(`${this.constants.API_ENDPOINT}/t3/my`, { headers })
       .pipe(catchError(() => of(null)))
@@ -113,6 +129,7 @@ export class StatusT3 implements OnInit {
             .filter(c => c.status === 'pending');
         }
         this.isLoading.set(false);
+        if (isRefresh) this.isRefreshing.set(false);
       });
   }
 
@@ -140,7 +157,11 @@ export class StatusT3 implements OnInit {
       pubType:       d.publication_details.type,
       pubStatus:     d.publication_details.status,
       status,
-      submittedDate: this.formatDateShort(d.created_at),
+      submittedDate:     this.formatDateShort(d.created_at),
+      submittedDateTime: this.formatDateCompact(d.created_at),
+      advisorDateTime:   this.formatDateCompact(d.advisor_approval.approved_at),
+      facultyDateTime:   this.formatDateCompact(d.faculty_com_approval.approved_at),
+      gradDateTime:      this.formatDateCompact(d.grad_school_approval.approved_at),
       daysAgo,
       advisorStatus: adv,
       facultyStatus: fac,
@@ -338,6 +359,15 @@ export class StatusT3 implements OnInit {
     }
 
     return items;
+  }
+
+  private formatDateCompact(date: Date | string | null | undefined): string {
+    if (!date) return '';
+    const d = new Date(date as string);
+    if (isNaN(d.getTime())) return '';
+    const h = d.getHours().toString().padStart(2, '0');
+    const m = d.getMinutes().toString().padStart(2, '0');
+    return `${d.getDate()} ${this.THAI_MONTHS[d.getMonth()]} ${h}:${m}`;
   }
 
   private formatDateShort(date: Date | string | null): string {

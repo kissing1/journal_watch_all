@@ -123,5 +123,12 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
 
+  {
+    path: 'bug-reports',
+    loadComponent: () =>
+      import('./Page/shared/bug-reports/bug-reports').then(m => m.BugReports),
+    canActivate: [authGuard],
+  },
+
   { path: '**', redirectTo: 'login' },
 ];

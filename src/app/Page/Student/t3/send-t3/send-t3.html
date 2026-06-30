@@ -173,15 +173,20 @@
       <div class="field-row">
         <div class="field-group field-group--full">
           <label class="field-label">ชื่อเรื่องภาษาไทย <span class="badge-required">*</span></label>
-          <input class="field-input field-input--highlight" [(ngModel)]="titleTh" placeholder="ชื่อเรื่องภาษาไทย" />
-          <div class="field-note">⚠ ดึงจาก Pre-T3 — แก้ไขได้หากจำเป็น</div>
+          <input id="field-titleTh" class="field-input field-input--highlight" [class.field-input--error]="fieldWithError() === 'field-titleTh'" [(ngModel)]="titleTh" (ngModelChange)="fieldWithError.set('')" placeholder="ชื่อเรื่องภาษาไทย" />
+          @if (fieldWithError() === 'field-titleTh') {
+            <div class="field-error-msg">กรุณากรอก ชื่อเรื่องภาษาไทย</div>
+          }
         </div>
       </div>
 
       <div class="field-row">
         <div class="field-group field-group--full">
           <label class="field-label">ชื่อเรื่องภาษาอังกฤษ <span class="badge-required">*</span></label>
-          <input class="field-input field-input--highlight" [(ngModel)]="titleEn" placeholder="Article title in English" />
+          <input id="field-titleEn" class="field-input field-input--highlight" [class.field-input--error]="fieldWithError() === 'field-titleEn'" [(ngModel)]="titleEn" (ngModelChange)="fieldWithError.set('')" placeholder="Article title in English" />
+          @if (fieldWithError() === 'field-titleEn') {
+            <div class="field-error-msg">กรุณากรอก ชื่อเรื่องภาษาอังกฤษ</div>
+          }
         </div>
       </div>
 
@@ -192,7 +197,10 @@
         </div>
         <div class="field-group">
           <label class="field-label">Corresponding Author <span class="badge-required">*</span></label>
-          <input class="field-input" [(ngModel)]="correspondingAuthor" placeholder="ชื่อ Corresponding Author" />
+          <input id="field-correspondingAuthor" class="field-input" [class.field-input--error]="fieldWithError() === 'field-correspondingAuthor'" [(ngModel)]="correspondingAuthor" (ngModelChange)="fieldWithError.set('')" placeholder="ชื่อ Corresponding Author" />
+          @if (fieldWithError() === 'field-correspondingAuthor') {
+            <div class="field-error-msg">กรุณากรอก Corresponding Author</div>
+          }
         </div>
       </div>
     </div>
@@ -501,7 +509,7 @@
         <span class="action-bar-success">✓ ยื่น T3 สำเร็จแล้ว</span>
       }
       <button class="btn-confirm"
-              (click)="submit()"
+              (click)="openConfirm()"
               [disabled]="isSubmitting() || !selectedPreT3 || submitSuccess()">
         @if (isSubmitting()) {
           <span class="submit-spinner"></span> กำลังยื่น...
@@ -657,4 +665,37 @@
       }
     </div><!-- /modal-panel -->
   </div><!-- /modal-backdrop -->
+}
+
+<!-- ═══ CONFIRM DIALOG ═══ -->
+@if (showConfirm()) {
+  <div class="confirm-backdrop" (click)="closeConfirm()">
+    <div class="confirm-card" (click)="$event.stopPropagation()">
+
+      <div class="confirm-topbar"></div>
+      <h2 class="confirm-title">ยืนยันการยื่น T3?</h2>
+      <p class="confirm-desc">ระบบจะส่งคำร้องนี้ไปยังอาจารย์ที่ปรึกษาเพื่อพิจารณาลงนาม<br>คุณแน่ใจที่จะยื่นคำร้องใช่ไหม?</p>
+
+      <div class="confirm-summary">
+        <div class="cs-row">
+          <span class="cs-label">วารสาร</span>
+          <span class="cs-val">{{ selectedPreT3Data?.title || '—' }}</span>
+        </div>
+        <div class="cs-row">
+          <span class="cs-label">ฐานข้อมูล</span>
+          <span class="cs-val">{{ selectedPreT3Data?.database || '—' }}</span>
+        </div>
+        <div class="cs-row">
+          <span class="cs-label">Pre-T3 อ้างอิง</span>
+          <span class="cs-val">{{ selectedPreT3Data?.id || '—' }}</span>
+        </div>
+      </div>
+
+      <div class="confirm-actions">
+        <button class="btn-confirm-cancel" (click)="closeConfirm()">ยกเลิก</button>
+        <button class="btn-confirm-ok" (click)="submit()">ยืนยัน ยื่น T3</button>
+      </div>
+
+    </div>
+  </div>
 }

@@ -1,7 +1,7 @@
 import { Component, signal, computed, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { catchError, of } from 'rxjs';
 import { AuthService } from '../../../../auth.service';
@@ -15,6 +15,11 @@ type StatusType = 'pending' | 'approved' | 'rejected';
 type FilterType  = 'all' | 'pending' | 'approved' | 'rejected';
 type Decision    = 'approved' | 'rejected' | null;
 
+const AVATAR_COLORS = [
+  '#1B3A6B', '#1C3560', '#1A5247', '#7A3A1A',
+  '#1E3B6E', '#3A3E4A', '#2D4A1E', '#6B1A3A',
+];
+
 const EVIDENCE_FILES: { key: string; label: string; icon: string }[] = [
   { key: 'acceptance_letter',  label: 'หนังสือตอบรับ',     icon: '📄' },
   { key: 'full_paper',         label: 'บทความฉบับสมบูรณ์', icon: '📑' },
@@ -27,6 +32,8 @@ const EVIDENCE_FILES: { key: string; label: string; icon: string }[] = [
 interface T3Item {
   id:            string;
   t3Id:          number;
+  initials:      string;
+  avatarColor:   string;
   studentName:   string;
   studentId:     string;
   email:         string;
@@ -42,6 +49,8 @@ interface T3Item {
   issue:         string;
   publishYear:   string;
   submittedDate: string;
+  submittedTime: string;
+  dateLabel:     string;
   daysAgo:       number;
   status:        StatusType;
   approvedDate?: string;
@@ -59,6 +68,7 @@ export class T3Request implements OnInit {
   private http      = inject(HttpClient);
   private auth      = inject(AuthService);
   private constants = inject(Constants);
+  private router    = inject(Router);
 
   readonly evidenceFiles = EVIDENCE_FILES;
 
@@ -83,7 +93,10 @@ export class T3Request implements OnInit {
 
   requests = signal<T3Item[]>([]);
 
-  ngOnInit(): void {
+  ngOnInit(): void { this.loadCards(); }
+
+  loadCards(): void {
+    this.isLoading.set(true);
     const headers = new HttpHeaders({ Authorization: `Bearer ${this.auth.token}` });
     this.http
       .get<GetRequestT3Res>(`${this.constants.API_ENDPOINT}/t3/pending`, { headers })
@@ -91,12 +104,12 @@ export class T3Request implements OnInit {
       .subscribe(res => {
         this.isLoading.set(false);
         if (res?.success) {
-          this.requests.set(res.data.map(d => this.mapDatum(d)));
+          this.requests.set(res.data.map((d, i) => this.mapDatum(d, i)));
         }
       });
   }
 
-  private mapDatum(d: Datum): T3Item {
+  private mapDatum(d: Datum, index: number): T3Item {
     const createdAt = new Date(d.created_at);
     const daysAgo   = Math.floor((Date.now() - createdAt.getTime()) / 86_400_000);
     const studentId = d.student_email.replace('@msu.ac.th', '');
@@ -106,13 +119,31 @@ export class T3Request implements OnInit {
     if (rawStatus.includes('approv')) status = 'approved';
     else if (rawStatus.includes('reject') || rawStatus.includes('cancel')) status = 'rejected';
 
+    const fmt = (v: any) =>
+      v ? new Date(v).toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: '2-digit' }) : '';
+
     const approvedAt = d.faculty_com_approval?.approved_at
       ? new Date(d.faculty_com_approval.approved_at as any).toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' })
       : undefined;
 
+    let dateLabel = '';
+    if (status === 'approved') {
+      dateLabel = d.faculty_com_approval?.approved_at ? `อนุมัติ ${fmt(d.faculty_com_approval.approved_at)}` : 'อนุมัติแล้ว';
+    } else if (status === 'rejected') {
+      dateLabel = d.faculty_com_approval?.approved_at ? `ไม่อนุมัติ ${fmt(d.faculty_com_approval.approved_at)}` : 'ไม่อนุมัติ';
+    } else {
+      dateLabel = `ยื่น ${fmt(createdAt)}`;
+    }
+
+    const stripped = d.student_name.replace(/^(นาย|น\.ส\.|นาง(?:สาว)?|ดร\.|ผศ\.|รศ\.|ศ\.)\s*/u, '').trim();
+    const parts    = stripped.split(/\s+/);
+    const initials = parts.slice(0, 2).map((p: string) => [...p][0] ?? '').join('') || '??';
+
     return {
       id:            String(d.t3_id),
       t3Id:          d.t3_id,
+      initials,
+      avatarColor:   AVATAR_COLORS[index % AVATAR_COLORS.length],
       studentName:   d.student_name,
       studentId,
       email:         d.student_email,
@@ -128,6 +159,8 @@ export class T3Request implements OnInit {
       issue:         d.publication_details.issue,
       publishYear:   d.publication_details.publish_year,
       submittedDate: createdAt.toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' }),
+      submittedTime: createdAt.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }),
+      dateLabel,
       daysAgo,
       status,
       approvedDate:  approvedAt,
@@ -257,8 +290,15 @@ export class T3Request implements OnInit {
           list.map(r => r.id === req.id ? { ...r, status: newStatus, approvedDate } : r)
         );
         this.submitResult.set('success');
-        this._scheduleResultClear();
-        setTimeout(() => this.closeDetail(), 1200);
+        setTimeout(() => {
+          this.closeDetail();
+          this.router.navigate(['/staff/history'], {
+            queryParams: {
+              type:   'T3',
+              status: newStatus === 'approved' ? 'approved' : 'rejected',
+            },
+          });
+        }, 1200);
       });
   }
 }

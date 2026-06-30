@@ -11,6 +11,11 @@ interface NavItem {
   children?: NavItem[];
 }
 
+interface NavGroup {
+  group: string;
+  items: NavItem[];
+}
+
 @Component({
   standalone: true,
   selector: 'app-sidebar-staff',
@@ -21,41 +26,49 @@ interface NavItem {
 export class SidebarStaff implements OnInit {
   @Input() isOpen = true;
 
-  activeRoute = '';
+  activeRoute   = '';
   expandedItems = new Set<string>();
-  imgError = false;
+  imgError      = false;
 
-  ngOnInit(): void {
-    console.log('[sidebar-staff] auth_picture in localStorage:', localStorage.getItem('auth_picture'));
-  }
+  ngOnInit(): void {}
 
   onImgError(): void { this.imgError = true; }
 
-  get userName() {
-    return `${this.authService.user?.firstName ?? ''} ${this.authService.user?.lastName ?? ''}`.trim();
-  }
-  get userEmail()    { return this.authService.user?.msuMail ?? ''; }
-  get userPicture()  { return this.authService.userPicture; }
+  get userName()    { return `${this.authService.user?.firstName ?? ''} ${this.authService.user?.lastName ?? ''}`.trim(); }
+  get userEmail()   { return this.authService.user?.msuMail ?? ''; }
+  get userRole()    { return this.authService.user?.role ?? 'เจ้าหน้าที่บัณฑิตวิทยาลัย'; }
+  get userPicture() { return this.authService.userPicture; }
   get userInitials() {
     const f = this.authService.user?.firstName?.[0] ?? '';
     const l = this.authService.user?.lastName?.[0] ?? '';
     return (f + l).toUpperCase();
   }
 
-  navItems: NavItem[] = [
-    { label: 'Dashboard',              icon: '🏠', route: '/staff/dashboard'     },
-    { label: 'ค้นหาวารสาร',           icon: '🔍', route: '/search'              },
-    { label: 'จัดการ MSU Unwanted',   icon: '🚫', route: '/msu-unwanted'        },
+  navGroups: NavGroup[] = [
     {
-      label: 'คำร้อง Pre-T3 / T3',
-      icon: '📋',
-      children: [
-        { label: 'คำร้อง Pre-T3', icon: '📋', route: '/staff/pre-t3-request' },
-        { label: 'คำร้อง T3',     icon: '📊', route: '/staff/t3-request'     },
-        { label: 'ประวัติ',        icon: '📁', route: '/staff/history'         },
+      group: 'เมนูหลัก',
+      items: [
+        { label: 'Dashboard',            icon: '🏠', route: '/staff/dashboard' },
+        { label: 'ค้นหาวารสาร',         icon: '🔍', route: '/search'          },
+        { label: 'จัดการ MSU Unwanted', icon: '🚫', route: '/msu-unwanted'    },
+        { label: 'รายงานปัญหา',         icon: '🐛', route: '/bug-reports'     },
       ],
     },
-    { label: 'จัดการผู้ใช้งาน', icon: '👥', route: '/staff/user-management' },
+    {
+      group: 'คำร้องและจัดการ',
+      items: [
+        {
+          label: 'คำร้อง Pre-T3 / T3',
+          icon: '📋',
+          children: [
+            { label: 'คำร้อง Pre-T3', icon: '📋', route: '/staff/pre-t3-request' },
+            { label: 'คำร้อง T3',     icon: '📊', route: '/staff/t3-request'     },
+            { label: 'ประวัติ',        icon: '📁', route: '/staff/history'        },
+          ],
+        },
+        { label: 'จัดการผู้ใช้งาน', icon: '👥', route: '/staff/user-management' },
+      ],
+    },
   ];
 
   constructor(private authService: AuthService, private router: Router) {
@@ -70,9 +83,11 @@ export class SidebarStaff implements OnInit {
   }
 
   private autoExpand(): void {
-    for (const item of this.navItems) {
-      if (item.children?.some(c => c.route && this.activeRoute.startsWith(c.route))) {
-        this.expandedItems.add(item.label);
+    for (const group of this.navGroups) {
+      for (const item of group.items) {
+        if (item.children?.some(c => c.route && this.activeRoute.startsWith(c.route))) {
+          this.expandedItems.add(item.label);
+        }
       }
     }
   }

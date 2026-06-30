@@ -35,7 +35,6 @@
       </div>
     } @else if (cards.length === 0) {
       <div class="empty-state">
-        <div class="empty-icon">📭</div>
         <div class="empty-text">ยังไม่มีประวัติการยื่น Pre-T3</div>
       </div>
     }
@@ -61,8 +60,16 @@
           </div>
           <div class="req-card-top-right">
             <span class="req-id-chip">{{ card.id }}</span>
-            <div class="req-date-row">
-              <span class="req-date-chip">📅 {{ card.submittedDate }}</span>
+            <div class="req-timestamps">
+              <span class="ts-item">ยื่น · {{ card.submittedDateTime }}</span>
+              @if (card.advisorDateTime) {
+                <span class="ts-dot">·</span>
+                <span class="ts-item">อาจารย์ · {{ card.advisorDateTime }}</span>
+              }
+              @if (card.facultyDateTime) {
+                <span class="ts-dot">·</span>
+                <span class="ts-item">Staff · {{ card.facultyDateTime }}</span>
+              }
             </div>
           </div>
         </div>

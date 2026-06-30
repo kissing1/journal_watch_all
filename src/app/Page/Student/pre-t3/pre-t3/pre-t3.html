@@ -214,7 +214,7 @@
           <div class="action-btns">
             <button class="btn-back" (click)="goBack()">← กลับไปค้นหา</button>
             <button class="btn-submit"
-                    (click)="submit()"
+                    (click)="openConfirm()"
                     [disabled]="!canSubmit() || isSubmitting()">
               @if (isSubmitting()) {
                 <span class="submit-spinner"></span> กำลังยื่น...
@@ -282,3 +282,36 @@
   </div><!-- /form-layout -->
 
 </div>
+
+<!-- ═══ CONFIRM DIALOG ═══ -->
+@if (showConfirm()) {
+  <div class="confirm-backdrop" (click)="closeConfirm()">
+    <div class="confirm-card" (click)="$event.stopPropagation()">
+
+      <div class="confirm-topbar"></div>
+      <h2 class="confirm-title">ยืนยันการยื่น Pre-T3?</h2>
+      <p class="confirm-desc">ระบบจะส่งคำร้องนี้ไปยังอาจารย์ที่ปรึกษาเพื่อพิจารณาลงนาม<br>คุณแน่ใจที่จะยื่นคำร้องใช่ไหม?</p>
+
+      <div class="confirm-summary">
+        <div class="cs-row">
+          <span class="cs-label">วารสาร</span>
+          <span class="cs-val">{{ journalName() || '—' }}</span>
+        </div>
+        <div class="cs-row">
+          <span class="cs-label">ฐานข้อมูล</span>
+          <span class="cs-val">{{ database() || '—' }}</span>
+        </div>
+        <div class="cs-row">
+          <span class="cs-label">Checklist</span>
+          <span class="cs-val cs-pass">✓ ผ่านครบ {{ checklist().length }} ข้อ</span>
+        </div>
+      </div>
+
+      <div class="confirm-actions">
+        <button class="btn-confirm-cancel" (click)="closeConfirm()">ยกเลิก</button>
+        <button class="btn-confirm-ok" (click)="submit()">ยืนยัน ยื่น Pre-T3</button>
+      </div>
+
+    </div>
+  </div>
+}

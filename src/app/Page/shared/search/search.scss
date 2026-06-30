@@ -1620,6 +1620,24 @@ $blue:   #1A5FAB;
   }
 }
 
+.badge-expiry {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 6px;
+  border: 1px solid rgba(28,39,68,0.2);
+  background: rgba(28,39,68,0.06);
+  color: rgba(28,39,68,0.6);
+  font-variant-numeric: tabular-nums;
+  transition: background 0.3s, color 0.3s, border-color 0.3s;
+
+  &--warning {
+    background: rgba(193,0,0,0.08);
+    color: #C10000;
+    border-color: rgba(193,0,0,0.3);
+  }
+}
+
 .badge-unwanted {
   font-size: 12px;
   font-weight: 600;
@@ -2382,6 +2400,110 @@ $blue:   #1A5FAB;
   line-height: 1.6;
 }
 
+/* ══ INTRO SECTION ══ */
+.intro-section {
+  display: flex; flex-direction: column; gap: 20px;
+  padding-top: 8px;
+}
+
+.intro-header {
+  text-align: center; padding: 8px 0;
+}
+
+.intro-title {
+  font-size: 20px; font-weight: 800; color: $navy;
+}
+
+.intro-sub {
+  font-size: 13.5px; color: $muted; margin-top: 6px; line-height: 1.6;
+}
+
+.intro-db-cards {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+}
+
+.intro-db-card {
+  background: $white; border-radius: 14px; padding: 22px 20px;
+  border: 1.5px solid $border;
+  box-shadow: 0 2px 8px rgba(28,39,68,0.05);
+  display: flex; flex-direction: column; gap: 12px;
+  position: relative; overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #262D40 0%, #E0A100 100%);
+  }
+}
+
+.intro-db-head {
+  display: flex; align-items: center; gap: 10px;
+}
+
+.intro-db-icon { font-size: 24px; flex-shrink: 0; }
+
+.intro-db-name {
+  font-size: 17px; font-weight: 800; color: $navy; flex: 1;
+}
+
+.intro-db-badge {
+  font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 99px;
+  &--scopus { background: rgba(26,95,171,0.1); color: #1A5FAB; border: 1px solid rgba(26,95,171,0.2); }
+  &--tci    { background: rgba(26,122,66,0.1); color: #1A7A42; border: 1px solid rgba(26,122,66,0.2); }
+}
+
+.intro-db-desc {
+  font-size: 13px; color: $muted; line-height: 1.65;
+}
+
+.intro-db-tags {
+  display: flex; gap: 6px; flex-wrap: wrap;
+  span {
+    font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 99px;
+    background: $bg; color: $navy; border: 1px solid $border;
+  }
+}
+
+.intro-steps-card {
+  background: $white; border-radius: 14px; padding: 22px 24px;
+  border: 1.5px solid $border;
+  box-shadow: 0 2px 8px rgba(28,39,68,0.05);
+  display: flex; flex-direction: column; gap: 16px;
+}
+
+.intro-steps-title {
+  font-size: 13px; font-weight: 700; color: $muted;
+  text-transform: uppercase; letter-spacing: 0.06em;
+}
+
+.intro-steps {
+  display: flex; align-items: center; gap: 8px;
+  flex-wrap: wrap; justify-content: center;
+}
+
+.intro-step {
+  display: flex; align-items: center; gap: 12px;
+}
+
+.intro-step-num {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: $navy; color: $yellow;
+  font-size: 15px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+
+.intro-step-text {
+  font-size: 13px; font-weight: 700; color: $navy; line-height: 1.4;
+  span { font-size: 11px; font-weight: 400; color: $muted; }
+}
+
+.intro-step-arrow {
+  font-size: 24px; color: $border; font-weight: 300; flex-shrink: 0;
+}
+
 /* ══ RESPONSIVE ══ */
 @media (max-width: 768px) {
   .search-page { padding: 16px 14px 40px; }
@@ -2518,7 +2640,7 @@ $blue:   #1A5FAB;
   }
   .badge-field, .badge-db, .badge-q,
   .badge-status, .badge-unwanted,
-  .badge-date, .badge-cache {
+  .badge-date, .badge-cache, .badge-expiry {
     font-size: 9px !important;
     padding: 2px 7px !important;
   }

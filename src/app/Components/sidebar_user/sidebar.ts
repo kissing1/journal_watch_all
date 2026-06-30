@@ -45,6 +45,7 @@ export class Sidebar {
         { label: 'Dashboard',            icon: '🏠', route: '/dashboard'    },
         { label: 'ค้นหาวารสาร',           icon: '🔍', route: '/search'       },
         { label: 'ตรวจสอบ MSU Unwanted', icon: '🚫', route: '/msu-unwanted' },
+        { label: 'รายงานปัญหา',           icon: '🐛', route: '/bug-reports'  },
       ],
     },
     {

@@ -1,7 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -103,9 +103,11 @@ export class SendT3 implements OnInit {
     private http:      HttpClient,
     private auth:      AuthService,
     private constants: Constants,
+    private router:    Router,
   ) {}
 
   ngOnInit(): void {
+    window.scrollTo(0, 0);
     const headers = new HttpHeaders({ Authorization: `Bearer ${this.auth.token}` });
     forkJoin({
       profile: this.http.get<GetProfileRes>(`${this.constants.API_ENDPOINT}/user/profile`, { headers })
@@ -353,11 +355,78 @@ export class SendT3 implements OnInit {
   impactFactor   = '';
   scoreYear      = '';
 
-  isSubmitting = signal(false);
-  submitError  = signal('');
-  submitSuccess = signal(false);
+  isSubmitting   = signal(false);
+  submitError    = signal('');
+  submitSuccess  = signal(false);
+  showConfirm    = signal(false);
+  fieldWithError = signal<string>('');
+
+  private readonly REQUIRED_FIELDS = [
+    { value: () => this.titleTh,             label: 'ชื่อเรื่องภาษาไทย',   fieldId: 'field-titleTh' },
+    { value: () => this.titleEn,             label: 'ชื่อเรื่องภาษาอังกฤษ', fieldId: 'field-titleEn' },
+    { value: () => this.correspondingAuthor, label: 'Corresponding Author', fieldId: 'field-correspondingAuthor' },
+  ];
+
+  private readonly API_FIELD_LABELS: Record<string, string> = {
+    'paper_and_research_details.title_thai':           'ชื่อเรื่องภาษาไทย',
+    'paper_and_research_details.title_english':        'ชื่อเรื่องภาษาอังกฤษ',
+    'paper_and_research_details.corresponding_author': 'Corresponding Author',
+    'paper_and_research_details.innovation_detail':    'รายละเอียดการนำไปใช้ประโยชน์',
+    'paper_and_research_details.innovation_type':      'ประเภทการนำไปใช้ประโยชน์',
+    'paper_and_research_details.first_author':         'ชื่อผู้แต่ง (First Author)',
+    'publication_details.type':                        'ประเภทวารสาร',
+    'publication_details.status':                      'สถานะการตีพิมพ์',
+    'publication_details.volume':                      'เล่มที่ (Volume)',
+    'publication_details.issue':                       'ฉบับที่ (Issue)',
+    'publication_details.publish_year':                'ปีที่ตีพิมพ์',
+    'publication_details.specified_database':          'ฐานข้อมูล',
+    'journal_metrics.score_year':                      'ปีที่คำนวณ Score',
+    'journal_metrics.impact_factor':                   'Impact Factor',
+    'pre_t3_id':                                       'Pre-T3 อ้างอิง',
+  };
+
+  private translateApiError(msg: string): string {
+    let result = msg;
+    for (const [path, label] of Object.entries(this.API_FIELD_LABELS)) {
+      result = result.replace(path, label);
+    }
+    return result;
+  }
+
+  private scrollToField(fieldId: string): void {
+    setTimeout(() => {
+      const el = document.getElementById(fieldId);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        (el as HTMLInputElement).focus();
+      }
+    }, 50);
+  }
+
+  openConfirm(): void {
+    if (!this.selectedPreT3 || this.isSubmitting() || this.submitSuccess()) return;
+
+    const missing = this.REQUIRED_FIELDS.find(f => !f.value().trim());
+    if (missing) {
+      this.submitError.set('');
+      this.fieldWithError.set(missing.fieldId);
+      this.scrollToField(missing.fieldId);
+      return;
+    }
+
+    this.fieldWithError.set('');
+    this.submitError.set('');
+    this.showConfirm.set(true);
+    document.body.style.overflow = 'hidden';
+  }
+
+  closeConfirm(): void {
+    this.showConfirm.set(false);
+    document.body.style.overflow = '';
+  }
 
   submit(): void {
+    this.closeConfirm();
     if (!this.selectedPreT3) return;
     const headers = new HttpHeaders({ Authorization: `Bearer ${this.auth.token}` });
     const payload = this.buildPayload();
@@ -388,10 +457,11 @@ export class SendT3 implements OnInit {
         }
         this.isSubmitting.set(false);
         this.submitSuccess.set(true);
+        setTimeout(() => this.router.navigateByUrl('/status-t3'), 1500);
       },
       error: (err) => {
-        const msg = err?.error?.message ?? `HTTP ${err?.status}`;
-        this.submitError.set(`ยื่น T3 ล้มเหลว: ${msg}`);
+        const raw = err?.error?.message ?? `HTTP ${err?.status}`;
+        this.submitError.set(`ยื่น T3 ล้มเหลว: ${this.translateApiError(raw)}`);
         this.isSubmitting.set(false);
       },
     });

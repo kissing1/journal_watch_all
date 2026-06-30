@@ -15,10 +15,14 @@
 
   <!-- PAGE TITLE -->
   <div class="page-title-row">
-    <div>
+    <div class="page-title-group">
       <h1 class="page-title">สถานะ <span class="page-title-highlight">T3</span></h1>
       <p class="page-sub">ติดตามความคืบหน้าคำร้องของคุณ</p>
     </div>
+    <button class="btn-refresh" (click)="refresh()" [disabled]="isRefreshing()">
+      <span class="refresh-icon" [class.spinning]="isRefreshing()">↻</span>
+      @if (isRefreshing()) { กำลังโหลด... } @else { รีเฟรช }
+    </button>
   </div>
 
   <!-- CANCEL TOAST -->
@@ -48,26 +52,67 @@
           }
         </div>
 
-        <!-- BODY -->
-        <div class="req-card-body">
-          <div class="req-card-meta">{{ card.id }} · ยื่นเมื่อ {{ card.submittedDate }} · {{ card.daysAgo }} วันที่แล้ว</div>
-          <div class="req-card-title">{{ card.titleThai || card.titleEn }}</div>
-          <div class="req-card-tags">
-            <span class="tag-db">📘 {{ card.database }}</span>
-            <span class="tag-issn">ISSN: {{ card.issn }}</span>
-            <span class="tag-type">{{ card.pubType }}</span>
+        <!-- CONTENT -->
+        <div class="req-card-content">
+
+          <!-- TOP ROW -->
+          <div class="req-card-top">
+            <div class="req-card-top-left">
+              <div class="req-journal">
+                <span class="req-journal-label">ชื่อบทความ:</span> {{ card.titleThai || card.titleEn }}
+              </div>
+              <div class="req-badges">
+                <span class="badge-issn">{{ card.issn }}</span>
+                <span class="badge-db">{{ card.database }}</span>
+                <span class="badge-q">{{ card.pubType }}</span>
+              </div>
+            </div>
+            <div class="req-card-top-right">
+              <span class="req-id-chip">{{ card.id }}</span>
+              <div class="req-timestamps">
+                <span class="ts-item">ยื่น · {{ card.submittedDateTime }}</span>
+                @if (card.advisorDateTime) {
+                  <span class="ts-dot">·</span>
+                  <span class="ts-item">อาจารย์ · {{ card.advisorDateTime }}</span>
+                }
+                @if (card.facultyDateTime) {
+                  <span class="ts-dot">·</span>
+                  <span class="ts-item">ที่ประชุม · {{ card.facultyDateTime }}</span>
+                }
+                @if (card.gradDateTime) {
+                  <span class="ts-dot">·</span>
+                  <span class="ts-item">บัณฑิต · {{ card.gradDateTime }}</span>
+                }
+              </div>
+            </div>
           </div>
-        </div>
 
-        <!-- RIGHT -->
-        <div class="req-card-right">
-          <span [class]="'cs-chip ' + (card.overallStatus === 'Approved' ? 'cs-approved' : (card.advisorStatus === 'Rejected' || card.facultyStatus === 'Rejected' || card.gradStatus === 'Rejected') ? 'cs-rejected' : 'cs-pending')">
-            {{ currentStatusLabel(card) }}
-          </span>
-          <button class="btn-cancel-card" (click)="cancelRequest(card.id, card.t3Id, $event)">✕ ยกเลิกคำร้องขอ</button>
-        </div>
+          <!-- DIVIDER -->
+          <div class="req-card-divider"></div>
 
-        <span class="req-card-arrow">›</span>
+          <!-- BOTTOM ROW -->
+          <div class="card-bottom-row">
+            <div class="current-status">
+              @if (card.overallStatus === 'Approved') {
+                <span class="cs-chip cs-approved">✅ อนุมัติสำเร็จ</span>
+              } @else if (card.advisorStatus === 'Rejected' || card.facultyStatus === 'Rejected' || card.gradStatus === 'Rejected') {
+                <span class="cs-chip cs-rejected">❌ ไม่ผ่านการอนุมัติ</span>
+              } @else if (card.advisorStatus === 'Pending') {
+                <span class="cs-chip cs-pending">รออาจารย์ที่ปรึกษา</span>
+              } @else if (card.facultyStatus === 'Pending') {
+                <span class="cs-chip cs-pending">รอที่ประชุมบัณฑิต</span>
+              } @else if (card.gradStatus === 'Pending') {
+                <span class="cs-chip cs-pending">รอบัณฑิตวิทยาลัย</span>
+              } @else {
+                <span class="cs-chip cs-pending">กำลังดำเนินการ</span>
+              }
+            </div>
+            <button class="btn-cancel-card" (click)="cancelRequest(card.id, card.t3Id, $event)">✕ ยกเลิกคำร้องขอ</button>
+          </div>
+
+        </div><!-- /req-card-content -->
+
+        <div class="req-card-arrow">›</div>
       </div>
     }
   </div>

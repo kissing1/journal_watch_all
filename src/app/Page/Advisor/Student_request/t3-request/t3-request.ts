@@ -69,6 +69,7 @@ export class T3Request implements OnInit {
   selectedRequest  = signal<T3Item | null>(null);
   detailData       = signal<T3Detail | null>(null);
   decision         = signal<Decision>('approved');
+  showConfirm      = signal(false);
   remark           = '';
 
   fileLoading:  Record<string, boolean> = {};
@@ -76,7 +77,10 @@ export class T3Request implements OnInit {
 
   requests = signal<T3Item[]>([]);
 
-  ngOnInit(): void {
+  ngOnInit(): void { this.loadRequests(); }
+
+  loadRequests(): void {
+    this.isLoading.set(true);
     const headers = new HttpHeaders({ Authorization: `Bearer ${this.auth.token}` });
     this.http
       .get<GetRequestT3Res>(`${this.constants.API_ENDPOINT}/t3/pending`, { headers })
@@ -210,6 +214,11 @@ export class T3Request implements OnInit {
     return true;
   }
 
+  openConfirm(): void {
+    if (!this.canSubmit) return;
+    this.showConfirm.set(true);
+  }
+
   submitDecision(): void {
     const req = this.selectedRequest();
     if (!req || !this.decision() || this.isSubmitting()) return;
@@ -230,6 +239,7 @@ export class T3Request implements OnInit {
       .pipe(catchError(err => { console.error('submitDecision error', err); return of(null); }))
       .subscribe(res => {
         this.isSubmitting.set(false);
+        this.showConfirm.set(false);
         if (res === null) return;
         const newStatus = this.decision() as 'approved' | 'rejected';
         const approvedDate = newStatus === 'approved'

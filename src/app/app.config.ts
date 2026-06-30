@@ -3,14 +3,16 @@ import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
 import { OAuthModule } from 'angular-oauth2-oidc';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { AuthInterceptor } from './auth.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideZonelessChangeDetection(),
     provideRouter(routes),
-     provideHttpClient(withInterceptorsFromDi()),  // ← เพิ่ม
-    importProvidersFrom(OAuthModule.forRoot()), 
+    provideHttpClient(withInterceptorsFromDi()),
+    importProvidersFrom(OAuthModule.forRoot()),
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
   ]
 };

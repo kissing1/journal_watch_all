@@ -1,6 +1,6 @@
 import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, ActivatedRoute } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { catchError, forkJoin, of } from 'rxjs';
 import { AuthService } from '../../../../auth.service';
@@ -11,6 +11,7 @@ import { GetPreT3DeteilsStaffRes, Data as PreT3DetailData } from '../../../../mo
 import { GetDeteilsT3StaffRes, Data as T3DetailData } from '../../../../model/res/get_deteils_T3_staff_res';
 
 type FilterType = 'all' | 'approved' | 'rejected';
+type TypeFilter  = 'all' | 'PreT3' | 'T3';
 type CardStatus = 'approved' | 'rejected' | 'cancelled';
 
 const CHECKLIST_LABELS: Record<string, string> = {
@@ -116,6 +117,7 @@ export class History implements OnInit {
   private http      = inject(HttpClient);
   private auth      = inject(AuthService);
   private constants = inject(Constants);
+  private route     = inject(ActivatedRoute);
 
   private readonly THAI_MONTHS = [
     'ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.',
@@ -133,6 +135,7 @@ export class History implements OnInit {
 
   isLoading     = signal(true);
   activeFilter  = signal<FilterType>('all');
+  typeFilter    = signal<TypeFilter>('all');
   allCards      = signal<HistoryCard[]>([]);
 
   // Pre-T3 modal
@@ -150,8 +153,10 @@ export class History implements OnInit {
   fileViewing: Record<string, boolean> = {};
 
   filtered = computed(() => {
-    const f   = this.activeFilter();
-    const all = this.allCards();
+    const f    = this.activeFilter();
+    const type = this.typeFilter();
+    let all    = this.allCards();
+    if (type !== 'all') all = all.filter(c => c.itemType === type);
     if (f === 'approved') return all.filter(c => c.status === 'approved');
     if (f === 'rejected')  return all.filter(c => c.status === 'rejected' || c.status === 'cancelled');
     return all;
@@ -161,9 +166,16 @@ export class History implements OnInit {
   get countApproved(): number { return this.allCards().filter(c => c.status === 'approved').length; }
   get countRejected(): number { return this.allCards().filter(c => c.status !== 'approved').length; }
 
-  setFilter(f: FilterType): void { this.activeFilter.set(f); }
+  setFilter(f: FilterType):     void { this.activeFilter.set(f); }
+  setTypeFilter(t: TypeFilter): void { this.typeFilter.set(t); }
 
   ngOnInit(): void {
+    const qp = this.route.snapshot.queryParamMap;
+    const qpType   = qp.get('type')   as TypeFilter | null;
+    const qpStatus = qp.get('status') as FilterType | null;
+    if (qpType   && ['PreT3','T3'].includes(qpType))                           this.typeFilter.set(qpType);
+    if (qpStatus && ['all','approved','rejected'].includes(qpStatus))           this.activeFilter.set(qpStatus);
+
     const headers = new HttpHeaders({ Authorization: `Bearer ${this.auth.token}` });
     const preT3$  = this.http.get<PreT3HistorySatffRes>(`${this.constants.API_ENDPOINT}/pre-t3/history?page=1&limit=20`, { headers })
                         .pipe(catchError(() => of(null)));

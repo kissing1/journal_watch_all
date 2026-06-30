@@ -22,7 +22,11 @@ interface T3Card {
   pubType:       string;
   pubStatus:     string;
   status:        'approved' | 'rejected' | 'cancelled';
-  submittedDate: string;
+  submittedDate:     string;
+  submittedDateTime: string;
+  advisorDateTime:   string;
+  facultyDateTime:   string;
+  gradDateTime:      string;
   advisorStatus:  ApprovalStatus;
   facultyStatus:  ApprovalStatus;
   gradStatus:     ApprovalStatus;
@@ -139,7 +143,11 @@ export class T3History implements OnInit {
       pubType:       d.publication_details.type,
       pubStatus:     d.publication_details.status,
       status,
-      submittedDate: this.formatDateShort(d.created_at),
+      submittedDate:     this.formatDateShort(d.created_at),
+      submittedDateTime: this.formatDateCompact(d.created_at),
+      advisorDateTime:   this.formatDateCompact(d.advisor_approval.approved_at),
+      facultyDateTime:   this.formatDateCompact(d.faculty_com_approval.approved_at),
+      gradDateTime:      this.formatDateCompact(d.grad_school_approval.approved_at),
       advisorStatus: adv,
       facultyStatus: fac,
       gradStatus:    grad,
@@ -154,8 +162,8 @@ export class T3History implements OnInit {
   }
 
   statusLabel(card: T3Card): string {
-    if (card.status === 'approved')   return '✅ อนุมัติแล้ว';
-    if (card.status === 'cancelled')  return '🚫 ยกเลิกแล้ว';
+    if (card.status === 'approved')   return 'อนุมัติแล้ว';
+    if (card.status === 'cancelled')  return 'ยกเลิกแล้ว';
     return '❌ ไม่ผ่านการอนุมัติ';
   }
 
@@ -322,6 +330,15 @@ export class T3History implements OnInit {
     }
 
     return items;
+  }
+
+  private formatDateCompact(date: Date | string | null | undefined): string {
+    if (!date) return '';
+    const d = new Date(date as string);
+    if (isNaN(d.getTime())) return '';
+    const h = d.getHours().toString().padStart(2, '0');
+    const m = d.getMinutes().toString().padStart(2, '0');
+    return `${d.getDate()} ${this.THAI_MONTHS[d.getMonth()]} ${h}:${m}`;
   }
 
   private formatDateShort(date: Date | string | null): string {

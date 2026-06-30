@@ -663,6 +663,16 @@ $orange: #D4580A;
   flex-direction: column;
   box-shadow: 0 20px 60px rgba(28,39,68,0.3);
   overflow: hidden;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, #262D40 0%, #E0A100 100%);
+    z-index: 1;
+  }
 }
 
 .modal-header {

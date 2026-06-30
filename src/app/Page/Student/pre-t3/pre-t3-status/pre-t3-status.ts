@@ -26,6 +26,9 @@ interface PreT3Card {
   status:           'pending' | 'approved' | 'rejected';
   submittedDate:    string;
   daysAgo:          number;
+  submittedDateTime:  string;
+  advisorDateTime:    string | null;
+  facultyDateTime:    string | null;
 }
 
 interface Step {
@@ -96,6 +99,7 @@ export class PreT3Status implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    window.scrollTo(0, 0);
     this.loadData();
   }
 
@@ -188,6 +192,11 @@ export class PreT3Status implements OnInit {
       status,
       submittedDate:    this.formatDateShort(d.created_at),
       daysAgo,
+      submittedDateTime:  this.formatDateCompact(d.created_at),
+      advisorDateTime:    advisorStatus === 'Approved' && d.advisor_approval.approved_at
+                            ? this.formatDateCompact(d.advisor_approval.approved_at) : null,
+      facultyDateTime:    facultyStatus === 'Approved' && d.faculty_com_approval.approved_at
+                            ? this.formatDateCompact(d.faculty_com_approval.approved_at) : null,
     };
   }
 
@@ -382,6 +391,15 @@ export class PreT3Status implements OnInit {
     const d = new Date(date as string);
     if (isNaN(d.getTime())) return '-';
     return `${d.getDate()} ${this.THAI_MONTHS[d.getMonth()]} ${(d.getFullYear() + 543).toString().slice(-2)}`;
+  }
+
+  private formatDateCompact(date: Date | string | null): string {
+    if (!date) return '-';
+    const d = new Date(date as string);
+    if (isNaN(d.getTime())) return '-';
+    const h = d.getHours().toString().padStart(2, '0');
+    const m = d.getMinutes().toString().padStart(2, '0');
+    return `${d.getDate()} ${this.THAI_MONTHS[d.getMonth()]} ${h}:${m}`;
   }
 
   private formatDateFull(date: Date | string | null): string {

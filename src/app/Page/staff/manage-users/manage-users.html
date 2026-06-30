@@ -77,7 +77,7 @@
         type="text"
         [placeholder]="activeTab() === 'student' ? 'ค้นหาชื่อ, รหัสนิสิต...' : 'ค้นหาชื่อ, อีเมล...'"
         [ngModel]="searchText()"
-        (ngModelChange)="searchText.set($event)"
+        (ngModelChange)="onSearchChange($event)"
       />
     </div>
   </div>
@@ -105,7 +105,7 @@
       @if (filteredStudents().length === 0) {
         <div class="mu-empty">ไม่พบข้อมูลนิสิต</div>
       }
-      @for (u of filteredStudents(); track u.user_id) {
+      @for (u of pagedStudents(); track u.user_id) {
         <div class="mu-table-row">
           <div class="mu-td mu-td--name">
             <div class="mu-row-avatar">{{ initials(u) }}</div>
@@ -157,6 +157,18 @@
         </div>
       }
     </div>
+    @if (studentTotalPages() > 1) {
+      <div class="mu-pagination">
+        <span class="mu-page-info">ทั้งหมด {{ filteredStudents().length }} รายการ</span>
+        <div class="mu-page-btns">
+          <button class="mu-page-btn" [disabled]="studentPage() === 1" (click)="setStudentPage(studentPage() - 1)">‹</button>
+          @for (p of studentPageNumbers(); track p) {
+            <button class="mu-page-btn" [class.mu-page-active]="p === studentPage()" (click)="setStudentPage(p)">{{ p }}</button>
+          }
+          <button class="mu-page-btn" [disabled]="studentPage() === studentTotalPages()" (click)="setStudentPage(studentPage() + 1)">›</button>
+        </div>
+      </div>
+    }
   }
 
   <!-- ═══ ADVISOR LIST ═══ -->
@@ -173,7 +185,7 @@
       @if (filteredAdvisors().length === 0) {
         <div class="mu-empty">ไม่พบข้อมูลอาจารย์</div>
       }
-      @for (u of filteredAdvisors(); track u.user_id) {
+      @for (u of pagedAdvisors(); track u.user_id) {
         <div class="mu-table-row">
           <div class="mu-td mu-td--name">
             <div class="mu-row-avatar mu-row-avatar--advisor">{{ initials(u) }}</div>
@@ -220,20 +232,18 @@
         </div>
       }
     </div>
-  }
-
-  <!-- ═══ PAGINATION ═══ -->
-  @if (!isLoading() && totalPages() > 1) {
-    <div class="mu-pagination">
-      <span class="mu-page-info">ทั้งหมด {{ totalItems() }} รายการ</span>
-      <div class="mu-page-btns">
-        <button class="mu-page-btn" [disabled]="currentPage() === 1" (click)="setPage(currentPage() - 1)">‹</button>
-        @for (p of pageNumbers(); track p) {
-          <button class="mu-page-btn" [class.mu-page-active]="p === currentPage()" (click)="setPage(p)">{{ p }}</button>
-        }
-        <button class="mu-page-btn" [disabled]="currentPage() === totalPages()" (click)="setPage(currentPage() + 1)">›</button>
+    @if (advisorTotalPages() > 1) {
+      <div class="mu-pagination">
+        <span class="mu-page-info">ทั้งหมด {{ filteredAdvisors().length }} รายการ</span>
+        <div class="mu-page-btns">
+          <button class="mu-page-btn" [disabled]="advisorPage() === 1" (click)="setAdvisorPage(advisorPage() - 1)">‹</button>
+          @for (p of advisorPageNumbers(); track p) {
+            <button class="mu-page-btn" [class.mu-page-active]="p === advisorPage()" (click)="setAdvisorPage(p)">{{ p }}</button>
+          }
+          <button class="mu-page-btn" [disabled]="advisorPage() === advisorTotalPages()" (click)="setAdvisorPage(advisorPage() + 1)">›</button>
+        </div>
       </div>
-    </div>
+    }
   }
 
 </div>

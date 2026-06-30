@@ -66,7 +66,10 @@ export class MsuUnwanted implements OnInit {
   deleteModal = signal<Journal | null>(null);
   isDeleting  = signal(false);
 
-  ngOnInit(): void { this.loadData(); }
+  ngOnInit(): void {
+    window.scrollTo({ top: 0 });
+    this.loadData();
+  }
 
   loadData(): void {
     this.isLoading.set(true);

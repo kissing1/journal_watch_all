@@ -179,8 +179,9 @@ export class PreT3 implements OnInit {
   get passCount(): number  { return this.checklist().filter(c => c.status === 'pass').length; }
   get allPass():   boolean { return this.checklist().every(c => c.status === 'pass'); }
 
-  isSubmitting = signal(false);
-  submitResult = signal<'success' | 'error' | null>(null);
+  isSubmitting  = signal(false);
+  submitResult  = signal<'success' | 'error' | null>(null);
+  showConfirm   = signal(false);
 
   canSubmit = computed(() =>
     this.checklist().every(c => c.status === 'pass') &&
@@ -189,6 +190,7 @@ export class PreT3 implements OnInit {
   );
 
   ngOnInit(): void {
+    window.scrollTo(0, 0);
     const state = history.state;
     if (state?.journalName) {
       this.journalName.set(state.journalName ?? '');
@@ -234,7 +236,19 @@ export class PreT3 implements OnInit {
       });
   }
 
+  openConfirm(): void {
+    if (!this.canSubmit() || this.isSubmitting()) return;
+    this.showConfirm.set(true);
+    document.body.style.overflow = 'hidden';
+  }
+
+  closeConfirm(): void {
+    this.showConfirm.set(false);
+    document.body.style.overflow = '';
+  }
+
   submit(): void {
+    this.closeConfirm();
     if (!this.canSubmit() || this.isSubmitting()) return;
     this.isSubmitting.set(true);
     this.submitResult.set(null);

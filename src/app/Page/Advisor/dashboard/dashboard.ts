@@ -29,8 +29,10 @@ export class Dashboard implements OnInit {
   private http      = inject(HttpClient);
   private constants = inject(Constants);
 
-  advisorName  = '';
-
+  get advisorName()  {
+    const u = this.auth.user;
+    return u ? `${u.firstName} ${u.lastName}`.trim() : '';
+  }
   get advisorEmail() { return this.auth.user?.msuMail ?? ''; }
   get userPicture()  { return this.auth.userPicture; }
 
@@ -47,15 +49,6 @@ export class Dashboard implements OnInit {
 
   ngOnInit(): void {
     const headers = new HttpHeaders({ Authorization: `Bearer ${this.auth.token}` });
-
-    this.http
-      .get<any>(`${this.constants.API_ENDPOINT}/user/profile`, { headers })
-      .pipe(catchError(() => of(null)))
-      .subscribe(res => {
-        if (!res?.success) return;
-        const d = res.data;
-        this.advisorName = `${d.prefix ?? ''} ${d.firstName} ${d.lastName}`.trim();
-      });
 
     this.http
       .get<any>(`${this.constants.API_ENDPOINT}/advisor/dashboard`, { headers })

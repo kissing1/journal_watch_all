@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../../../auth.service';
@@ -10,7 +10,10 @@ import { AuthService } from '../../../auth.service';
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.scss'],
 })
-export class Dashboard {
+export class Dashboard implements OnInit {
+  ngOnInit(): void {
+    window.scrollTo({ top: 0 });
+  }
 
   get userName()    { return `${this.authService.user?.firstName ?? ''} ${this.authService.user?.lastName ?? ''}`.trim(); }
   get userEmail()   { return this.authService.user?.msuMail ?? ''; }

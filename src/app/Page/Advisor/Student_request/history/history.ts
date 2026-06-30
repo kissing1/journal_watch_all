@@ -10,7 +10,7 @@ import { PreT3HistoryAdvisor, Item as PreT3Item } from '../../../../model/res/pr
 import { GetDeteilsT3Res, Data as T3Detail } from '../../../../model/res/get_deteils_T3_res';
 import { PreT3DetailsRes, Data as PreT3Detail } from '../../../../model/res/Pre-T3_details_res';
 
-type FilterType    = 'all' | 'approved' | 'rejected';
+type FilterType    = 'all' | 'approved' | 'rejected' | 'pre-t3' | 't3';
 type AdvisorStatus = 'Approved' | 'Rejected' | 'Pending';
 
 interface HistoryCard {
@@ -92,13 +92,17 @@ export class History implements OnInit {
     const f   = this.activeFilter();
     const all = this.allCards();
     if (f === 'approved') return all.filter(c => c.advisorStatus === 'Approved');
-    if (f === 'rejected')  return all.filter(c => c.advisorStatus === 'Rejected');
+    if (f === 'rejected') return all.filter(c => c.advisorStatus === 'Rejected');
+    if (f === 'pre-t3')  return all.filter(c => c.itemType === 'PreT3');
+    if (f === 't3')      return all.filter(c => c.itemType === 'T3');
     return all;
   });
 
   get countAll():      number { return this.allCards().length; }
   get countApproved(): number { return this.allCards().filter(c => c.advisorStatus === 'Approved').length; }
   get countRejected(): number { return this.allCards().filter(c => c.advisorStatus === 'Rejected').length; }
+  get countPreT3():    number { return this.allCards().filter(c => c.itemType === 'PreT3').length; }
+  get countT3():       number { return this.allCards().filter(c => c.itemType === 'T3').length; }
 
   setFilter(f: FilterType): void { this.activeFilter.set(f); }
 
@@ -112,7 +116,10 @@ export class History implements OnInit {
     }));
   }
 
-  ngOnInit(): void {
+  ngOnInit(): void { this.loadHistory(); }
+
+  loadHistory(): void {
+    this.isLoading.set(true);
     const headers = new HttpHeaders({ Authorization: `Bearer ${this.auth.token}` });
     const t3$    = this.http.get<T3HistoryAdvisor>(`${this.constants.API_ENDPOINT}/t3/history?page=1&limit=20`, { headers })
                        .pipe(catchError(() => of(null)));

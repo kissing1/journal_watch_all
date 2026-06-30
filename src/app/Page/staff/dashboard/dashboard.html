@@ -1,245 +1,139 @@
-<div class="db-page">
+<div class="dashboard-page">
 
-  <!-- ═══ WELCOME BANNER ═══ -->
-  <section class="db-welcome">
-    <div class="db-welcome__left">
-      <div class="db-welcome__avatar">
-        <span>{{ staffName ? staffName[0] : 'S' }}</span>
-      </div>
-      <div class="db-welcome__info">
-        <div class="db-welcome__greeting">{{ greeting }},</div>
-        <h1 class="db-welcome__name">{{ staffName || 'เจ้าหน้าที่' }}</h1>
-        <div class="db-welcome__meta">
-          <span class="db-role-badge">เจ้าหน้าที่บัณฑิตวิทยาลัย</span>
-          <span class="db-welcome__email">{{ staffEmail }}</span>
-        </div>
-      </div>
+  <!-- WELCOME -->
+  <section class="welcome-section">
+    <div class="hero-overlay"></div>
+
+    <div class="welcome-icon">
+      {{ staffName ? staffName[0] : 'S' }}
     </div>
-    <div class="db-welcome__right">
-      <div class="db-date-box">
-        <div class="db-date-box__icon">📅</div>
-        <div class="db-date-box__text">
-          <div class="db-date-box__label">วันที่วันนี้</div>
-          <div class="db-date-box__value">{{ today }}</div>
+
+    <div class="welcome-content">
+      <h1>{{ greeting }},<br>{{ staffName || 'เจ้าหน้าที่' }}</h1>
+      <p class="subtitle">ระบบจัดการคำร้องวารสาร · เจ้าหน้าที่บัณฑิตวิทยาลัย</p>
+
+      <div class="user-meta">
+        <div class="meta-card">
+          <span class="meta-label">อีเมล</span>
+          <span class="meta-value">{{ staffEmail }}</span>
         </div>
+        <div class="meta-card">
+          <span class="meta-label">วันที่วันนี้</span>
+          <span class="meta-value">{{ today }}</span>
+        </div>
+        @if (totalPending() > 0) {
+          <div class="meta-card meta-card--alert">
+            <span class="meta-label">แจ้งเตือน</span>
+            <div class="alert-row">
+              <span class="alert-dot"></span>
+              <span class="meta-value">มีคำร้องรอดำเนินการ {{ totalPending() }} รายการ</span>
+            </div>
+          </div>
+        }
       </div>
-      @if (totalPending() > 0) {
-        <div class="db-alert-badge">
-          <span class="db-alert-dot"></span>
-          มีคำร้องรอดำเนินการ {{ totalPending() }} รายการ
-        </div>
-      }
     </div>
   </section>
 
-  <!-- ═══ KPI STATS ═══ -->
-  <section class="db-stats">
-    <div class="db-stat-card db-stat-card--pending-pt3">
-      <div class="db-stat-card__icon">📋</div>
-      <div class="db-stat-card__body">
-        <div class="db-stat-card__label">รอพิจารณา Pre-T3</div>
-        @if (isLoading()) {
-          <div class="db-stat-skeleton"></div>
-        } @else {
-          <div class="db-stat-card__value">{{ pendingPreT3() }}</div>
-          <div class="db-stat-card__sub">คำร้องที่ยังไม่ดำเนินการ</div>
-        }
-      </div>
-      <a class="db-stat-card__link" routerLink="/staff/pre-t3-request">ดูทั้งหมด →</a>
+
+  <!-- WORKFLOW STEPS -->
+  <section class="steps-section">
+    <div class="section-header">
+      <h2>ขั้นตอนการดำเนินการ</h2>
+      <p>Workflow การพิจารณาคำร้องของเจ้าหน้าที่บัณฑิตวิทยาลัย</p>
     </div>
 
-    <div class="db-stat-card db-stat-card--pending-t3">
-      <div class="db-stat-card__icon">📊</div>
-      <div class="db-stat-card__body">
-        <div class="db-stat-card__label">รอพิจารณา T3</div>
-        @if (isLoading()) {
-          <div class="db-stat-skeleton"></div>
-        } @else {
-          <div class="db-stat-card__value">{{ pendingT3() }}</div>
-          <div class="db-stat-card__sub">คำร้องที่ยังไม่ดำเนินการ</div>
-        }
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <h3>รับแจ้งคำร้อง</h3>
+        <p>ระบบแจ้งเตือนเมื่อนิสิตยื่น Pre-T3 หรือ T3 ผ่านอาจารย์ที่ปรึกษาเรียบร้อยแล้ว</p>
       </div>
-      <a class="db-stat-card__link" routerLink="/staff/t3-request">ดูทั้งหมด →</a>
-    </div>
-
-    <div class="db-stat-card db-stat-card--approved">
-      <div class="db-stat-card__icon">✅</div>
-      <div class="db-stat-card__body">
-        <div class="db-stat-card__label">อนุมัติแล้ว</div>
-        @if (isLoading()) {
-          <div class="db-stat-skeleton"></div>
-        } @else {
-          <div class="db-stat-card__value">{{ approvedTotal() }}</div>
-          <div class="db-stat-card__sub">ทั้ง Pre-T3 และ T3</div>
-        }
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <h3>ตรวจสอบเอกสาร</h3>
+        <p>ตรวจสอบความครบถ้วนของเอกสาร Checklist และหลักฐานประกอบทั้งหมด</p>
       </div>
-      <a class="db-stat-card__link" routerLink="/staff/history">ดูประวัติ →</a>
-    </div>
-
-    <div class="db-stat-card db-stat-card--rejected">
-      <div class="db-stat-card__icon">❌</div>
-      <div class="db-stat-card__body">
-        <div class="db-stat-card__label">ไม่อนุมัติ / ยกเลิก</div>
-        @if (isLoading()) {
-          <div class="db-stat-skeleton"></div>
-        } @else {
-          <div class="db-stat-card__value">{{ rejectedTotal() }}</div>
-          <div class="db-stat-card__sub">ทั้ง Pre-T3 และ T3</div>
-        }
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <h3>นำเสนอที่ประชุม</h3>
+        <p>นำคำร้องเข้าที่ประชุมบัณฑิตวิทยาลัยเพื่อขอมติอนุมัติหรือไม่อนุมัติ</p>
       </div>
-      <a class="db-stat-card__link" routerLink="/staff/history">ดูประวัติ →</a>
+      <div class="step-card">
+        <div class="step-num">4</div>
+        <h3>แจ้งผลนิสิต</h3>
+        <p>อัปเดตสถานะในระบบและแจ้งผลการพิจารณาให้นิสิตทราบ</p>
+      </div>
     </div>
   </section>
 
-  <!-- ═══ MAIN GRID ═══ -->
-  <div class="db-main-grid">
+  <!-- MAIN GRID: RECENT + QUICK ACTIONS -->
+  <div class="main-grid">
 
-    <!-- LEFT: RECENT PENDING -->
-    <section class="db-section db-section--recent">
-      <div class="db-section__head">
-        <div class="db-section__title">
-          <span class="db-section__icon">🕐</span>
-          คำร้องที่รอดำเนินการล่าสุด
-        </div>
+    <!-- Recent Pending -->
+    <section class="panel">
+      <div class="panel-head">
+        <span class="panel-title">🕐 คำร้องที่รอดำเนินการล่าสุด</span>
         @if (!isLoading() && recentItems().length > 0) {
-          <span class="db-count-chip">{{ recentItems().length }} รายการ</span>
+          <span class="count-chip">{{ recentItems().length }} รายการ</span>
         }
       </div>
 
       @if (isLoading()) {
-        <div class="db-skeleton-list">
+        <div class="skeleton-list">
           @for (i of [1,2,3,4]; track i) {
-            <div class="db-skeleton-row">
-              <div class="db-skeleton-avatar"></div>
-              <div class="db-skeleton-lines">
-                <div class="db-skeleton-line db-skeleton-line--wide"></div>
-                <div class="db-skeleton-line db-skeleton-line--narrow"></div>
+            <div class="skeleton-row">
+              <div class="skeleton-avatar"></div>
+              <div class="skeleton-lines">
+                <div class="skeleton-line skeleton-line--wide"></div>
+                <div class="skeleton-line skeleton-line--narrow"></div>
               </div>
             </div>
           }
         </div>
       } @else if (recentItems().length === 0) {
-        <div class="db-empty">
-          <div class="db-empty__icon">🎉</div>
-          <div class="db-empty__text">ไม่มีคำร้องที่รอดำเนินการ</div>
-          <div class="db-empty__sub">ทุกคำร้องได้รับการพิจารณาแล้ว</div>
+        <div class="empty-state">
+          <div class="empty-state__icon">🎉</div>
+          <div class="empty-state__text">ไม่มีคำร้องที่รอดำเนินการ</div>
+          <div class="empty-state__sub">ทุกคำร้องได้รับการพิจารณาแล้ว</div>
         </div>
       } @else {
-        <div class="db-recent-list">
+        <div class="recent-list">
           @for (item of recentItems(); track item.studentId + item.type) {
-            <a class="db-recent-item" [routerLink]="item.routerLink">
-              <div class="db-recent-item__avatar" [class.db-recent-item__avatar--t3]="item.type === 'T3'">
+            <a class="recent-item" [routerLink]="item.routerLink">
+              <div class="recent-avatar" [class.recent-avatar--t3]="item.type === 'T3'">
                 {{ item.studentName[0] }}
               </div>
-              <div class="db-recent-item__body">
-                <div class="db-recent-item__name">{{ item.studentName }}</div>
-                <div class="db-recent-item__journal">{{ item.journalName }}</div>
+              <div class="recent-body">
+                <div class="recent-name">{{ item.studentName }}</div>
+                <div class="recent-journal">{{ item.journalName }}</div>
               </div>
-              <div class="db-recent-item__right">
-                <div class="db-type-chip" [class.db-type-chip--t3]="item.type === 'T3'">
+              <div class="recent-right">
+                <span class="type-chip" [class.type-chip--t3]="item.type === 'T3'">
                   {{ item.type === 'T3' ? 'T3' : 'Pre-T3' }}
-                </div>
-                <div class="db-recent-item__date">{{ item.dateLabel }}</div>
+                </span>
+                <span class="recent-date">{{ item.dateLabel }}</span>
               </div>
-              <div class="db-recent-item__arrow">›</div>
+              <span class="recent-arrow">›</span>
             </a>
           }
         </div>
       }
     </section>
 
-    <!-- RIGHT: QUICK ACTIONS + INFO -->
-    <div class="db-right-col">
+    <!-- Quick Actions -->
+    <section class="panel">
+      <div class="panel-head">
+        <span class="panel-title">⚡ Quick Actions</span>
+      </div>
+      <div class="quick-actions">
+        <a class="action-btn action-btn--navy"   routerLink="/staff/pre-t3-request">📋 คำร้อง Pre-T3</a>
+        <a class="action-btn action-btn--blue"   routerLink="/staff/t3-request">📊 คำร้อง T3</a>
+        <a class="action-btn action-btn--green"  routerLink="/staff/history">📁 ประวัติคำร้อง</a>
+        <a class="action-btn action-btn--yellow" routerLink="/search">🔍 ค้นหาวารสาร</a>
+        <a class="action-btn action-btn--red"    routerLink="/msu-unwanted">🚫 MSU Unwanted</a>
+      </div>
+    </section>
 
-      <!-- Quick Actions -->
-      <section class="db-section db-section--actions">
-        <div class="db-section__head">
-          <div class="db-section__title">
-            <span class="db-section__icon">⚡</span>
-            Quick Actions
-          </div>
-        </div>
-        <div class="db-actions-grid">
-          <a class="db-action" routerLink="/staff/pre-t3-request">
-            <div class="db-action__icon db-action__icon--navy">📋</div>
-            <div class="db-action__label">คำร้อง Pre-T3</div>
-            <div class="db-action__sub">พิจารณาคำร้องใหม่</div>
-          </a>
-          <a class="db-action" routerLink="/staff/t3-request">
-            <div class="db-action__icon db-action__icon--blue">📊</div>
-            <div class="db-action__label">คำร้อง T3</div>
-            <div class="db-action__sub">พิจารณาผลการตีพิมพ์</div>
-          </a>
-          <a class="db-action" routerLink="/staff/history">
-            <div class="db-action__icon db-action__icon--green">📁</div>
-            <div class="db-action__label">ประวัติคำร้อง</div>
-            <div class="db-action__sub">ดูรายการที่ผ่านมา</div>
-          </a>
-          <a class="db-action" routerLink="/search">
-            <div class="db-action__icon db-action__icon--yellow">🔍</div>
-            <div class="db-action__label">ค้นหาวารสาร</div>
-            <div class="db-action__sub">ตรวจสอบฐานข้อมูล</div>
-          </a>
-          <a class="db-action" routerLink="/msu-unwanted">
-            <div class="db-action__icon db-action__icon--red">🚫</div>
-            <div class="db-action__label">MSU Unwanted</div>
-            <div class="db-action__sub">จัดการวารสารต้องห้าม</div>
-          </a>
-        </div>
-      </section>
-
-      <!-- Summary Info -->
-      <section class="db-section db-section--summary">
-        <div class="db-section__head">
-          <div class="db-section__title">
-            <span class="db-section__icon">📈</span>
-            สรุปภาพรวม
-          </div>
-        </div>
-        @if (isLoading()) {
-          <div class="db-summary-skeleton">
-            @for (i of [1,2,3]; track i) { <div class="db-skel-bar"></div> }
-          </div>
-        } @else {
-          <div class="db-summary-rows">
-            <div class="db-summary-row">
-              <span class="db-summary-row__label">Pre-T3 รอดำเนินการ</span>
-              <div class="db-summary-row__bar-wrap">
-                <div class="db-summary-row__bar db-summary-row__bar--navy"
-                     [style.width.%]="totalPending() > 0 ? (pendingPreT3() / totalPending()) * 100 : 0"></div>
-              </div>
-              <span class="db-summary-row__count">{{ pendingPreT3() }}</span>
-            </div>
-            <div class="db-summary-row">
-              <span class="db-summary-row__label">T3 รอดำเนินการ</span>
-              <div class="db-summary-row__bar-wrap">
-                <div class="db-summary-row__bar db-summary-row__bar--blue"
-                     [style.width.%]="totalPending() > 0 ? (pendingT3() / totalPending()) * 100 : 0"></div>
-              </div>
-              <span class="db-summary-row__count">{{ pendingT3() }}</span>
-            </div>
-            <div class="db-summary-divider"></div>
-            <div class="db-summary-row">
-              <span class="db-summary-row__label">อนุมัติแล้วทั้งหมด</span>
-              <div class="db-summary-row__bar-wrap">
-                <div class="db-summary-row__bar db-summary-row__bar--green"
-                     [style.width.%]="(approvedTotal() + rejectedTotal()) > 0 ? (approvedTotal() / (approvedTotal() + rejectedTotal())) * 100 : 0"></div>
-              </div>
-              <span class="db-summary-row__count">{{ approvedTotal() }}</span>
-            </div>
-            <div class="db-summary-row">
-              <span class="db-summary-row__label">ไม่อนุมัติ / ยกเลิก</span>
-              <div class="db-summary-row__bar-wrap">
-                <div class="db-summary-row__bar db-summary-row__bar--red"
-                     [style.width.%]="(approvedTotal() + rejectedTotal()) > 0 ? (rejectedTotal() / (approvedTotal() + rejectedTotal())) * 100 : 0"></div>
-              </div>
-              <span class="db-summary-row__count">{{ rejectedTotal() }}</span>
-            </div>
-          </div>
-        }
-      </section>
-
-    </div>
   </div>
 
 </div>

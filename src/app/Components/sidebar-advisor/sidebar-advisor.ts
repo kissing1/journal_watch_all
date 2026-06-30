@@ -11,6 +11,11 @@ interface NavItem {
   children?: NavItem[];
 }
 
+interface NavGroup {
+  group: string;
+  items: NavItem[];
+}
+
 @Component({
   standalone: true,
   selector: 'app-sidebar-advisor',
@@ -21,13 +26,12 @@ interface NavItem {
 export class SidebarAdvisor {
   @Input() isOpen = true;
 
-  activeRoute = '';
+  activeRoute   = '';
   expandedItems = new Set<string>();
 
-  get userName() {
-    return `${this.authService.user?.firstName ?? ''} ${this.authService.user?.lastName ?? ''}`.trim();
-  }
+  get userName()    { return `${this.authService.user?.firstName ?? ''} ${this.authService.user?.lastName ?? ''}`.trim(); }
   get userEmail()   { return this.authService.user?.msuMail ?? ''; }
+  get userRole()    { return this.authService.user?.role ?? 'อาจารย์ที่ปรึกษา'; }
   get userPicture() { return this.authService.userPicture; }
   get userInitials() {
     const f = this.authService.user?.firstName?.[0] ?? '';
@@ -35,17 +39,28 @@ export class SidebarAdvisor {
     return (f + l).toUpperCase();
   }
 
-  navItems: NavItem[] = [
-    { label: 'Dashboard',             icon: '🏠', route: '/advisor/dashboard' },
-    { label: 'ค้นหาวารสาร',          icon: '🔍', route: '/search'            },
-    { label: 'ตรวจสอบ MSU Unwanted', icon: '🚫', route: '/msu-unwanted'      },
+  navGroups: NavGroup[] = [
     {
-      label: 'คำร้องขอของนิสิต',
-      icon: '📋',
-      children: [
-        { label: 'Pre-T3 ที่รอลงนาม', icon: '📋', route: '/advisor/pre-t3-request' },
-        { label: 'T3 ที่รอลงนาม',     icon: '📊', route: '/advisor/t3-request'     },
-        { label: 'ประวัติทั้งหมด',    icon: '📁', route: '/advisor/history'         },
+      group: 'เมนูหลัก',
+      items: [
+        { label: 'Dashboard',             icon: '🏠', route: '/advisor/dashboard' },
+        { label: 'ค้นหาวารสาร',          icon: '🔍', route: '/search'            },
+        { label: 'ตรวจสอบ MSU Unwanted', icon: '🚫', route: '/msu-unwanted'      },
+        { label: 'รายงานปัญหา',          icon: '🐛', route: '/bug-reports'       },
+      ],
+    },
+    {
+      group: 'คำร้องนิสิต',
+      items: [
+        {
+          label: 'คำร้องขอของนิสิต',
+          icon: '📋',
+          children: [
+            { label: 'Pre-T3 ที่รอลงนาม', icon: '📋', route: '/advisor/pre-t3-request' },
+            { label: 'T3 ที่รอลงนาม',     icon: '📊', route: '/advisor/t3-request'     },
+            { label: 'ประวัติทั้งหมด',    icon: '📁', route: '/advisor/history'         },
+          ],
+        },
       ],
     },
   ];
@@ -62,9 +77,11 @@ export class SidebarAdvisor {
   }
 
   private autoExpand(): void {
-    for (const item of this.navItems) {
-      if (item.children?.some(c => c.route && this.activeRoute.startsWith(c.route))) {
-        this.expandedItems.add(item.label);
+    for (const group of this.navGroups) {
+      for (const item of group.items) {
+        if (item.children?.some(c => c.route && this.activeRoute.startsWith(c.route))) {
+          this.expandedItems.add(item.label);
+        }
       }
     }
   }

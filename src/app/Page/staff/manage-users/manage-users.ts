@@ -44,12 +44,14 @@ export class ManageUsers implements OnInit {
   selectStatus(val: string): void {
     this.statusFilter.set(val);
     this.statusDropdownOpen.set(false);
+    this.studentPage.set(1);
+    this.advisorPage.set(1);
   }
 
-  currentPage = signal(1);
-  totalPages  = signal(1);
-  totalItems  = signal(0);
-  readonly limit = 20;
+  readonly limit     = 1000;
+  readonly PAGE_SIZE = 12;
+  studentPage = signal(1);
+  advisorPage = signal(1);
 
   allStudents  = computed(() => this.allUsers().filter(u => u.role === Role.Student));
   allAdvisors  = computed(() => this.allUsers().filter(u => u.role === Role.Supervisor));
@@ -79,13 +81,33 @@ export class ManageUsers implements OnInit {
     });
   });
 
+  studentTotalPages = computed(() => Math.ceil(this.filteredStudents().length / this.PAGE_SIZE));
+  advisorTotalPages = computed(() => Math.ceil(this.filteredAdvisors().length / this.PAGE_SIZE));
+
+  pagedStudents = computed(() => {
+    const start = (this.studentPage() - 1) * this.PAGE_SIZE;
+    return this.filteredStudents().slice(start, start + this.PAGE_SIZE);
+  });
+
+  pagedAdvisors = computed(() => {
+    const start = (this.advisorPage() - 1) * this.PAGE_SIZE;
+    return this.filteredAdvisors().slice(start, start + this.PAGE_SIZE);
+  });
+
+  studentPageNumbers = computed(() =>
+    Array.from({ length: this.studentTotalPages() }, (_, i) => i + 1)
+  );
+  advisorPageNumbers = computed(() =>
+    Array.from({ length: this.advisorTotalPages() }, (_, i) => i + 1)
+  );
+
   ngOnInit(): void { this.loadData(); }
 
   loadData(): void {
     this.isLoading.set(true);
     const headers = new HttpHeaders({ Authorization: `Bearer ${this.auth.token}` });
     const params  = new HttpParams()
-      .set('page',  String(this.currentPage()))
+      .set('page',  '1')
       .set('limit', String(this.limit));
 
     this.http
@@ -94,8 +116,6 @@ export class ManageUsers implements OnInit {
       .subscribe(res => {
         if (res?.success) {
           this.allUsers.set(res.data.users);
-          this.totalPages.set(res.data.pagination.totalPages);
-          this.totalItems.set(res.data.pagination.total);
         }
         this.isLoading.set(false);
       });
@@ -106,17 +126,25 @@ export class ManageUsers implements OnInit {
     this.searchText.set('');
     this.statusFilter.set('all');
     this.statusDropdownOpen.set(false);
+    this.studentPage.set(1);
+    this.advisorPage.set(1);
   }
 
-  setPage(p: number): void {
-    if (p < 1 || p > this.totalPages()) return;
-    this.currentPage.set(p);
-    this.loadData();
+  setStudentPage(p: number): void {
+    if (p < 1 || p > this.studentTotalPages()) return;
+    this.studentPage.set(p);
   }
 
-  pageNumbers = computed(() =>
-    Array.from({ length: this.totalPages() }, (_, i) => i + 1)
-  );
+  setAdvisorPage(p: number): void {
+    if (p < 1 || p > this.advisorTotalPages()) return;
+    this.advisorPage.set(p);
+  }
+
+  onSearchChange(val: string): void {
+    this.searchText.set(val);
+    this.studentPage.set(1);
+    this.advisorPage.set(1);
+  }
 
   // ── Add Student Modal ────────────────────────────────────────────
   addStudentModal  = signal(false);

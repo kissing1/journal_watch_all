@@ -1,25 +1,32 @@
 <div class="page">
 
-  <!-- HEADER -->
-  <div class="page-header">
-    <div class="page-title-row">
-      <span class="page-title-icon">📁</span>
-      <h1 class="page-title">ประวัติทั้ง <span class="title-highlight">T3</span></h1>
-    </div>
-    <p class="page-subtitle">คำร้อง Pre-T3 และ T3 ที่ดำเนินการเสร็จสิ้นแล้ว</p>
-  </div>
-
   <!-- TAB BAR -->
   <div class="tab-bar">
-    <a class="tab-item" routerLink="/advisor/pre-t3-request">
-      <span>📋</span><span>Pre-T3 ที่รอลงนาม</span>
+    <a class="tab-item" routerLink="/advisor/pre-t3-request" routerLinkActive="tab-active" [routerLinkActiveOptions]="{ exact: true }">
+      <span class="tab-icon">☑️</span>
+      <span class="tab-label">Pre-T3 ที่รอลงนาม</span>
     </a>
-    <a class="tab-item" routerLink="/advisor/t3-request">
-      <span>📊</span><span>T3 ที่รอลงนาม</span>
+    <a class="tab-item" routerLink="/advisor/t3-request" routerLinkActive="tab-active" [routerLinkActiveOptions]="{ exact: true }">
+      <span class="tab-icon">📊</span>
+      <span class="tab-label">T3 ที่รอลงนาม</span>
     </a>
-    <a class="tab-item tab-active" routerLink="/advisor/history">
-      <span>📁</span><span>ประวัติทั้งหมด</span>
+    <a class="tab-item" routerLink="/advisor/history" routerLinkActive="tab-active" [routerLinkActiveOptions]="{ exact: true }">
+      <span class="tab-icon">📋</span>
+      <span class="tab-label">ประวัติทั้งหมด</span>
     </a>
+  </div>
+
+  <!-- HEADER -->
+  <div class="page-title-row">
+    <span class="page-icon">📋</span>
+    <div class="page-title-group">
+      <h1 class="page-title">ประวัติทั้งหมด</h1>
+      <p class="page-sub">คำร้อง Pre-T3 และ T3 ที่ดำเนินการเสร็จสิ้นแล้ว</p>
+    </div>
+    <button class="btn-refresh" (click)="loadHistory()" [disabled]="isLoading()">
+      <span class="refresh-icon" [class.spinning]="isLoading()">↻</span>
+      @if (isLoading()) { กำลังโหลด... } @else { รีเฟรช }
+    </button>
   </div>
 
   <!-- FILTER ROW -->
@@ -28,6 +35,16 @@
             (click)="setFilter('all')">
       ทั้งหมด
       <span class="filter-count">{{ countAll }}</span>
+    </button>
+    <button class="filter-btn filter-btn--pret3" [class.active]="activeFilter() === 'pre-t3'"
+            (click)="setFilter('pre-t3')">
+      Pre-T3
+      <span class="filter-count">{{ countPreT3 }}</span>
+    </button>
+    <button class="filter-btn filter-btn--t3" [class.active]="activeFilter() === 't3'"
+            (click)="setFilter('t3')">
+      T3
+      <span class="filter-count">{{ countT3 }}</span>
     </button>
     <button class="filter-btn filter-btn--approved" [class.active]="activeFilter() === 'approved'"
             (click)="setFilter('approved')">

@@ -54,13 +54,18 @@ $gray:   #9CA3AF;
 }
 
 /* ── FILTER ── */
-.filter-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.filter-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .filter-btn {
   padding: 8px 18px; border-radius: 99px; border: 1.5px solid $border;
   background: $white; color: $muted; font-size: 13px; font-weight: 600;
   font-family: 'Sarabun', sans-serif; cursor: pointer; transition: all 0.18s;
   &:hover  { border-color: $navy; color: $navy; }
   &.active { background: $navy; color: $white; border-color: $navy; }
+  &--type.active { background: $yellow; color: $navy; border-color: $yellow; }
+}
+.filter-divider {
+  width: 1px; height: 26px;
+  background: $border; margin: 0 4px; flex-shrink: 0;
 }
 
 /* ── CARD LIST ── */
@@ -144,6 +149,18 @@ $gray:   #9CA3AF;
 .empty-state { display: flex; flex-direction: column; align-items: center; padding: 60px 0; gap: 12px; }
 .empty-icon  { font-size: 48px; }
 .empty-text  { font-size: 15px; color: $gray; }
+
+.loading-spinner {
+  width: 40px; height: 40px;
+  border: 3px solid rgba(28,39,68,0.12);
+  border-top-color: #E8A800;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
 
 /* ═══════════════════════════════════════════════════
    MODAL  — matches pre-t3-history.scss exactly

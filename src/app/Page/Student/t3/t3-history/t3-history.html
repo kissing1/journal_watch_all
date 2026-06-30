@@ -26,7 +26,7 @@
     @if (isLoading()) {
       <div class="empty-state"><div class="loading-spinner"></div><div class="empty-text">กำลังโหลดข้อมูล...</div></div>
     } @else if (cards.length === 0) {
-      <div class="empty-state"><div class="empty-icon">📭</div><div class="empty-text">ยังไม่มีประวัติคำร้อง T3</div></div>
+      <div class="empty-state"><div class="empty-text">ยังไม่มีประวัติคำร้อง T3</div></div>
     }
 
     @for (card of cards; track card.id) {
@@ -43,22 +43,50 @@
           }
         </div>
 
-        <!-- BODY -->
-        <div class="req-card-body">
-          <div class="req-card-meta">{{ card.id }} · ยื่นเมื่อ {{ card.submittedDate }}</div>
-          <div class="req-card-title">{{ card.titleThai || card.titleEn }}</div>
-          <div class="req-card-tags">
-            <span class="tag-db">📘 {{ card.database }}</span>
-            <span class="tag-issn">ISSN: {{ card.issn }}</span>
-            <span class="tag-type">{{ card.pubType }}</span>
-          </div>
-        </div>
+        <!-- CONTENT -->
+        <div class="req-card-content">
 
-        <!-- RIGHT -->
-        <div class="req-card-right">
-          <span [class]="statusChipClass(card)">{{ statusLabel(card) }}</span>
-          <span class="req-card-step">{{ card.submittedDate }}</span>
-        </div>
+          <!-- TOP ROW -->
+          <div class="req-card-top">
+            <div class="req-card-top-left">
+              <div class="req-journal">
+                <span class="req-journal-label">ชื่อบทความ:</span> {{ card.titleThai || card.titleEn }}
+              </div>
+              <div class="req-badges">
+                <span class="badge-issn">{{ card.issn }}</span>
+                <span class="badge-db">{{ card.database }}</span>
+                <span class="badge-q">{{ card.pubType }}</span>
+              </div>
+            </div>
+            <div class="req-card-top-right">
+              <span class="req-id-chip">{{ card.id }}</span>
+              <div class="req-timestamps">
+                <span class="ts-item">ยื่น · {{ card.submittedDateTime }}</span>
+                @if (card.advisorDateTime) {
+                  <span class="ts-dot">·</span>
+                  <span class="ts-item">อาจารย์ · {{ card.advisorDateTime }}</span>
+                }
+                @if (card.facultyDateTime) {
+                  <span class="ts-dot">·</span>
+                  <span class="ts-item">ที่ประชุม · {{ card.facultyDateTime }}</span>
+                }
+                @if (card.gradDateTime) {
+                  <span class="ts-dot">·</span>
+                  <span class="ts-item">บัณฑิต · {{ card.gradDateTime }}</span>
+                }
+              </div>
+            </div>
+          </div>
+
+          <!-- DIVIDER -->
+          <div class="req-card-divider"></div>
+
+          <!-- BOTTOM ROW -->
+          <div class="card-bottom-row">
+            <span [class]="statusChipClass(card)">{{ statusLabel(card) }}</span>
+          </div>
+
+        </div><!-- /req-card-content -->
 
         <span class="req-card-arrow">›</span>
       </div>

@@ -13,16 +13,19 @@ import { GetProfileRes, Data as ProfileData } from '../../../../model/res/get_pr
 type ApprovalStatus = 'Pending' | 'Approved' | 'Rejected';
 
 interface HistoryCard {
-  id:            string;
-  journalName:   string;
-  issn:          string;
-  database:      string;
-  quartile:      string;
-  journalStatus: string;
-  advisorStatus: ApprovalStatus;
-  facultyStatus: ApprovalStatus;
-  status:        'approved' | 'rejected' | 'cancelled';
-  submittedDate: string;
+  id:                string;
+  journalName:       string;
+  issn:              string;
+  database:          string;
+  quartile:          string;
+  journalStatus:     string;
+  advisorStatus:     ApprovalStatus;
+  facultyStatus:     ApprovalStatus;
+  status:            'approved' | 'rejected' | 'cancelled';
+  submittedDate:     string;
+  submittedDateTime: string;
+  advisorDateTime:   string | null;
+  facultyDateTime:   string | null;
 }
 
 interface Step {
@@ -174,7 +177,12 @@ export class PreT3History implements OnInit {
       advisorStatus,
       facultyStatus,
       status,
-      submittedDate: this.formatDateShort(d.created_at),
+      submittedDate:     this.formatDateShort(d.created_at),
+      submittedDateTime: this.formatDateCompact(d.created_at),
+      advisorDateTime:   advisorStatus === 'Approved' && d.advisor_approval.approved_at
+                           ? this.formatDateCompact(d.advisor_approval.approved_at) : null,
+      facultyDateTime:   facultyStatus === 'Approved' && d.faculty_com_approval.approved_at
+                           ? this.formatDateCompact(d.faculty_com_approval.approved_at) : null,
     };
   }
 
@@ -358,6 +366,15 @@ export class PreT3History implements OnInit {
     const d = new Date(date as string);
     if (isNaN(d.getTime())) return '-';
     return `${d.getDate()} ${this.THAI_MONTHS[d.getMonth()]} ${(d.getFullYear() + 543).toString().slice(-2)}`;
+  }
+
+  private formatDateCompact(date: Date | string | null): string {
+    if (!date) return '-';
+    const d = new Date(date as string);
+    if (isNaN(d.getTime())) return '-';
+    const h = d.getHours().toString().padStart(2, '0');
+    const m = d.getMinutes().toString().padStart(2, '0');
+    return `${d.getDate()} ${this.THAI_MONTHS[d.getMonth()]} ${h}:${m}`;
   }
 
   private formatDateFull(date: Date | string | null): string {

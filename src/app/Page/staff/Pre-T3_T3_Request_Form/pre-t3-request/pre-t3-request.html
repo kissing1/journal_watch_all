@@ -5,6 +5,10 @@
     <div class="page-title-row">
       <span class="page-title-icon">📋</span>
       <h1 class="page-title">Pre-T3 คำร้อง</h1>
+      <button class="btn-refresh" (click)="loadCards()" [disabled]="isLoading">
+        <span class="refresh-icon" [class.spinning]="isLoading">↻</span>
+        <span>รีเฟรช</span>
+      </button>
     </div>
     <p class="page-subtitle">ตรวจสอบและดำเนินการคำร้อง Pre-T3 ของนิสิต</p>
   </div>
@@ -22,25 +26,15 @@
     </a>
   </div>
 
-  <!-- FILTER CHIPS -->
-  <div class="filter-bar">
-    @for (f of filters; track f.key) {
-      <button class="filter-chip" [class.active]="activeFilter === f.key" (click)="activeFilter = f.key">
-        {{ f.label }}
-      </button>
-    }
-  </div>
 
   <!-- CARD LIST -->
   <div class="card-list">
     @if (isLoading) {
       <div class="empty-state">
-        <div class="empty-icon">⏳</div>
-        <div class="empty-text">กำลังโหลดข้อมูล...</div>
+        <div class="loading-spinner"></div>
       </div>
     } @else if (filtered.length === 0) {
       <div class="empty-state">
-        <div class="empty-icon">📭</div>
         <div class="empty-text">ไม่มีคำร้องในหมวดนี้</div>
       </div>
     }
@@ -78,40 +72,33 @@
             }
           </div>
 
-          <!-- ── Action buttons (pending only) ── -->
-          @if (card.status === 'pending') {
-            <div class="card-actions" (click)="$event.stopPropagation()">
-              <button class="card-btn card-btn--meeting"
-                (click)="openSendMeetingModal(card, $event)">
-                ✅ อนุมัติ
-              </button>
-              <button class="card-btn card-btn--reject"
-                (click)="openRejectModal(card, $event)">
-                ✕ ไม่อนุมัติทันที
-              </button>
-            </div>
-          }
+          <div class="card-status-row">
+            @if (card.status === 'pending') {
+              <span class="status-chip chip-pending">รอดำเนินการ</span>
+            } @else if (card.status === 'meeting') {
+              <span class="status-chip chip-meeting">● ส่งที่ประชุมแล้ว</span>
+            } @else if (card.status === 'approved') {
+              <span class="status-chip chip-approved">✅ อนุมัติแล้ว</span>
+            } @else if (card.status === 'rejected') {
+              <span class="status-chip chip-rejected">❌ ไม่อนุมัติ</span>
+            } @else if (card.status === 'auto-rejected') {
+              <span class="status-chip chip-auto-rejected">🚫 ระบบปฏิเสธอัตโนมัติ</span>
+            }
+          </div>
+
         </div>
 
         <!-- ═══ RIGHT ═══ -->
         <div class="card-right">
-          @if (card.status === 'pending') {
-            <span class="status-chip chip-pending">⏳ รอดำเนินการ</span>
-          } @else if (card.status === 'meeting') {
-            <span class="status-chip chip-meeting">● ส่งที่ประชุมแล้ว</span>
-          } @else if (card.status === 'approved') {
-            <span class="status-chip chip-approved">✅ อนุมัติแล้ว</span>
-          } @else if (card.status === 'rejected') {
-            <span class="status-chip chip-rejected">❌ ไม่อนุมัติ</span>
-          } @else if (card.status === 'auto-rejected') {
-            <span class="status-chip chip-auto-rejected">🚫 ระบบปฏิเสธอัตโนมัติ</span>
-          }
           <div class="date-row">
             <span class="date-label">{{ card.dateLabel }}</span>
+            @if (card.advisorTime) { <span class="advisor-time">🕐 {{ card.advisorTime }}</span> }
             @if (card.daysAgo) { <span class="days-ago">{{ card.daysAgo }} วันแล้ว</span> }
           </div>
           <div class="request-id">{{ card.requestId }}</div>
         </div>
+
+        <span class="card-arrow">›</span>
 
       </div>
     }
@@ -329,14 +316,155 @@
             </div>
           </div>
 
+          <!-- Section 7: การพิจารณาของเจ้าหน้าที่ -->
+          @if (d.cardStatus === 'pending' || d.cardStatus === 'meeting') {
+            <div class="ms-card review-section">
+              <div class="ms-head">💬 การพิจารณาของเจ้าหน้าที่</div>
+
+              <!-- Decision choices -->
+              <div class="review-choices">
+                <button class="review-choice"
+                  [class.review-choice--approved]="inlineDecision === 'approved'"
+                  (click)="inlineDecision = 'approved'">
+                  <span class="choice-indicator choice-indicator--approved">
+                    {{ inlineDecision === 'approved' ? '✓' : '○' }}
+                  </span>
+                  อนุมัติ T3
+                </button>
+                <button class="review-choice"
+                  [class.review-choice--rejected]="inlineDecision === 'rejected'"
+                  (click)="inlineDecision = 'rejected'">
+                  <span class="choice-indicator choice-indicator--rejected">
+                    {{ inlineDecision === 'rejected' ? '✗' : '○' }}
+                  </span>
+                  ไม่อนุมัติ
+                </button>
+              </div>
+
+              <!-- Reject reason (required when rejected) -->
+              @if (inlineDecision === 'rejected') {
+                <div class="meeting-info-panel meeting-info-panel--reject">
+                  <div class="meeting-info-head">
+                    💬 เหตุผลการไม่อนุมัติ <span class="required">*</span>
+                    <span class="required-note">จำเป็น</span>
+                  </div>
+                  <textarea class="modal-textarea modal-textarea--reject"
+                    [(ngModel)]="inlineRejectReason"
+                    placeholder="กรุณาระบุเหตุผลที่ไม่อนุมัติ..."
+                    rows="3"></textarea>
+                  @if (showRejectReasonError && !inlineRejectReason.trim()) {
+                    <div class="inline-error">⚠ กรุณาระบุเหตุผลการไม่อนุมัติ</div>
+                  }
+                </div>
+              }
+
+              <!-- Meeting info (required when approved) -->
+              @if (inlineDecision === 'approved') {
+                <div class="meeting-info-panel">
+                  <div class="meeting-info-head">
+                    📋 ข้อมูลที่ประชุม <span class="required">*</span>
+                    <span class="required-note">จำเป็น</span>
+                  </div>
+                  <div class="meeting-info-grid">
+                    <div class="modal-field">
+                      <div class="modal-field-label">เลขที่ประชุม <span class="required">*</span></div>
+                      <input type="text" class="modal-input"
+                        [(ngModel)]="inlineMeetingNo"
+                        placeholder="เช่น 3/2568">
+                    </div>
+                    <div class="modal-field">
+                      <div class="modal-field-label">วันที่ประชุม <span class="required">*</span></div>
+                      <input type="date" class="modal-input"
+                        [(ngModel)]="inlineMeetingDate">
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          }
         </div><!-- /modal-body -->
 
         <!-- ══ MODAL FOOTER ══ -->
-        @if (d.cardStatus === 'meeting') {
-          <div class="modal-footer">
-            <button class="btn-meeting" (click)="openMeetingModal()">📝 บันทึกมติที่ประชุม</button>
+        @if (d.cardStatus === 'pending' || d.cardStatus === 'meeting') {
+          <div class="modal-footer review-footer">
+            <button class="btn-cancel" (click)="closeDetail()">ยกเลิก</button>
+            @if (inlineDecision === 'approved') {
+              <button class="btn-inline-approve"
+                [disabled]="!inlineMeetingNo || !inlineMeetingDate || isSubmittingDecision"
+                (click)="submitInlineDecision('approved')">
+                ✓ ลงนาม Pre-T3
+              </button>
+            } @else {
+              <button class="btn-inline-approve btn-inline-approve--reject"
+                [disabled]="!inlineRejectReason.trim() || isSubmittingDecision"
+                (click)="submitInlineDecision('rejected')">
+                ✗ ยืนยันไม่อนุมัติ
+              </button>
+            }
           </div>
         }
+      }
+
+      <!-- ══ INLINE CONFIRM OVERLAY ══ -->
+      @if (showInlineConfirm && selectedDetail) {
+        <div class="ic-backdrop" (click)="cancelInlineConfirm()">
+          <div class="ic-card" (click)="$event.stopPropagation()">
+
+            <div class="ic-topbar"></div>
+
+            <div class="ic-icon">
+              {{ pendingAction === 'approved' ? '✓' : '✗' }}
+            </div>
+
+            <div class="ic-title">
+              {{ pendingAction === 'approved' ? 'ยืนยันการลงนาม Pre-T3?' : 'ยืนยันการไม่อนุมัติ Pre-T3?' }}
+            </div>
+            <div class="ic-sub">
+              {{ pendingAction === 'approved'
+                ? 'คุณแน่ใจว่าต้องการลงนามอนุมัติคำร้องนี้ใช่หรือไม่?'
+                : 'คุณแน่ใจว่าต้องการไม่อนุมัติคำร้องนี้ใช่หรือไม่?' }}
+            </div>
+
+            <div class="ic-rows">
+              <div class="ic-row">
+                <span class="ic-row-label">วารสาร</span>
+                <span class="ic-row-value">{{ selectedDetail.journalName }}</span>
+              </div>
+              <div class="ic-row">
+                <span class="ic-row-label">ฐานข้อมูล</span>
+                <span class="ic-row-value">{{ selectedDetail.database }}</span>
+              </div>
+              @if (pendingAction === 'approved') {
+                <div class="ic-row">
+                  <span class="ic-row-label">เลขที่ประชุม</span>
+                  <span class="ic-row-value">{{ inlineMeetingNo }}</span>
+                </div>
+                <div class="ic-row">
+                  <span class="ic-row-label">วันที่ประชุม</span>
+                  <span class="ic-row-value">{{ inlineMeetingDate }}</span>
+                </div>
+              } @else {
+                <div class="ic-row">
+                  <span class="ic-row-label">เหตุผล</span>
+                  <span class="ic-row-value">{{ inlineRejectReason }}</span>
+                </div>
+              }
+            </div>
+
+            <div class="ic-actions">
+              <button class="ic-btn-cancel" (click)="cancelInlineConfirm()">ยกเลิก</button>
+              <button class="ic-btn-confirm"
+                [class.ic-btn-confirm--reject]="pendingAction === 'rejected'"
+                [disabled]="isSubmittingDecision"
+                (click)="confirmAndSubmit()">
+                {{ isSubmittingDecision ? 'กำลังดำเนินการ...'
+                  : pendingAction === 'approved' ? '✓ ยืนยัน ลงนาม Pre-T3'
+                  : '✗ ยืนยัน ไม่อนุมัติ' }}
+              </button>
+            </div>
+
+          </div>
+        </div>
       }
 
     </div><!-- /modal-panel -->
