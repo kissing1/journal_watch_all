@@ -1,0 +1,67 @@
+import { Component, signal } from '@angular/core';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { PostLoginReq, PostLoginRes } from '../../model_admin/req/post_login_res';
+import { Constants } from '../../comfig/constants';
+
+@Component({
+  selector: 'app-login',
+  imports: [CommonModule, ReactiveFormsModule],
+  templateUrl: './login.html',
+  styleUrl: './login.scss',
+})
+export class Login {
+  form: FormGroup;
+  loading = signal(false);
+  errorMsg = signal('');
+  showPassword = signal(false);
+
+  constructor(
+    private fb: FormBuilder,
+    private http: HttpClient,
+    private router: Router,
+    private constants: Constants,
+  ) {
+    this.form = this.fb.group({
+      username: ['', Validators.required],
+      password: ['', Validators.required],
+    });
+  }
+
+  togglePassword() {
+    this.showPassword.update(v => !v);
+  }
+
+  onSubmit() {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+
+    this.loading.set(true);
+    this.errorMsg.set('');
+
+    const body: PostLoginReq = this.form.value;
+    const url = `${this.constants.API_ENDPOINT}/auth/login`;
+
+    this.http.post<PostLoginRes>(url, body).subscribe({
+      next: (res) => {
+        localStorage.setItem('auth_token', res.data.otpToken);
+        this.router.navigate(['/req-otp'], {
+          state: {
+            username: body.username,
+            password: body.password,
+            maskedEmail: res.data.maskedEmail,
+          },
+        });
+        this.loading.set(false);
+      },
+      error: (err) => {
+        this.errorMsg.set(err?.error?.message || 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง');
+        this.loading.set(false);
+      },
+    });
+  }
+}

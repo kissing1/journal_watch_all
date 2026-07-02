@@ -42,10 +42,10 @@ export class Sidebar {
     {
       group: 'เมนูหลัก',
       items: [
-        { label: 'Dashboard',            icon: '🏠', route: '/dashboard'    },
-        { label: 'ค้นหาวารสาร',           icon: '🔍', route: '/search'       },
-        { label: 'ตรวจสอบ MSU Unwanted', icon: '🚫', route: '/msu-unwanted' },
-        { label: 'รายงานปัญหา',           icon: '🐛', route: '/bug-reports'  },
+        { label: 'Dashboard',            icon: 'ri-dashboard-line',    route: '/dashboard'    },
+        { label: 'ค้นหาวารสาร',           icon: 'ri-search-line',       route: '/search'       },
+        { label: 'ตรวจสอบ MSU Unwanted', icon: 'ri-shield-cross-line', route: '/msu-unwanted' },
+        { label: 'รายงานปัญหา',           icon: 'ri-bug-line',          route: '/bug-reports'  },
       ],
     },
     {
@@ -53,20 +53,20 @@ export class Sidebar {
       items: [
         {
           label: 'ยื่น Pre-T3',
-          icon: '📋',
+          icon: 'ri-file-list-3-line',
           children: [
-            { label: 'ยื่น Pre-T3',    icon: '📄', route: '/pre-t3'         },
-            { label: 'สถานะ Pre-T3',   icon: '📊', route: '/pre-t3-status'  },
-            { label: 'ประวัติทั้งหมด', icon: '📁', route: '/pre-t3-history' },
+            { label: 'ยื่น Pre-T3',    icon: 'ri-file-add-line',        route: '/pre-t3'         },
+            { label: 'สถานะ Pre-T3',   icon: 'ri-task-line',            route: '/pre-t3-status'  },
+            { label: 'ประวัติทั้งหมด', icon: 'ri-history-line',         route: '/pre-t3-history' },
           ],
         },
         {
           label: 'ยื่น T3',
-          icon: '🎓',
+          icon: 'ri-graduation-cap-line',
           children: [
-            { label: 'ยื่น T3',      icon: '📄', route: '/send-t3'    },
-            { label: 'สถานะ T3',     icon: '📊', route: '/status-t3'  },
-            { label: 'ประวัติ T3',   icon: '📁', route: '/t3-history'  },
+            { label: 'ยื่น T3',    icon: 'ri-file-add-line',  route: '/send-t3'    },
+            { label: 'สถานะ T3',   icon: 'ri-task-line',      route: '/status-t3'  },
+            { label: 'ประวัติ T3', icon: 'ri-history-line',   route: '/t3-history' },
           ],
         },
       ],

@@ -295,7 +295,7 @@ export class History implements OnInit {
   statusLabel(card: HistoryCard): string {
     if (card.advisorStatus === 'Approved') return '✅ อนุมัติแล้ว';
     if (card.advisorStatus === 'Rejected') return '❌ ไม่อนุมัติ';
-    return '⏳ รอดำเนินการ';
+    return '○ รอดำเนินการ';
   }
 
   actionDateLabel(card: HistoryCard): string {

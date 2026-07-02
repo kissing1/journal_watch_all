@@ -63,7 +63,7 @@
         </div>
         <div class="card-right">
           @if (req.status === 'pending') {
-            <span class="status-badge status-pending">⏳ รอลงนาม</span>
+            <span class="status-badge status-pending"><i class="ti ti-hourglass"></i> รอลงนาม</span>
             <div class="date-info">ยื่น {{ req.submittedDate }}</div>
             <div class="days-ago">{{ req.daysAgo }} วันแล้ว</div>
           } @else if (req.status === 'approved') {

@@ -162,7 +162,9 @@
             <div class="stepper-wrap">
               @for (step of d.steps; track step.label) {
                 <div [class]="'step-item ' + step.status">
-                  <div class="step-circle" [class]="step.status">{{ step.icon }}</div>
+                  <div class="step-circle" [class]="step.status">
+                    @if (step.icon.startsWith('ti ')) { <i [class]="step.icon"></i> } @else { {{ step.icon }} }
+                  </div>
                   <div class="step-label" [class]="step.status">{{ step.label }}</div>
                   <div class="step-sub" [class]="step.status">{{ step.sub }}</div>
                   <div class="step-date">{{ step.date }}</div>

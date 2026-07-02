@@ -132,14 +132,14 @@
         </div>
         <div class="mh-right-row">
           @if (isDetailLoading) {
-            <span class="detail-refreshing">⏳ กำลังโหลดข้อมูล...</span>
+            <span class="detail-refreshing"><i class="ti ti-hourglass"></i> กำลังโหลดข้อมูล...</span>
           }
           <span class="status-chip" [class]="'status-chip chip-' + activeCard.status">
-            {{ activeCard.status === 'pending' ? '⏳ รอดำเนินการ'
-             : activeCard.status === 'meeting' ? '● ส่งที่ประชุมแล้ว'
-             : activeCard.status === 'approved' ? '✅ อนุมัติแล้ว'
-             : activeCard.status === 'rejected' ? '❌ ไม่อนุมัติ'
-             : '🚫 ระบบปฏิเสธ' }}
+            @if (activeCard.status === 'pending') { <i class="ti ti-hourglass"></i> รอดำเนินการ }
+            @else if (activeCard.status === 'meeting') { ● ส่งที่ประชุมแล้ว }
+            @else if (activeCard.status === 'approved') { ✅ อนุมัติแล้ว }
+            @else if (activeCard.status === 'rejected') { ❌ ไม่อนุมัติ }
+            @else { 🚫 ระบบปฏิเสธ }
           </span>
         </div>
       </div>

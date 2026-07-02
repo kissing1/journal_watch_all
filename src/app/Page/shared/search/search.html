@@ -66,7 +66,7 @@
     <!-- Header -->
     <div class="search-card-header">
       <div class="search-header-left">
-        <div class="search-header-icon">🔍</div>
+        <div class="search-header-icon"><i class="ti ti-search"></i></div>
         <div>
           <h2 class="search-title">ค้นหาวารสาร</h2>
           <p class="search-subtitle">ตรวจสอบวารสารจากฐานข้อมูลก่อนยื่น Pre-T3 / T3</p>
@@ -113,9 +113,9 @@
       </div>
       <button class="search-btn" (click)="search()" [disabled]="isLoading()">
         @if (isLoading()) {
-          <span class="spin-icon">⏳</span> กำลังค้นหา...
+          <span class="spin-icon"><i class="ti ti-hourglass"></i></span> กำลังค้นหา...
         } @else {
-          🔍 ค้นหา
+          <i class="ti ti-search"></i> ค้นหา
         }
       </button>
     </div>
@@ -421,7 +421,7 @@
                 <li>📞 <strong>ติดต่อบัณฑิตวิทยาลัยโดยตรง</strong> แจ้งชื่อวารสาร ISSN {{ r.issn }} และสถานะ Scopus Discontinued vs TCI Active เพื่อขอคำยืนยัน</li>
                 <li>👨‍🏫 <strong>ปรึกษาอาจารย์ที่ปรึกษา</strong> และนำผล Screenshot ของหน้าจอแบบนี้ด้วยเพื่อประกอบการพิจารณา</li>
                 <li>📝 หากบัณฑิตวิทยาลัย<strong>อนุมัติเป็นลายลักษณ์อักษร</strong> จึงสามารถนำมายื่นได้ โดยแนบหลักฐานการอนุมัติยืนยันด้วย</li>
-                <li>🔍 พิจารณาหาวารสารสำรองที่สถานะ <strong>Scopus Active และ Q1–Q2</strong> ชัดเจน เพื่อลดความเสี่ยง</li>
+                <li><i class="ti ti-search"></i> พิจารณาหาวารสารสำรองที่สถานะ <strong>Scopus Active และ Q1–Q2</strong> ชัดเจน เพื่อลดความเสี่ยง</li>
               </ul>
             </div>
 
@@ -514,7 +514,7 @@
         <div class="pred-advice-box">
           <div class="pred-advice-title">💡 คำแนะนำสำหรับนิสิต</div>
           <p>✋ ห้ามส่งบทความ หรือชำระค่า APC ให้กับวารสารนี้โดยเด็ดขาด</p>
-          <p>🔍 ค้นหาวารสารใหม่ที่มีอยู่ใน Scopus (Q1–Q2) หรือ TCI กลุ่มที่ 1 แทน</p>
+          <p><i class="ti ti-search"></i> ค้นหาวารสารใหม่ที่มีอยู่ใน Scopus (Q1–Q2) หรือ TCI กลุ่มที่ 1 แทน</p>
           <p>👨‍🏫 ปรึกษาอาจารย์ที่ปรึกษาเพื่อขอคำแนะนำวารสารที่เหมาะสม</p>
           <p>📞 ติดต่อบัณฑิตวิทยาลัย หากต้องการความช่วยเหลือเพิ่มเติม</p>
         </div>
@@ -975,7 +975,7 @@
     <div class="error-card">
       <span class="error-icon">⚠️</span>
       <div class="error-text">{{ errorMessage() }}</div>
-      <button class="btn-secondary" (click)="hasSearched.set(false); errorMessage.set('')">ลองใหม่</button>
+      <button class="btn-secondary" (click)="search()">ลองใหม่</button>
     </div>
   }
 </div><!-- /search-page -->

@@ -222,7 +222,7 @@ export class SendT3 implements OnInit {
 
     const statusPillText    = cardStatus === 'approved' ? '✅ อนุมัติสำเร็จ'
                             : cardStatus === 'rejected' ? '❌ ไม่ผ่านการอนุมัติ' : '⚙ กำลังดำเนินการ';
-    const currentStatusIcon = cardStatus === 'approved' ? '✅' : cardStatus === 'rejected' ? '❌' : '⏳';
+    const currentStatusIcon = cardStatus === 'approved' ? '✅' : cardStatus === 'rejected' ? '❌' : 'ti ti-hourglass';
     const { title, desc }   = this.buildCurrentStatus(d);
     const p = this._profileInfo;
 
@@ -283,11 +283,11 @@ export class SendT3 implements OnInit {
     let s2: Step;
     if (adv === 'Approved')       s2 = { icon: '✓',  label: 'อาจารย์ที่ปรึกษาพิจารณา', sub: '● เสร็จแล้ว',       date: this.formatDateShort(d.advisor_approval.approved_at), status: 'done'   };
     else if (adv === 'Rejected')  s2 = { icon: '✗',  label: 'อาจารย์ที่ปรึกษาพิจารณา', sub: '✗ ไม่อนุมัติ',      date: '-',                                                   status: 'active' };
-    else                          s2 = { icon: '⏳', label: 'อาจารย์ที่ปรึกษาพิจารณา', sub: '⚙ กำลังดำเนินการ', date: this.formatDateShort(d.created_at),                    status: 'active' };
+    else                          s2 = { icon: 'ti ti-hourglass', label: 'อาจารย์ที่ปรึกษาพิจารณา', sub: '⚙ กำลังดำเนินการ', date: this.formatDateShort(d.created_at),                    status: 'active' };
 
     let s3: Step;
     if (fac === 'Approved')       s3 = { icon: '✓',  label: 'รอผลจากที่ประชุม', sub: '● เสร็จแล้ว',       date: '-', status: 'done'    };
-    else if (meet)                s3 = { icon: '⏳', label: 'รอผลจากที่ประชุม', sub: '⚙ กำลังดำเนินการ', date: '-', status: 'active'  };
+    else if (meet)                s3 = { icon: 'ti ti-hourglass', label: 'รอผลจากที่ประชุม', sub: '⚙ กำลังดำเนินการ', date: '-', status: 'active'  };
     else                          s3 = { icon: '🏛', label: 'รอผลจากที่ประชุม', sub: '○ รอขั้นก่อนหน้า',  date: '-', status: 'pending' };
 
     const s4: Step = ov === 'Approved'

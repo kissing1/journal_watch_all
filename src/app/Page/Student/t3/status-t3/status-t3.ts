@@ -182,10 +182,10 @@ export class StatusT3 implements OnInit {
     if (card.overallStatus === 'Approved')    return '✅ อนุมัติแล้ว';
     if (card.advisorStatus === 'Rejected' || card.facultyStatus === 'Rejected' || card.gradStatus === 'Rejected')
                                               return '❌ ไม่ผ่านการอนุมัติ';
-    if (card.advisorStatus === 'Pending')     return '⏳ รออาจารย์ที่ปรึกษา';
-    if (card.facultyStatus === 'Pending')     return '⏳ รอที่ประชุมบัณฑิต';
-    if (card.gradStatus   === 'Pending')      return '⏳ รอบัณฑิตวิทยาลัย';
-    return '⏳ กำลังดำเนินการ';
+    if (card.advisorStatus === 'Pending')     return '○ รออาจารย์ที่ปรึกษา';
+    if (card.facultyStatus === 'Pending')     return '○ รอที่ประชุมบัณฑิต';
+    if (card.gradStatus   === 'Pending')      return '○ รอบัณฑิตวิทยาลัย';
+    return '○ กำลังดำเนินการ';
   }
 
   // ── Cancel ─────────────────────────────────────────
@@ -250,7 +250,7 @@ export class StatusT3 implements OnInit {
     const statusPillText    = cardStatus === 'approved'  ? '✅ อนุมัติสำเร็จ'
                             : cardStatus === 'rejected'  ? '❌ ไม่ผ่านการอนุมัติ'
                             :                             '⚙ กำลังดำเนินการ';
-    const currentStatusIcon = cardStatus === 'approved' ? '✅' : cardStatus === 'rejected' ? '❌' : '⏳';
+    const currentStatusIcon = cardStatus === 'approved' ? '✅' : cardStatus === 'rejected' ? '❌' : 'ti ti-hourglass';
     const { title, desc }   = this.buildCurrentStatusText(d);
 
     return {
@@ -305,7 +305,7 @@ export class StatusT3 implements OnInit {
 
     const s2: Step = adv === 'Approved' ? { icon: '✓',  label: 'อาจารย์ที่ปรึกษาพิจารณา', sub: '● เสร็จแล้ว',       date: '-', status: 'done'    }
                    : adv === 'Rejected' ? { icon: '✗',  label: 'อาจารย์ที่ปรึกษาพิจารณา', sub: '✗ ไม่อนุมัติ',      date: '-', status: 'active'  }
-                   :                     { icon: '⏳',  label: 'อาจารย์ที่ปรึกษาพิจารณา', sub: '⚙ กำลังดำเนินการ', date,      status: 'active'  };
+                   :                     { icon: 'ti ti-hourglass',  label: 'อาจารย์ที่ปรึกษาพิจารณา', sub: '⚙ กำลังดำเนินการ', date,      status: 'active'  };
 
     const s3: Step = fac === 'Approved' ? { icon: '✓',  label: 'รอผลจากที่ประชุม', sub: '● เสร็จแล้ว',       date: '-', status: 'done'    }
                    : fac === 'Rejected' ? { icon: '✗',  label: 'รอผลจากที่ประชุม', sub: '✗ ไม่อนุมัติ',      date: '-', status: 'active'  }

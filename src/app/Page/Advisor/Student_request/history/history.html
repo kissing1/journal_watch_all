@@ -79,7 +79,7 @@
           <div [class]="cardIconClass(card)">
             @if (card.advisorStatus === 'Approved') { ✅ }
             @else if (card.advisorStatus === 'Rejected') { ❌ }
-            @else { ⏳ }
+            @else { <i class="ti ti-hourglass"></i> }
           </div>
 
           <!-- BODY -->
@@ -427,7 +427,7 @@
           <div class="result-icon">
             @if (card.advisorStatus === 'Approved') { ✅ }
             @else if (card.advisorStatus === 'Rejected') { ❌ }
-            @else { ⏳ }
+            @else { <i class="ti ti-hourglass"></i> }
           </div>
           <div class="result-body">
             <div class="result-title">

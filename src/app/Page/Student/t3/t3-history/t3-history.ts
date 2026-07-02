@@ -277,7 +277,7 @@ export class T3History implements OnInit {
 
     const s2: Step = adv === 'Approved' ? { icon: '✓', label: 'อาจารย์ที่ปรึกษาพิจารณา', sub: '● เสร็จแล้ว',  date: '-', status: 'done'   }
                    : adv === 'Rejected' ? { icon: '✗', label: 'อาจารย์ที่ปรึกษาพิจารณา', sub: '✗ ไม่อนุมัติ', date: '-', status: 'active' }
-                   :                     { icon: '⏳', label: 'อาจารย์ที่ปรึกษาพิจารณา', sub: '⚙ ดำเนินการ',  date,      status: 'active' };
+                   :                     { icon: 'ti ti-hourglass', label: 'อาจารย์ที่ปรึกษาพิจารณา', sub: '⚙ ดำเนินการ',  date,      status: 'active' };
 
     const s3: Step = fac === 'Approved' ? { icon: '✓', label: 'รอผลจากที่ประชุม', sub: '● เสร็จแล้ว',      date: '-', status: 'done'    }
                    : fac === 'Rejected' ? { icon: '✗', label: 'รอผลจากที่ประชุม', sub: '✗ ไม่อนุมัติ',     date: '-', status: 'active'  }

@@ -219,7 +219,7 @@ export class PreT3Status implements OnInit {
     else if (cardStatus === 'rejected') statusPillText = '❌ ไม่ผ่านการอนุมัติ';
     else statusPillText = '⚙ กำลังดำเนินการ';
 
-    const currentStatusIcon = cardStatus === 'approved' ? '✅' : cardStatus === 'rejected' ? '❌' : '⏳';
+    const currentStatusIcon = cardStatus === 'approved' ? '✅' : cardStatus === 'rejected' ? '❌' : 'ti ti-hourglass';
 
     const { title, desc } = this.buildCurrentStatus(d, info.advisorName);
 
@@ -306,14 +306,14 @@ export class PreT3Status implements OnInit {
     let s2: Step;
     if (adv === 'Approved')       s2 = { icon: '✓',  label: 'อาจารย์ที่ปรึกษาพิจารณา', sub: '● เสร็จแล้ว',       date: advisorDate, status: 'done'   };
     else if (adv === 'Rejected')  s2 = { icon: '✗',  label: 'อาจารย์ที่ปรึกษาพิจารณา', sub: '✗ ไม่อนุมัติ',      date: '-',         status: 'active' };
-    else                          s2 = { icon: '⏳', label: 'อาจารย์ที่ปรึกษาพิจารณา', sub: '⚙ กำลังดำเนินการ', date: createdDate,  status: 'active' };
+    else                          s2 = { icon: 'ti ti-hourglass', label: 'อาจารย์ที่ปรึกษาพิจารณา', sub: '⚙ กำลังดำเนินการ', date: createdDate,  status: 'active' };
 
     // Step 3 — meeting
     let s4: Step;
     if (fac === 'Approved')
       s4 = { icon: '✓',  label: 'รอผลจากที่ประชุม', sub: '● เสร็จแล้ว',       date: '-', status: 'done'   };
     else if (meet)
-      s4 = { icon: '⏳', label: 'รอผลจากที่ประชุม', sub: '⚙ กำลังดำเนินการ', date: '-', status: 'active' };
+      s4 = { icon: 'ti ti-hourglass', label: 'รอผลจากที่ประชุม', sub: '⚙ กำลังดำเนินการ', date: '-', status: 'active' };
     else
       s4 = { icon: '🏛', label: 'รอผลจากที่ประชุม', sub: '○ รอขั้นก่อนหน้า',  date: '-', status: 'pending' };
 

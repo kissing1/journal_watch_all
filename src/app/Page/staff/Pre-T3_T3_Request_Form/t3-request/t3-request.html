@@ -132,7 +132,7 @@
             <span class="section-title">ข้อมูลนิสิต</span>
           </div>
           @if (isDetailLoading()) {
-            <div class="detail-loading">⏳ กำลังโหลดข้อมูล...</div>
+            <div class="detail-loading"><i class="ti ti-hourglass"></i> กำลังโหลดข้อมูล...</div>
           } @else if (detailData(); as d) {
             <div class="detail-grid">
               <div class="detail-field"><div class="detail-label">ชื่อ-นามสกุล</div><div class="detail-value">{{ d.student_name }}</div></div>
@@ -325,7 +325,7 @@
               <button class="btn-approve"
                       [disabled]="isSubmitting() || !canSubmit"
                       (click)="submitDecision()">
-                {{ isSubmitting() ? '⏳ กำลังส่ง...' : '✅ ลงนามอนุมัติ T3' }}
+                @if (isSubmitting()) { <i class="ti ti-hourglass"></i> กำลังส่ง... } @else { ✅ ลงนามอนุมัติ T3 }
               </button>
             </div>
           </div>

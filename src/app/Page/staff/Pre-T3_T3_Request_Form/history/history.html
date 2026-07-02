@@ -195,7 +195,7 @@
       <!-- ══ LOADING ══ -->
       @if (detailLoading()) {
         <div class="modal-loading">
-          <span>⏳ กำลังโหลดรายละเอียด...</span>
+          <span><i class="ti ti-hourglass"></i> กำลังโหลดรายละเอียด...</span>
         </div>
       }
 
@@ -240,7 +240,7 @@
                     <div class="tl-item">
                       <div class="tl-left">
                         <div [class]="'tl-icon tl-' + (apv.status === 'อนุมัติ' ? 'advisor' : apv.status === 'ไม่อนุมัติ' ? 'reject' : 'waiting')">
-                          {{ apv.status === 'อนุมัติ' ? '✅' : apv.status === 'ไม่อนุมัติ' ? '❌' : '⏳' }}
+                          @if (apv.status === 'อนุมัติ') { ✅ } @else if (apv.status === 'ไม่อนุมัติ') { ❌ } @else { <i class="ti ti-hourglass"></i> }
                         </div>
                         @if (!last) { <div class="tl-line"></div> }
                       </div>
@@ -297,7 +297,7 @@
 
       <!-- Loading -->
       @if (t3DetailLoading()) {
-        <div class="t3-modal-body"><div class="detail-loading">⏳ กำลังโหลดข้อมูล...</div></div>
+        <div class="t3-modal-body"><div class="detail-loading"><i class="ti ti-hourglass"></i> กำลังโหลดข้อมูล...</div></div>
       }
 
       @if (selectedT3Detail(); as d) {
@@ -417,7 +417,7 @@
                     <div class="tl-item">
                       <div class="tl-left">
                         <div [class]="'tl-icon tl-' + (apv.status === 'อนุมัติ' ? 'advisor' : apv.status === 'ไม่อนุมัติ' ? 'reject' : 'waiting')">
-                          {{ apv.status === 'อนุมัติ' ? '✓' : apv.status === 'ไม่อนุมัติ' ? '✕' : '⏳' }}
+                          @if (apv.status === 'อนุมัติ') { ✓ } @else if (apv.status === 'ไม่อนุมัติ') { ✕ } @else { <i class="ti ti-hourglass"></i> }
                         </div>
                         @if (!last) { <div class="tl-line"></div> }
                       </div>

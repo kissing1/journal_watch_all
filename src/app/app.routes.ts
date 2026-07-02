@@ -5,6 +5,7 @@ import { AboutJournalWatch } from './Page/shared/about-journal-watch/about-journ
 import { Manual } from './Page/shared/manual/manual';
 import { Contact } from './Page/shared/contact/contact';
 import { authGuard } from './auth.guard';
+import { adminGuard } from './admin.guard';
 
 import { MsuUnwanted } from './Page/shared/msu-unwanted/msu-unwanted';
 import { Search } from './Page/shared/search/search';
@@ -19,6 +20,130 @@ export const routes: Routes = [
   { path: 'about', component: AboutJournalWatch },
   { path: 'manual', component: Manual },
   { path: 'contact', component: Contact },
+
+  // ── Admin Login Flow ──
+  {
+    path: 'login-admin',
+    loadComponent: () => import('./Login/login_admin/login').then(m => m.Login),
+  },
+  {
+    path: 'req-otp',
+    loadComponent: () => import('./page_admin/shared/req-otp/req-otp').then(m => m.ReqOTP),
+  },
+
+  // ── Admin Routes ──
+  {
+    path: 'admin/dashboard',
+    loadComponent: () => import('./page_admin/admin/dashboard/dashboard').then(m => m.Dashboard),
+    canActivate: [adminGuard],
+  },
+  {
+    path: 'admin/profile',
+    loadComponent: () => import('./page_admin/admin/profile/profile').then(m => m.Profile),
+    canActivate: [adminGuard],
+  },
+  {
+    path: 'admin/search',
+    loadComponent: () => import('./page_admin/shared/search/search').then(m => m.Search),
+    canActivate: [adminGuard],
+  },
+  {
+    path: 'admin/msu-unwanted',
+    loadComponent: () => import('./page_admin/shared/msu-unwanted/msu-unwanted').then(m => m.MsuUnwanted),
+    canActivate: [adminGuard],
+  },
+  {
+    path: 'admin/manage-users',
+    loadComponent: () => import('./page_admin/shared/manage-users/manage-users').then(m => m.ManageUsers),
+    canActivate: [adminGuard],
+  },
+  {
+    path: 'admin/system-log',
+    loadComponent: () => import('./page_admin/shared/system-log/system-log').then(m => m.SystemLog),
+    canActivate: [adminGuard],
+  },
+  {
+    path: 'admin/bug-reports',
+    loadComponent: () => import('./page_admin/shared/bug-reports/bug-reports').then(m => m.BugReports),
+    canActivate: [adminGuard],
+  },
+  {
+    path: 'admin/backup-restore',
+    loadComponent: () => import('./page_admin/shared/backup-restore/backup-restore').then(m => m.BackupRestore),
+    canActivate: [adminGuard],
+  },
+  {
+    path: 'admin/reports',
+    loadComponent: () => import('./page_admin/shared/reports/reports').then(m => m.Reports),
+    canActivate: [adminGuard],
+  },
+  {
+    path: 'admin/about',
+    loadComponent: () => import('./page_admin/shared/about-journal-watch/about-journal-watch').then(m => m.AboutJournalWatch),
+    canActivate: [adminGuard],
+  },
+  {
+    path: 'admin/manual',
+    loadComponent: () => import('./page_admin/shared/manual/manual').then(m => m.Manual),
+    canActivate: [adminGuard],
+  },
+
+  // ── Super-Admin Routes ──
+  {
+    path: 'super-admin/dashboard',
+    loadComponent: () => import('./page_admin/super-admin/dashboard/dashboard').then(m => m.Dashboard),
+    canActivate: [adminGuard],
+  },
+  {
+    path: 'super-admin/profile',
+    loadComponent: () => import('./page_admin/super-admin/profile/profile').then(m => m.Profile),
+    canActivate: [adminGuard],
+  },
+  {
+    path: 'super-admin/search',
+    loadComponent: () => import('./page_admin/shared/search/search').then(m => m.Search),
+    canActivate: [adminGuard],
+  },
+  {
+    path: 'super-admin/msu-unwanted',
+    loadComponent: () => import('./page_admin/shared/msu-unwanted/msu-unwanted').then(m => m.MsuUnwanted),
+    canActivate: [adminGuard],
+  },
+  {
+    path: 'super-admin/manage-users',
+    loadComponent: () => import('./page_admin/shared/manage-users/manage-users').then(m => m.ManageUsers),
+    canActivate: [adminGuard],
+  },
+  {
+    path: 'super-admin/system-log',
+    loadComponent: () => import('./page_admin/shared/system-log/system-log').then(m => m.SystemLog),
+    canActivate: [adminGuard],
+  },
+  {
+    path: 'super-admin/bug-reports',
+    loadComponent: () => import('./page_admin/shared/bug-reports/bug-reports').then(m => m.BugReports),
+    canActivate: [adminGuard],
+  },
+  {
+    path: 'super-admin/backup-restore',
+    loadComponent: () => import('./page_admin/shared/backup-restore/backup-restore').then(m => m.BackupRestore),
+    canActivate: [adminGuard],
+  },
+  {
+    path: 'super-admin/reports',
+    loadComponent: () => import('./page_admin/shared/reports/reports').then(m => m.Reports),
+    canActivate: [adminGuard],
+  },
+  {
+    path: 'super-admin/about',
+    loadComponent: () => import('./page_admin/shared/about-journal-watch/about-journal-watch').then(m => m.AboutJournalWatch),
+    canActivate: [adminGuard],
+  },
+  {
+    path: 'super-admin/manual',
+    loadComponent: () => import('./page_admin/shared/manual/manual').then(m => m.Manual),
+    canActivate: [adminGuard],
+  },
   {
     path: 'dashboard',
     loadComponent: () =>

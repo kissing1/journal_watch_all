@@ -45,7 +45,7 @@ export class Dashboard implements OnInit {
     },
     {
       number: 4,
-      icon: '⏳',
+      icon: '○',
       title: 'รอผลการพิจารณา',
       desc: 'เจ้าหน้าที่นำคำร้องเข้าที่ประชุมบัณฑิตวิทยาลัย รอมติอนุมัติ/ไม่อนุมัติ',
       color: '#1A5FAB',

@@ -19,7 +19,8 @@ export class AuthInterceptor implements HttpInterceptor {
     return next.handle(req).pipe(
       catchError((err: HttpErrorResponse) => {
         // ไม่ refresh ถ้า error มาจาก endpoint /auth/refresh เอง (ป้องกัน loop)
-        if (err.status === 401 && !req.url.includes('/auth/refresh')) {
+        // และไม่ redirect ถ้า user ยังไม่ได้ login อยู่ (ปล่อยให้ component จัดการ error เอง)
+        if (err.status === 401 && !req.url.includes('/auth/refresh') && this.auth.isLoggedIn) {
           return this.handle401(req, next);
         }
         return throwError(() => err);
@@ -44,7 +45,7 @@ export class AuthInterceptor implements HttpInterceptor {
             this.refreshSubject.next(token);
             return next.handle(this.attachToken(req, token));
           }
-          // refresh ล้มเหลว → logout
+          // refresh ล้มเหลว → logout แล้ว redirect
           this.auth.logout();
           this.router.navigateByUrl('/login');
           return throwError(() => new Error('Session expired'));

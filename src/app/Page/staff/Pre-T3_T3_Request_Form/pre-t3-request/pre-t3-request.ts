@@ -569,7 +569,7 @@ export class PreT3Request implements OnInit {
 
   private statusText(s: string): string {
     return ({
-      pending:         '⏳ รอดำเนินการ',
+      pending:         '○ รอดำเนินการ',
       meeting:         '● ส่งที่ประชุมแล้ว',
       approved:        '✅ อนุมัติแล้ว',
       rejected:        '❌ ไม่อนุมัติ',
