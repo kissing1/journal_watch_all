@@ -173,6 +173,16 @@ export class T3History implements OnInit {
     return 'cs-chip cs-rejected';
   }
 
+  actionDateLabel(card: T3Card): string {
+    if (card.status === 'approved' && card.gradDateTime) return `อนุมัติ ${card.gradDateTime}`;
+    if (card.status === 'rejected') {
+      if (card.advisorStatus === 'Rejected' && card.advisorDateTime) return `ปฏิเสธ ${card.advisorDateTime}`;
+      if (card.facultyStatus === 'Rejected' && card.facultyDateTime) return `ปฏิเสธ ${card.facultyDateTime}`;
+      if (card.gradStatus    === 'Rejected' && card.gradDateTime)    return `ปฏิเสธ ${card.gradDateTime}`;
+    }
+    return '';
+  }
+
   // ── Detail Modal ─────────────────────────────────────
   get selectedDetail(): T3DetailView | null {
     const id = this.selectedId();
@@ -220,10 +230,10 @@ export class T3History implements OnInit {
     else if (ov === 'Cancelled') cardStatus = 'cancelled';
     else                     cardStatus = 'rejected';
 
-    const statusPillText    = cardStatus === 'approved'  ? '✅ อนุมัติสำเร็จ'
+    const statusPillText    = cardStatus === 'approved'  ? 'อนุมัติสำเร็จ'
                             : cardStatus === 'cancelled' ? '🚫 ยกเลิกแล้ว'
                             :                             '❌ ไม่ผ่านการอนุมัติ';
-    const currentStatusIcon = cardStatus === 'approved'  ? '✅'
+    const currentStatusIcon = cardStatus === 'approved'  ? 'ti ti-circle-check'
                             : cardStatus === 'cancelled' ? '🚫' : '❌';
     const { title, desc }   = this.buildCurrentStatusText(d);
 

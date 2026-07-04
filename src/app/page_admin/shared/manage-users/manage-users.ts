@@ -28,7 +28,10 @@ export class ManageUsers implements OnInit {
   private auth      = inject(AuthService);
   private constants = inject(Constants);
 
-  get isSuperAdmin(): boolean { return this.auth.user?.role === 'SuperAdmin'; }
+  get isSuperAdmin(): boolean {
+    return this.auth.user?.role === 'SuperAdmin'
+      || (JSON.parse(localStorage.getItem('user') ?? 'null') as any)?.role === 'SuperAdmin';
+  }
   get canSeeAdminTab(): boolean { return this.isSuperAdmin; }
 
   isLoading  = signal(true);

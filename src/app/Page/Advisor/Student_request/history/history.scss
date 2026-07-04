@@ -72,6 +72,9 @@ $white:  #FFFFFF;
   &--approved.active { background: #065F46; border-color: #065F46; color: $white; }
   &--rejected.active  { background: #991B1B; border-color: #991B1B; color: $white; }
 }
+.filter-divider {
+  width: 1.5px; align-self: stretch; background: $border; margin: 2px 2px;
+}
 .filter-count {
   display: inline-flex; align-items: center; justify-content: center;
   min-width: 20px; height: 20px; border-radius: 99px; padding: 0 6px;
@@ -88,16 +91,6 @@ $white:  #FFFFFF;
   padding: 18px 20px;
   transition: box-shadow 0.18s, border-color 0.18s;
   &:hover { box-shadow: 0 4px 18px rgba(28,39,68,0.09); border-color: rgba(28,39,68,0.18); }
-}
-
-/* ── STATUS ICON ── */
-.card-icon {
-  flex-shrink: 0; width: 44px; height: 44px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center; font-size: 18px;
-
-  &--approved { background: rgba(26,122,66,0.1); border: 2px solid rgba(26,122,66,0.25); }
-  &--rejected  { background: rgba(192,57,43,0.1);  border: 2px solid rgba(192,57,43,0.25);  }
-  &--pending  { background: rgba(232,168,0,0.1);   border: 2px solid rgba(232,168,0,0.25);  }
 }
 
 /* ── CARD BODY ── */
@@ -154,6 +147,7 @@ $white:  #FFFFFF;
 
 .status-badge {
   font-size: 12px; font-weight: 700; padding: 5px 14px; border-radius: 99px; white-space: nowrap;
+  display: inline-flex; align-items: center; gap: 5px;
   &.status-approved { background: #D1FAE5; color: #065F46; border: 1px solid #A7F3D0; }
   &.status-rejected  { background: #FEE2E2; color: #991B1B; border: 1px solid #FECACA; }
   &.status-pending  { background: #FEF3C7; color: #92600A; border: 1px solid #FDE68A; }
@@ -214,6 +208,7 @@ $white:  #FFFFFF;
 
 .modal-status-badge {
   font-size: 11px; font-weight: 700; padding: 3px 12px; border-radius: 99px;
+  display: inline-flex; align-items: center; gap: 5px;
   &.badge-pending  { background: #FEF3C7; color: #92600A; border: 1px solid #FDE68A; }
   &.badge-approved { background: #D1FAE5; color: #065F46; border: 1px solid #A7F3D0; }
   &.badge-rejected { background: #FEE2E2; color: #991B1B; border: 1px solid #FECACA; }
@@ -324,7 +319,7 @@ $white:  #FFFFFF;
 .result-section {
   display: flex; align-items: flex-start; gap: 16px;
   padding: 20px 22px; border-radius: 12px; border: 1.5px solid $border;
-  &.result-approved { background: rgba(26,122,66,0.06); border-color: rgba(26,122,66,0.3); }
+  &.result-approved { background: rgba(26,122,66,0.06); border-color: rgba(26,122,66,0.3); .result-icon { color: $green; } }
   &.result-rejected  { background: rgba(192,57,43,0.06);  border-color: rgba(192,57,43,0.3); }
   &.result-pending  { background: rgba(232,168,0,0.06);   border-color: rgba(232,168,0,0.3); }
 }

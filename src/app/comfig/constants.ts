@@ -4,5 +4,5 @@ import { Injectable } from "@angular/core";
     providedIn:'root',
 })
 export class Constants{
-    public readonly API_ENDPOINT: string = 'https://api.farmlnwza007.online/api';
+    public readonly API_ENDPOINT: string = 'https://api.farmlnwza007.online/api/v2';
 }

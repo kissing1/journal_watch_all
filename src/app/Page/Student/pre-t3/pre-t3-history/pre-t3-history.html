@@ -3,13 +3,13 @@
   <!-- TAB NAV -->
   <div class="tab-bar">
     <a class="tab-item" routerLink="/pre-t3" routerLinkActive="tab-active" [routerLinkActiveOptions]="{ exact: true }">
-      <span class="tab-icon">📋</span><span class="tab-label">ยื่น Pre-T3</span>
+      <span class="tab-icon"><i class="ti ti-clipboard-text"></i></span><span class="tab-label">ยื่น Pre-T3</span>
     </a>
     <a class="tab-item" routerLink="/pre-t3-status" routerLinkActive="tab-active">
-      <span class="tab-icon">📊</span><span class="tab-label">สถานะ Pre-T3</span>
+      <span class="tab-icon"><i class="ti ti-chart-bar"></i></span><span class="tab-label">สถานะ Pre-T3</span>
     </a>
     <a class="tab-item" routerLink="/pre-t3-history" routerLinkActive="tab-active">
-      <span class="tab-icon">📁</span><span class="tab-label">ประวัติทั้งหมด</span>
+      <span class="tab-icon"><i class="ti ti-folder"></i></span><span class="tab-label">ประวัติทั้งหมด</span>
     </a>
   </div>
 
@@ -78,11 +78,11 @@
 
         <div class="current-status">
           @if (card.status === 'approved') {
-            <span class="cs-chip cs-approved">✅ อนุมัติสำเร็จ</span>
+            <span class="cs-chip cs-approved"><i class="ti ti-circle-check"></i> อนุมัติสำเร็จ</span>
           } @else if (card.status === 'cancelled') {
-            <span class="cs-chip cs-cancelled">🚫 ยกเลิกแล้ว</span>
+            <span class="cs-chip cs-cancelled"><i class="ti ti-ban"></i> ยกเลิกแล้ว</span>
           } @else {
-            <span class="cs-chip cs-rejected">❌ ไม่ผ่านการอนุมัติ</span>
+            <span class="cs-chip cs-rejected"><i class="ti ti-circle-x"></i> ไม่ผ่านการอนุมัติ</span>
           }
         </div>
 
@@ -131,6 +131,7 @@
               <div class="mh-date-lbl">วันที่ยื่น</div>
             </div>
             <div class="mh-status-pill" [class]="'mh-status-pill mh-status-pill--' + d.cardStatus">
+              @if (d.cardStatus === 'approved') { <i class="ti ti-circle-check"></i> }
               {{ d.statusPillText }}
             </div>
           </div>
@@ -178,7 +179,9 @@
 
         <!-- Section: Current Status -->
         <div class="ms-current" [class]="'ms-current ms-current--' + d.cardStatus">
-          <div class="ms-current-icon">{{ d.currentStatusIcon }}</div>
+          <div class="ms-current-icon">
+            @if (d.currentStatusIcon.startsWith('ti ')) { <i [class]="d.currentStatusIcon"></i> } @else { {{ d.currentStatusIcon }} }
+          </div>
           <div class="ms-current-body">
             <div class="ms-current-title">{{ d.currentStatusTitle }}</div>
             <div class="ms-current-desc">{{ d.currentStatusDesc }}</div>

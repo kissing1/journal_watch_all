@@ -122,6 +122,7 @@ $gray:   #9CA3AF;
 .current-status { display: flex; }
 .cs-chip {
   font-size: 12.5px; font-weight: 700; padding: 6px 14px; border-radius: 99px;
+  display: inline-flex; align-items: center; gap: 6px;
   &.cs-approved  { background: $green-l;  color: $green;  border: 1px solid #a8d9bc; }
   &.cs-rejected  { background: $red-l;    color: $red;    border: 1px solid #f5c6c0; }
   &.cs-cancelled { background: #F3F4F6;   color: $muted;  border: 1px solid #D1D5DB; }
@@ -195,6 +196,7 @@ $gray:   #9CA3AF;
 .mh-status-pill {
   font-size: 12px; font-weight: 700; padding: 7px 16px; border-radius: 99px; white-space: nowrap;
   background: rgba(232,168,0,0.12); color: #b87d00; border: 1.5px solid rgba(232,168,0,0.4);
+  display: inline-flex; align-items: center; gap: 6px;
   &.mh-status-pill--approved { background: $green-l; color: $green; border-color: #a8d9bc; }
   &.mh-status-pill--rejected  { background: $red-l;   color: $red;   border-color: #f5c6c0; }
   &.mh-status-pill--cancelled { background: #F3F4F6;  color: $muted; border-color: #D1D5DB; }
@@ -222,7 +224,7 @@ $gray:   #9CA3AF;
   background: rgba(232,168,0,0.08); border: 1.5px solid rgba(232,168,0,0.35);
   .ms-current-title { color: #b87d00; }
   .ms-current-desc  { color: #7a5500; }
-  &.ms-current--approved { background: rgba(26,122,66,0.08); border-color: rgba(26,122,66,0.35); .ms-current-title { color: $green; } .ms-current-desc { color: darken($green, 8%); } }
+  &.ms-current--approved { background: rgba(26,122,66,0.08); border-color: rgba(26,122,66,0.35); .ms-current-title { color: $green; } .ms-current-desc { color: darken($green, 8%); } .ms-current-icon { color: $green; } }
   &.ms-current--rejected  { background: rgba(192,57,43,0.08); border-color: rgba(192,57,43,0.35); .ms-current-title { color: $red;   } .ms-current-desc { color: darken($red, 5%); } }
   &.ms-current--cancelled { background: #F9FAFB; border-color: #D1D5DB; .ms-current-title { color: $muted; } .ms-current-desc { color: $gray; } }
 }

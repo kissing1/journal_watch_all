@@ -24,7 +24,8 @@ export class MsuUnwanted implements OnInit {
   private constants = inject(Constants);
 
   get canManage(): boolean {
-    const role = this.auth.user?.role;
+    const role = this.auth.user?.role
+      ?? (JSON.parse(localStorage.getItem('user') ?? 'null') as any)?.role;
     return role === 'Admin' || role === 'SuperAdmin';
   }
 

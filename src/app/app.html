@@ -1,12 +1,12 @@
 @if (isAdmin) {
-  <app-header-admin [sidebarOpen]="sidebarOpen" [showToggle]="authService.isLoggedIn && !isLoginPage" (menuClick)="toggleSidebar()"></app-header-admin>
+  <app-header-admin [sidebarOpen]="sidebarOpen" [showToggle]="(authService.isLoggedIn || isAdmin) && !isLoginPage" (menuClick)="toggleSidebar()"></app-header-admin>
 } @else {
   <app-header [sidebarOpen]="sidebarOpen" [showToggle]="authService.isLoggedIn && !isLoginPage" (menuClick)="toggleSidebar()"></app-header>
 }
 
 <div class="app-layout">
 
-  @if (authService.isLoggedIn && !isLoginPage) {
+  @if ((authService.isLoggedIn || isAdmin) && !isLoginPage) {
     @if (isAdmin) {
       <app-sidebar-admin [isOpen]="sidebarOpen"></app-sidebar-admin>
     } @else if (isAdvisor) {

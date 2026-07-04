@@ -10,7 +10,8 @@ import { PreT3HistoryAdvisor, Item as PreT3Item } from '../../../../model/res/pr
 import { GetDeteilsT3Res, Data as T3Detail } from '../../../../model/res/get_deteils_T3_res';
 import { PreT3DetailsRes, Data as PreT3Detail } from '../../../../model/res/Pre-T3_details_res';
 
-type FilterType    = 'all' | 'approved' | 'rejected' | 'pre-t3' | 't3';
+type TypeFilter    = 'all' | 'pre-t3' | 't3';
+type StatusFilter  = 'all' | 'approved' | 'rejected';
 type AdvisorStatus = 'Approved' | 'Rejected' | 'Pending';
 
 interface HistoryCard {
@@ -79,7 +80,8 @@ export class History implements OnInit {
 
   isLoading       = signal(true);
   isDetailLoading = signal(false);
-  activeFilter    = signal<FilterType>('all');
+  typeFilter      = signal<TypeFilter>('all');
+  statusFilter    = signal<StatusFilter>('all');
   allCards        = signal<HistoryCard[]>([]);
   selectedCard    = signal<HistoryCard | null>(null);
   detailDataT3    = signal<T3Detail | null>(null);
@@ -89,13 +91,15 @@ export class History implements OnInit {
   fileViewing: Record<string, boolean> = {};
 
   filtered = computed(() => {
-    const f   = this.activeFilter();
-    const all = this.allCards();
-    if (f === 'approved') return all.filter(c => c.advisorStatus === 'Approved');
-    if (f === 'rejected') return all.filter(c => c.advisorStatus === 'Rejected');
-    if (f === 'pre-t3')  return all.filter(c => c.itemType === 'PreT3');
-    if (f === 't3')      return all.filter(c => c.itemType === 'T3');
-    return all;
+    const type   = this.typeFilter();
+    const status = this.statusFilter();
+    return this.allCards().filter(c => {
+      if (type === 'pre-t3' && c.itemType !== 'PreT3') return false;
+      if (type === 't3'     && c.itemType !== 'T3')    return false;
+      if (status === 'approved' && c.advisorStatus !== 'Approved') return false;
+      if (status === 'rejected' && c.advisorStatus !== 'Rejected') return false;
+      return true;
+    });
   });
 
   get countAll():      number { return this.allCards().length; }
@@ -104,7 +108,18 @@ export class History implements OnInit {
   get countPreT3():    number { return this.allCards().filter(c => c.itemType === 'PreT3').length; }
   get countT3():       number { return this.allCards().filter(c => c.itemType === 'T3').length; }
 
-  setFilter(f: FilterType): void { this.activeFilter.set(f); }
+  resetFilters(): void {
+    this.typeFilter.set('all');
+    this.statusFilter.set('all');
+  }
+
+  setTypeFilter(f: Exclude<TypeFilter, 'all'>): void {
+    this.typeFilter.set(this.typeFilter() === f ? 'all' : f);
+  }
+
+  setStatusFilter(f: Exclude<StatusFilter, 'all'>): void {
+    this.statusFilter.set(this.statusFilter() === f ? 'all' : f);
+  }
 
   checklistItems(): ChecklistItem[] {
     const data = this.detailDataPreT3();
@@ -280,12 +295,6 @@ export class History implements OnInit {
     return `${d.getDate()} ${this.THAI_MONTHS[d.getMonth()]} ${year}`;
   }
 
-  cardIconClass(card: HistoryCard): string {
-    if (card.advisorStatus === 'Approved') return 'card-icon card-icon--approved';
-    if (card.advisorStatus === 'Rejected') return 'card-icon card-icon--rejected';
-    return 'card-icon card-icon--pending';
-  }
-
   statusBadgeClass(card: HistoryCard): string {
     if (card.advisorStatus === 'Approved') return 'status-badge status-approved';
     if (card.advisorStatus === 'Rejected') return 'status-badge status-rejected';
@@ -293,7 +302,7 @@ export class History implements OnInit {
   }
 
   statusLabel(card: HistoryCard): string {
-    if (card.advisorStatus === 'Approved') return '✅ อนุมัติแล้ว';
+    if (card.advisorStatus === 'Approved') return 'อนุมัติแล้ว';
     if (card.advisorStatus === 'Rejected') return '❌ ไม่อนุมัติ';
     return '○ รอดำเนินการ';
   }

@@ -60,12 +60,11 @@ $orange: #D4580A;
 }
 
 .hero-logo {
-  width: 100px;
-  height: 100px;
-  object-fit: cover;
+  width: 112px;
+  height: 112px;
+  object-fit: contain;
   flex-shrink: 0;
-  border-radius: 50%;
-  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3));
+  filter: drop-shadow(0 4px 14px rgba(0,0,0,0.5));
 }
 
 .hero-title {

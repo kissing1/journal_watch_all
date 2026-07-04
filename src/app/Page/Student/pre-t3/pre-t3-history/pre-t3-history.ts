@@ -196,10 +196,10 @@ export class PreT3History implements OnInit {
       d.overall_status === 'Approved'  ? 'approved'  :
       d.overall_status === 'Cancelled' ? 'cancelled' : 'rejected';
 
-    const statusPillText    = cardStatus === 'approved'  ? '✅ อนุมัติสำเร็จ'
+    const statusPillText    = cardStatus === 'approved'  ? 'อนุมัติสำเร็จ'
                             : cardStatus === 'cancelled' ? '🚫 ยกเลิกแล้ว'
                             :                             '❌ ไม่ผ่านการอนุมัติ';
-    const currentStatusIcon = cardStatus === 'approved'  ? '✅'
+    const currentStatusIcon = cardStatus === 'approved'  ? 'ti ti-circle-check'
                             : cardStatus === 'cancelled' ? '🚫' : '❌';
     const { title, desc }     = this.buildCurrentStatus(d, info.advisorName);
 

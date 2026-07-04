@@ -43,10 +43,10 @@ export class SidebarAdvisor {
     {
       group: 'เมนูหลัก',
       items: [
-        { label: 'Dashboard',             icon: '🏠', route: '/advisor/dashboard' },
-        { label: 'ค้นหาวารสาร',          icon: '🔍', route: '/search'            },
-        { label: 'ตรวจสอบ MSU Unwanted', icon: '🚫', route: '/msu-unwanted'      },
-        { label: 'รายงานปัญหา',          icon: '🐛', route: '/bug-reports'       },
+        { label: 'Dashboard',             icon: 'ti ti-home',          route: '/advisor/dashboard' },
+        { label: 'ค้นหาวารสาร',          icon: 'ti ti-search',        route: '/search'            },
+        { label: 'ตรวจสอบ MSU Unwanted', icon: 'ti ti-ban',           route: '/msu-unwanted'      },
+        { label: 'รายงานปัญหา',          icon: 'ti ti-bug',           route: '/bug-reports'       },
       ],
     },
     {
@@ -54,11 +54,11 @@ export class SidebarAdvisor {
       items: [
         {
           label: 'คำร้องขอของนิสิต',
-          icon: '📋',
+          icon: 'ti ti-clipboard-text',
           children: [
-            { label: 'Pre-T3 ที่รอลงนาม', icon: '📋', route: '/advisor/pre-t3-request' },
-            { label: 'T3 ที่รอลงนาม',     icon: '📊', route: '/advisor/t3-request'     },
-            { label: 'ประวัติทั้งหมด',    icon: '📁', route: '/advisor/history'         },
+            { label: 'Pre-T3 ที่รอลงนาม', icon: 'ti ti-clipboard-text', route: '/advisor/pre-t3-request' },
+            { label: 'T3 ที่รอลงนาม',     icon: 'ti ti-chart-bar',      route: '/advisor/t3-request'     },
+            { label: 'ประวัติทั้งหมด',    icon: 'ti ti-folder',         route: '/advisor/history'         },
           ],
         },
       ],

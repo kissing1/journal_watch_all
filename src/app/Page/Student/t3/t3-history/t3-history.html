@@ -3,13 +3,13 @@
   <!-- TAB BAR -->
   <div class="tab-bar">
     <a class="tab-item" routerLink="/send-t3" routerLinkActive="tab-active" [routerLinkActiveOptions]="{ exact: true }">
-      <span class="tab-icon">📋</span><span class="tab-label">ยื่น T3</span>
+      <span class="tab-icon"><i class="ti ti-clipboard-text"></i></span><span class="tab-label">ยื่น T3</span>
     </a>
     <a class="tab-item" routerLink="/status-t3" routerLinkActive="tab-active">
-      <span class="tab-icon">📊</span><span class="tab-label">สถานะ T3</span>
+      <span class="tab-icon"><i class="ti ti-chart-bar"></i></span><span class="tab-label">สถานะ T3</span>
     </a>
     <a class="tab-item" routerLink="/t3-history" routerLinkActive="tab-active">
-      <span class="tab-icon">📁</span><span class="tab-label">ประวัติทั้งหมด</span>
+      <span class="tab-icon"><i class="ti ti-folder"></i></span><span class="tab-label">ประวัติทั้งหมด</span>
     </a>
   </div>
 
@@ -32,63 +32,43 @@
     @for (card of cards; track card.id) {
       <div [class]="cardClass(card)" (click)="openDetail(card)">
 
-        <!-- STATUS ICON -->
-        <div class="req-card-left">
-          @if (card.status === 'approved') {
-            <div class="req-status-icon req-status-icon--approved">✅</div>
-          } @else if (card.status === 'cancelled') {
-            <div class="req-status-icon req-status-icon--cancelled">🚫</div>
-          } @else {
-            <div class="req-status-icon req-status-icon--rejected">❌</div>
-          }
+        <div class="card-body">
+          <div class="card-meta">
+            <span class="card-id">{{ card.id }}</span>
+            <span class="meta-sep">·</span>
+            <span class="card-submitted">ยื่น {{ card.submittedDateTime }}</span>
+            @if (card.advisorDateTime) {
+              <span class="meta-sep">·</span>
+              <span class="card-submitted">อาจารย์ {{ card.advisorDateTime }}</span>
+            }
+            @if (card.facultyDateTime) {
+              <span class="meta-sep">·</span>
+              <span class="card-submitted">เจ้าหน้าที่อนุมัติ {{ card.facultyDateTime }}</span>
+            }
+          </div>
+
+          <div class="card-title">{{ card.titleThai || card.titleEn }}</div>
+
+          <div class="card-tags">
+            <span class="tag-db">{{ card.database }}</span>
+            @if (card.pubType) {
+              <span class="tag-type">{{ card.pubType }}</span>
+            }
+            <span class="tag-issn">ISSN: {{ card.issn }}</span>
+          </div>
         </div>
 
-        <!-- CONTENT -->
-        <div class="req-card-content">
-
-          <!-- TOP ROW -->
-          <div class="req-card-top">
-            <div class="req-card-top-left">
-              <div class="req-journal">
-                <span class="req-journal-label">ชื่อบทความ:</span> {{ card.titleThai || card.titleEn }}
-              </div>
-              <div class="req-badges">
-                <span class="badge-issn">{{ card.issn }}</span>
-                <span class="badge-db">{{ card.database }}</span>
-                <span class="badge-q">{{ card.pubType }}</span>
-              </div>
-            </div>
-            <div class="req-card-top-right">
-              <span class="req-id-chip">{{ card.id }}</span>
-              <div class="req-timestamps">
-                <span class="ts-item">ยื่น · {{ card.submittedDateTime }}</span>
-                @if (card.advisorDateTime) {
-                  <span class="ts-dot">·</span>
-                  <span class="ts-item">อาจารย์ · {{ card.advisorDateTime }}</span>
-                }
-                @if (card.facultyDateTime) {
-                  <span class="ts-dot">·</span>
-                  <span class="ts-item">ที่ประชุม · {{ card.facultyDateTime }}</span>
-                }
-                @if (card.gradDateTime) {
-                  <span class="ts-dot">·</span>
-                  <span class="ts-item">บัณฑิต · {{ card.gradDateTime }}</span>
-                }
-              </div>
-            </div>
-          </div>
-
-          <!-- DIVIDER -->
-          <div class="req-card-divider"></div>
-
-          <!-- BOTTOM ROW -->
-          <div class="card-bottom-row">
-            <span [class]="statusChipClass(card)">{{ statusLabel(card) }}</span>
-          </div>
-
-        </div><!-- /req-card-content -->
-
-        <span class="req-card-arrow">›</span>
+        <div class="card-right">
+          <span [class]="statusChipClass(card)">
+            @if (card.status === 'approved') { <i class="ti ti-circle-check"></i> }
+            @else if (card.status === 'cancelled') { <i class="ti ti-ban"></i> }
+            @else { <i class="ti ti-circle-x"></i> }
+            {{ statusLabel(card) }}
+          </span>
+          @if (actionDateLabel(card)) {
+            <span class="action-date">{{ actionDateLabel(card) }}</span>
+          }
+        </div>
       </div>
     }
   </div>
@@ -139,7 +119,10 @@
                 <div class="mh-date-val">{{ d.submittedDate }}</div>
                 <div class="mh-date-lbl">วันที่ยื่น</div>
               </div>
-              <div class="mh-status-pill" [class]="'mh-status-pill mh-status-pill--' + d.cardStatus">{{ d.statusPillText }}</div>
+              <div class="mh-status-pill" [class]="'mh-status-pill mh-status-pill--' + d.cardStatus">
+                @if (d.cardStatus === 'approved') { <i class="ti ti-circle-check"></i> }
+                {{ d.statusPillText }}
+              </div>
             </div>
           </div>
 
@@ -175,7 +158,9 @@
 
           <!-- Current Status -->
           <div class="ms-current" [class]="'ms-current ms-current--' + d.cardStatus">
-            <div class="ms-current-icon">{{ d.currentStatusIcon }}</div>
+            <div class="ms-current-icon">
+              @if (d.currentStatusIcon.startsWith('ti ')) { <i [class]="d.currentStatusIcon"></i> } @else { {{ d.currentStatusIcon }} }
+            </div>
             <div class="ms-current-body">
               <div class="ms-current-title">{{ d.currentStatusTitle }}</div>
               <div class="ms-current-desc">{{ d.currentStatusDesc }}</div>

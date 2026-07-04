@@ -3,13 +3,13 @@
   <!-- TAB BAR -->
   <div class="tab-bar">
     <a class="tab-item" routerLink="/send-t3" routerLinkActive="tab-active" [routerLinkActiveOptions]="{ exact: true }">
-      <span class="tab-icon">📋</span><span class="tab-label">ยื่น T3</span>
+      <span class="tab-icon"><i class="ti ti-clipboard-text"></i></span><span class="tab-label">ยื่น T3</span>
     </a>
     <a class="tab-item" routerLink="/status-t3" routerLinkActive="tab-active">
-      <span class="tab-icon">📊</span><span class="tab-label">สถานะ T3</span>
+      <span class="tab-icon"><i class="ti ti-chart-bar"></i></span><span class="tab-label">สถานะ T3</span>
     </a>
     <a class="tab-item" routerLink="/t3-history" routerLinkActive="tab-active">
-      <span class="tab-icon">📁</span><span class="tab-label">ประวัติทั้งหมด</span>
+      <span class="tab-icon"><i class="ti ti-folder"></i></span><span class="tab-label">ประวัติทั้งหมด</span>
     </a>
   </div>
 
@@ -40,17 +40,6 @@
 
     @for (card of cards; track card.id) {
       <div [class]="cardClass(card)" (click)="openDetail(card)">
-
-        <!-- STATUS ICON -->
-        <div class="req-card-left">
-          @if (card.overallStatus === 'Approved') {
-            <div class="req-status-icon req-status-icon--approved">✅</div>
-          } @else if (card.advisorStatus === 'Rejected' || card.facultyStatus === 'Rejected' || card.gradStatus === 'Rejected') {
-            <div class="req-status-icon req-status-icon--rejected">❌</div>
-          } @else {
-            <div class="req-status-icon req-status-icon--pending"><i class="ti ti-hourglass"></i></div>
-          }
-        </div>
 
         <!-- CONTENT -->
         <div class="req-card-content">

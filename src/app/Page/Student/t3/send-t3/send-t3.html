@@ -3,13 +3,13 @@
   <!-- TAB BAR -->
   <div class="tab-bar">
     <a class="tab-item" routerLink="/send-t3" routerLinkActive="tab-active" [routerLinkActiveOptions]="{ exact: true }">
-      <span class="tab-icon">📋</span><span class="tab-label">ยื่น T3</span>
+      <span class="tab-icon"><i class="ti ti-clipboard-text"></i></span><span class="tab-label">ยื่น T3</span>
     </a>
     <a class="tab-item" routerLink="/status-t3" routerLinkActive="tab-active">
-      <span class="tab-icon">📊</span><span class="tab-label">สถานะ T3</span>
+      <span class="tab-icon"><i class="ti ti-chart-bar"></i></span><span class="tab-label">สถานะ T3</span>
     </a>
     <a class="tab-item" routerLink="/t3-history" routerLinkActive="tab-active">
-      <span class="tab-icon">📁</span><span class="tab-label">ประวัติทั้งหมด</span>
+      <span class="tab-icon"><i class="ti ti-folder"></i></span><span class="tab-label">ประวัติทั้งหมด</span>
     </a>
   </div>
 
@@ -81,7 +81,7 @@
       </div>
 
       <div class="sub-section-head">
-        <span class="sub-icon">🔗</span>
+        
         <span class="sub-title">PRE-T3 ที่ผ่านการอนุมัติ — เลือก 1 ฉบับเพื่อใช้เป็นหลักฐานใน T3</span>
       </div>
       <div class="section-divider"></div>
@@ -328,7 +328,7 @@
       </div>
 
       <div class="sub-section-head">
-        <span class="sub-icon">📌</span>
+        
         <span class="sub-title">สถานะบทความวิจัยฉบับนี้</span>
       </div>
       <div class="section-divider"></div>
@@ -378,7 +378,7 @@
     <div class="form-section">
       <div class="section-head section-head--spaced">
         <div class="section-head-left">
-          <span class="section-head-icon">📎</span>
+          
           <span class="section-head-title">เอกสารประกอบ T3</span>
         </div>
         <span class="section-head-hint">POST /upload/t3/:id/files · max 10MB</span>
@@ -394,7 +394,7 @@
       <div class="upload-grid">
         <div class="upload-card">
           <div class="upload-required-tag">* จำเป็น</div>
-          <div class="upload-icon">📄</div>
+          <div class="upload-icon"><i class="ti ti-file-check"></i></div>
           <div class="upload-name">acceptance_letter</div>
           <div class="upload-desc">หนังสือตอบรับ (PDF/JPG/PNG, max 10MB)</div>
           <label class="upload-btn">
@@ -409,7 +409,7 @@
 
         <div class="upload-card">
           <div class="upload-required-tag">* จำเป็น</div>
-          <div class="upload-icon">📑</div>
+          <div class="upload-icon"><i class="ti ti-files"></i></div>
           <div class="upload-name">full_paper</div>
           <div class="upload-desc">บทความฉบับสมบูรณ์</div>
           <label class="upload-btn">
@@ -433,7 +433,7 @@
 
       <div class="upload-grid upload-grid--4">
         <div class="upload-card upload-card--optional">
-          <div class="upload-icon">📰</div>
+          <div class="upload-icon"><i class="ti ti-news"></i></div>
           <div class="upload-name">journal_cover</div>
           <div class="upload-desc">ปกวารสาร</div>
           <label class="upload-btn upload-btn--secondary">
@@ -446,7 +446,7 @@
         </div>
 
         <div class="upload-card upload-card--optional">
-          <div class="upload-icon">🔍</div>
+          <div class="upload-icon"><i class="ti ti-database-search"></i></div>
           <div class="upload-name">database_evidence</div>
           <div class="upload-desc">หลักฐานฐานข้อมูล</div>
           <label class="upload-btn upload-btn--secondary">
@@ -459,7 +459,7 @@
         </div>
 
         <div class="upload-card upload-card--optional">
-          <div class="upload-icon">📝</div>
+          <div class="upload-icon"><i class="ti ti-notes"></i></div>
           <div class="upload-name">peer_review_result</div>
           <div class="upload-desc">ผล Peer Review</div>
           <label class="upload-btn upload-btn--secondary">
@@ -472,7 +472,7 @@
         </div>
 
         <div class="upload-card upload-card--optional">
-          <div class="upload-icon">📋</div>
+          <div class="upload-icon"><i class="ti ti-list-details"></i></div>
           <div class="upload-name">table_of_contents</div>
           <div class="upload-desc">สารบัญวารสาร</div>
           <label class="upload-btn upload-btn--secondary">

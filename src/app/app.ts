@@ -50,7 +50,7 @@ export class App {
 
   @HostListener('document:keydown', ['$event'])
   onKeydown(event: KeyboardEvent) {
-    if (event.altKey && event.shiftKey && event.code === 'KeyL' && !this.authService.isLoggedIn) {
+    if (event.altKey && event.shiftKey && event.code === 'KeyL') {
       event.preventDefault();
       this.router.navigate(['/login-admin']);
     }

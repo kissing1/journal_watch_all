@@ -582,7 +582,9 @@ export class Search implements OnInit, OnDestroy {
   }
 
   get isStudent(): boolean {
-    return this.auth.user?.role?.toLowerCase() === 'student';
+    const role = this.auth.user?.role
+      ?? (JSON.parse(localStorage.getItem('user') ?? 'null') as any)?.role;
+    return role?.toLowerCase() === 'student';
   }
 
   get hasConflict(): boolean {

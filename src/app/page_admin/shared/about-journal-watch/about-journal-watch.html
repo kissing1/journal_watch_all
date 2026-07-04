@@ -15,7 +15,7 @@
         หรือวารสารปลอม (Hijacked Journals) ได้อย่างแม่นยำ
       </p>
       @if (!authService.isLoggedIn) {
-        <a class="btn-cta" routerLink="/login">เข้าสู่ระบบสืบค้นวารสาร</a>
+        <a class="btn-cta" routerLink="/login-admin">เข้าสู่ระบบสืบค้นวารสาร</a>
       }
     </div>
 
@@ -96,7 +96,7 @@
     <!-- ═══ BACK BUTTON ═══ -->
     @if (!authService.isLoggedIn) {
       <div class="back-wrap animate animate--up">
-        <a class="btn-back" routerLink="/login">← กลับหน้าเข้าสู่ระบบ</a>
+        <a class="btn-back" routerLink="/login-admin">← กลับหน้าเข้าสู่ระบบ</a>
       </div>
     }
 

@@ -41,6 +41,7 @@ $gray:   #9CA3AF;
   &:hover { color: $navy; }
   &.tab-active { color: $navy; border-bottom-color: $yellow; font-weight: 700; }
 }
+.tab-icon { font-size: 16px; }
 
 /* ── STATS ── */
 .stats-row { display: flex; gap: 10px; flex-wrap: wrap; }
