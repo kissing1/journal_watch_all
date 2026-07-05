@@ -52,15 +52,15 @@
       <div class="db-content">
 
         @if (loadError(); as err) {
-          <div class="db-error">⚠️ {{ err }}</div>
+          <div class="db-error"><i class="ti ti-alert-triangle"></i> {{ err }}</div>
         }
 
         <!-- ── Section 1: สถิติภาพรวม ── -->
         <div class="dash-section">
-          <div class="dash-section__title">สถิติภาพรวมระบบ</div>
+          <div class="dash-section__title"><i class="ti ti-layout-dashboard"></i> สถิติภาพรวมระบบ</div>
           <div class="ov-grid">
 
-            <div class="ov-card">
+            <div class="ov-card ov-card--navy">
               <div class="ov-card__badge">01</div>
               <div class="ov-card__body">
                 <div class="ov-card__label">ผู้ใช้งานทั้งหมด</div>
@@ -70,12 +70,12 @@
                 </div>
                 <div class="ov-card__pills">
                   <span class="ov-pill ov-pill--active">● Active {{ s.users.active }}</span>
-                  <span class="ov-pill ov-pill--sus">⛔ Suspended {{ s.users.suspended }}</span>
+                  <span class="ov-pill ov-pill--sus"><i class="ti ti-ban"></i> Suspended {{ s.users.suspended }}</span>
                 </div>
               </div>
             </div>
 
-            <div class="ov-card">
+            <div class="ov-card ov-card--gold">
               <div class="ov-card__badge ov-card__badge--gold">02</div>
               <div class="ov-card__body">
                 <div class="ov-card__label">คำร้องทั้งหมด</div>
@@ -86,7 +86,7 @@
               </div>
             </div>
 
-            <div class="ov-card">
+            <div class="ov-card ov-card--red">
               <div class="ov-card__badge ov-card__badge--red">03</div>
               <div class="ov-card__body">
                 <div class="ov-card__label">MSU Unwanted Journals</div>
@@ -96,7 +96,7 @@
               </div>
             </div>
 
-            <div class="ov-card">
+            <div class="ov-card ov-card--teal">
               <div class="ov-card__badge ov-card__badge--teal">04</div>
               <div class="ov-card__body">
                 <div class="ov-card__label">แคชวารสาร</div>
@@ -112,7 +112,7 @@
 
         <!-- ── Section 2: รายละเอียดคำร้อง ── -->
         <div class="dash-section">
-          <div class="dash-section__title">รายละเอียดคำร้อง</div>
+          <div class="dash-section__title"><i class="ti ti-file-text"></i> รายละเอียดคำร้อง</div>
           <div class="req-grid">
 
             <div class="req-card">
@@ -188,7 +188,7 @@
         <div class="bottom-grid">
 
           <div class="dash-section dash-section--no-mb">
-            <div class="dash-section__title">แหล่งที่มาของแคชวารสาร</div>
+            <div class="dash-section__title"><i class="ti ti-database"></i> แหล่งที่มาของแคชวารสาร</div>
             <div class="cache-list">
               <div class="cache-row">
                 <span class="cache-dot cache-dot--scopus"></span>
@@ -231,7 +231,7 @@
 
           @if (s.api_keys.length > 0) {
             <div class="dash-section dash-section--no-mb">
-              <div class="dash-section__title">API Keys (รายสัปดาห์)</div>
+              <div class="dash-section__title"><i class="ti ti-key"></i> API Keys (รายสัปดาห์)</div>
               <div class="api-list">
                 @for (k of s.api_keys; track k.index) {
                   <div class="api-key-row">
@@ -240,7 +240,7 @@
                       <span class="api-key-row__status"
                             [class.api-key-row__status--ok]="k.isAvailable"
                             [class.api-key-row__status--off]="!k.isAvailable">
-                        {{ k.isAvailable ? '● ใช้งานได้' : '⛔ เต็ม' }}
+                        @if (k.isAvailable) { ● ใช้งานได้ } @else { <i class="ti ti-ban"></i> เต็ม }
                       </span>
                     </div>
                     <div class="req-progress req-progress--thin">
@@ -266,7 +266,7 @@
     } @else {
       @if (loadError(); as err) {
         <div class="db-content">
-          <div class="db-error">⚠️ {{ err }}</div>
+          <div class="db-error"><i class="ti ti-alert-triangle"></i> {{ err }}</div>
         </div>
       }
     }

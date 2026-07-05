@@ -1,3 +1,5 @@
+<app-global-error-toast></app-global-error-toast>
+
 @if (isAdmin) {
   <app-header-admin [sidebarOpen]="sidebarOpen" [showToggle]="(authService.isLoggedIn || isAdmin) && !isLoginPage" (menuClick)="toggleSidebar()"></app-header-admin>
 } @else {

@@ -35,6 +35,7 @@
       </div>
     } @else if (cards.length === 0) {
       <div class="empty-state">
+        <div class="empty-icon"><i class="ti ti-inbox"></i></div>
         <div class="empty-text">ยังไม่มีประวัติการยื่น Pre-T3</div>
       </div>
     }
@@ -162,7 +163,7 @@
 
         <!-- Section: Stepper -->
         <div class="ms-card">
-          <div class="ms-head">🔄 ขั้นตอนการอนุมัติ Pre-T3</div>
+          <div class="ms-head"><i class="ti ti-refresh"></i> ขั้นตอนการอนุมัติ Pre-T3</div>
           <div class="stepper-wrap">
             @for (step of d.steps; track step.label) {
               <div [class]="'step-item ' + step.status">

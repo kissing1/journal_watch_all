@@ -27,6 +27,14 @@ interface PreT3Item {
 
 type ApprovalStatus = 'Pending' | 'Approved' | 'Rejected';
 
+// ต้องตรงกับ MySQL ENUM ของคอลัมน์ t3_requests.innovation_type
+// (Commercial | Social_Economic | Policy_Public | None) — ห้ามส่ง label ภาษาไทยตรงๆ ไม่งั้น insert พัง
+const INNOVATION_TYPE_MAP: Record<string, string> = {
+  'การนำไปใช้ประโยชน์เชิงพาณิชย์ (Commercial)':                    'Commercial',
+  'การนำไปใช้ประโยชน์เชิงสังคมทิศทางเศรษฐกิจ (Social/Economic)': 'Social_Economic',
+  'การนำไปใช้ประโยชน์เชิงนโยบายสาธารณะ (Policy/Public)':          'Policy_Public',
+};
+
 interface Step {
   icon:   string;
   label:  string;
@@ -481,7 +489,7 @@ export class SendT3 implements OnInit {
         title_english:        this.titleEn,
         first_author:         this.fullName(),
         corresponding_author: this.correspondingAuthor,
-        innovation_type:      this.innovationType,
+        innovation_type:      INNOVATION_TYPE_MAP[this.innovationType] ?? 'None',
         innovation_detail:    this.innovationDetail,
       },
       publication_details: {

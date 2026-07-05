@@ -13,7 +13,7 @@ export interface Data {
     last_rejected_at:       null;
     journal_snapshot:       JournalSnapshot;
     student_snapshot:       StudentSnapshot;
-    student_info:           StudentInfo;
+    student_info?:          StudentInfo;
     advisor_info:           AdvisorInfo;
     article_info:           ArticleInfo;
     checklist_data:         { [key: string]: boolean };

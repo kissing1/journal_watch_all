@@ -35,6 +35,7 @@
       </div>
     } @else if (filtered.length === 0) {
       <div class="empty-state">
+        <div class="empty-icon"><i class="ti ti-inbox"></i></div>
         <div class="empty-text">ไม่มีคำร้องในหมวดนี้</div>
       </div>
     }
@@ -78,7 +79,7 @@
             } @else if (card.status === 'meeting') {
               <span class="status-chip chip-meeting">● ส่งที่ประชุมแล้ว</span>
             } @else if (card.status === 'approved') {
-              <span class="status-chip chip-approved">✅ อนุมัติแล้ว</span>
+              <span class="status-chip chip-approved"><i class="ti ti-circle-check"></i> อนุมัติแล้ว</span>
             } @else if (card.status === 'rejected') {
               <span class="status-chip chip-rejected">❌ ไม่อนุมัติ</span>
             } @else if (card.status === 'auto-rejected') {
@@ -137,7 +138,7 @@
           <span class="status-chip" [class]="'status-chip chip-' + activeCard.status">
             @if (activeCard.status === 'pending') { <i class="ti ti-hourglass"></i> รอดำเนินการ }
             @else if (activeCard.status === 'meeting') { ● ส่งที่ประชุมแล้ว }
-            @else if (activeCard.status === 'approved') { ✅ อนุมัติแล้ว }
+            @else if (activeCard.status === 'approved') { <i class="ti ti-circle-check"></i> อนุมัติแล้ว }
             @else if (activeCard.status === 'rejected') { ❌ ไม่อนุมัติ }
             @else { 🚫 ระบบปฏิเสธ }
           </span>
@@ -261,10 +262,10 @@
 
           <!-- Section 4: Pre-T3 Checklist -->
           <div class="ms-card">
-            <div class="ms-head">☑️ Pre-T3 Checklist</div>
+            <div class="ms-head"><i class="ti ti-list-check"></i> Pre-T3 Checklist</div>
             @if (d.checklistPassed) {
               <div class="checklist-banner checklist-pass">
-                <span>✅</span><span>1–9. ผ่านทุกข้อ</span>
+                <span><i class="ti ti-circle-check"></i></span><span>1–9. ผ่านทุกข้อ</span>
               </div>
             } @else {
               <div class="checklist-banner checklist-fail">
@@ -303,7 +304,9 @@
               @for (step of d.timeline; track step.label; let last = $last) {
                 <div class="tl-item">
                   <div class="tl-left">
-                    <div class="tl-dot" [class]="'tl-dot tl-dot--' + step.status"></div>
+                    <div class="tl-dot" [class]="'tl-dot tl-dot--' + step.status">
+                      @if (step.status === 'done') { <i class="ti ti-check"></i> }
+                    </div>
                     @if (!last) { <div class="tl-line"></div> }
                   </div>
                   <div class="tl-body">
@@ -490,7 +493,7 @@
           <div class="decision-buttons">
             <button class="decision-btn decision-approve"
               [class.active]="meetingDecision === 'approved'"
-              (click)="meetingDecision = 'approved'">✅ อนุมัติ</button>
+              (click)="meetingDecision = 'approved'"><i class="ti ti-circle-check"></i> อนุมัติ</button>
             <button class="decision-btn decision-reject"
               [class.active]="meetingDecision === 'rejected'"
               (click)="meetingDecision = 'rejected'">❌ ไม่อนุมัติ</button>
@@ -518,7 +521,7 @@
     <div class="action-modal" (click)="$event.stopPropagation()">
 
       <div class="action-modal-header">
-        <span class="action-modal-title">✅ อนุมัติคำร้อง</span>
+        <span class="action-modal-title"><i class="ti ti-circle-check"></i> อนุมัติคำร้อง</span>
         <button class="modal-close" (click)="closeSendMeetingModal()">✕</button>
       </div>
 

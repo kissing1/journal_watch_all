@@ -13,6 +13,7 @@
     <p class="page-subtitle">ตรวจสอบและดำเนินการคำร้อง T3 ของนิสิต</p>
   </div>
 
+
   <!-- TAB BAR -->
   <div class="tab-bar">
     <a class="tab-item" routerLink="/staff/pre-t3-request" routerLinkActive="tab-active">
@@ -35,6 +36,7 @@
       </div>
     } @else if (filtered().length === 0) {
       <div class="empty-state">
+        <div class="empty-icon"><i class="ti ti-inbox"></i></div>
         <div class="empty-text">ไม่มีคำร้อง T3 ในหมวดนี้</div>
       </div>
     }
@@ -281,7 +283,7 @@
                 <div class="meeting-grid">
                   <div class="field-item">
                     <label class="field-label">เลขที่ประชุม <span class="required-mark">*</span></label>
-                    <input class="field-input" [(ngModel)]="meetingNo" placeholder="เช่น 3/2568"
+                    <input class="field-input" [(ngModel)]="meetingNo" placeholder="เช่น 1/2026"
                            [class.field-input--error]="!meetingNo.trim()" />
                   </div>
                   <div class="field-item">

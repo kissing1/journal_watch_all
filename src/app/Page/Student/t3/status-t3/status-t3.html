@@ -35,7 +35,7 @@
     @if (isLoading()) {
       <div class="empty-state"><div class="loading-spinner"></div><div class="empty-text">กำลังโหลดข้อมูล...</div></div>
     } @else if (cards.length === 0) {
-      <div class="empty-state"><div class="empty-icon">📭</div><div class="empty-text">ยังไม่มีคำร้อง T3</div></div>
+      <div class="empty-state"><div class="empty-icon"><i class="ti ti-inbox"></i></div><div class="empty-text">ยังไม่มีคำร้อง T3</div></div>
     }
 
     @for (card of cards; track card.id) {
@@ -171,7 +171,7 @@
 
           <!-- Stepper -->
           <div class="ms-card">
-            <div class="ms-head">🔄 ขั้นตอนการอนุมัติ T3</div>
+            <div class="ms-head"><i class="ti ti-refresh"></i> ขั้นตอนการอนุมัติ T3</div>
             <div class="stepper-wrap">
               @for (step of d.steps; track step.label) {
                 <div [class]="'step-item ' + step.status">

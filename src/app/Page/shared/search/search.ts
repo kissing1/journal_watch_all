@@ -1,4 +1,4 @@
-import { Component, inject, signal, ViewChild, ElementRef, OnInit, OnDestroy } from '@angular/core';
+import { Component, inject, signal, ViewChild, ElementRef, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -81,7 +81,7 @@ interface JournalResult {
   templateUrl: './search.html',
   styleUrls: ['./search.scss'],
 })
-export class Search implements OnInit, OnDestroy {
+export class Search implements OnInit {
   ngOnInit(): void {
     window.scrollTo({ top: 0 });
   }
@@ -100,34 +100,6 @@ export class Search implements OnInit, OnDestroy {
   errorMessage = signal('');
   tciError     = signal('');
   activeDb     = signal<ActiveDb>('scopus');
-  cacheExpiry  = signal(300);
-
-  private expiryInterval?: ReturnType<typeof setInterval>;
-
-  ngOnDestroy(): void {
-    clearInterval(this.expiryInterval);
-  }
-
-  private startExpiryTimer(): void {
-    clearInterval(this.expiryInterval);
-    this.cacheExpiry.set(300);
-    this.expiryInterval = setInterval(() => {
-      const remaining = this.cacheExpiry() - 1;
-      this.cacheExpiry.set(remaining <= 0 ? 0 : remaining);
-      if (remaining <= 0) clearInterval(this.expiryInterval);
-    }, 1000);
-  }
-
-  get expiryLabel(): string {
-    const s = this.cacheExpiry();
-    const m = Math.floor(s / 60).toString().padStart(2, '0');
-    const sec = (s % 60).toString().padStart(2, '0');
-    return `${m}:${sec}`;
-  }
-
-  get expiryWarning(): boolean {
-    return this.cacheExpiry() <= 60;
-  }
 
   // ── DEGREE DROPDOWN ──
   showDegreeMenu = signal(false);
@@ -409,7 +381,6 @@ export class Search implements OnInit, OnDestroy {
 
       this.hasSearched.set(true);
       this.isLoading.set(false);
-      this.startExpiryTimer();
 
       if (this.hasConflict) this.activeDb.set('conflict');
       else if (!this.result() && this.tciResult()) this.activeDb.set('tci');

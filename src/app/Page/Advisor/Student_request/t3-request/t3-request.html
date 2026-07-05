@@ -79,6 +79,7 @@
     }
     @if (filtered().length === 0 && !isLoading()) {
       <div class="empty-state">
+        <div class="empty-icon"><i class="ti ti-inbox"></i></div>
         <div class="empty-text">ไม่มีคำร้อง T3 ในหมวดนี้</div>
       </div>
     }
@@ -328,12 +329,6 @@
 
             <div class="modal-actions">
               <button class="btn-cancel" (click)="closeDetail()">ยกเลิก</button>
-              <button class="btn-draft">💾 บันทึกร่าง</button>
-              <button class="btn-reject"
-                      [disabled]="isSubmitting() || decision() !== 'rejected' || !remark.trim()"
-                      (click)="submitDecision()">
-                ✗ ไม่อนุมัติ
-              </button>
               <button class="btn-approve"
                       [disabled]="isSubmitting() || !canSubmit"
                       (click)="openConfirm()">

@@ -254,6 +254,14 @@ export class History implements OnInit {
     document.body.style.overflow = '';
   }
 
+  printDetail(): void {
+    document.body.classList.add('modal-print');
+    window.addEventListener('afterprint', () => {
+      document.body.classList.remove('modal-print');
+    }, { once: true });
+    window.print();
+  }
+
   private fetchFile(t3Id: number, fileKey: string, stateMap: Record<string, boolean>, onBlob: (blob: Blob) => void): void {
     if (stateMap[fileKey]) return;
     stateMap[fileKey] = true;

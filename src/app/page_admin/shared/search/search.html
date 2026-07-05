@@ -584,10 +584,7 @@
           </span>
           <span class="badge-date">📅 ตรวจสอบ: {{ r.checkDate }}</span>
           <span class="badge-cache" [class.badge-cache--hit]="r.fromCache" [class.badge-cache--live]="!r.fromCache">
-            {{ r.fromCache ? '⚡ จาก Cache' : '🔄 ข้อมูลสด' }}
-          </span>
-          <span class="badge-expiry" [class.badge-expiry--warning]="expiryWarning">
-            ⏱ Cache: {{ expiryLabel }}
+            @if (r.fromCache) { ⚡ จาก Cache } @else { <i class="ti ti-refresh"></i> ข้อมูลสด }
           </span>
         </div>
 
@@ -806,10 +803,7 @@
             </span>
             <span class="badge-date">📅 ตรวจสอบ: {{ t.checkDate }}</span>
             <span class="badge-cache" [class.badge-cache--hit]="t.fromCache" [class.badge-cache--live]="!t.fromCache">
-              {{ t.fromCache ? '⚡ จาก Cache' : '🔄 ข้อมูลสด' }}
-            </span>
-            <span class="badge-expiry" [class.badge-expiry--warning]="expiryWarning">
-              ⏱ Cache: {{ expiryLabel }}
+              @if (t.fromCache) { ⚡ จาก Cache } @else { <i class="ti ti-refresh"></i> ข้อมูลสด }
             </span>
           </div>
 

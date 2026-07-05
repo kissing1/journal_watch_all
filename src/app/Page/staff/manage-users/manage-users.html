@@ -103,7 +103,7 @@
         <div class="mu-th mu-th--actions">จัดการ</div>
       </div>
       @if (filteredStudents().length === 0) {
-        <div class="mu-empty">ไม่พบข้อมูลนิสิต</div>
+        <div class="mu-empty"><i class="ti ti-inbox"></i> ไม่พบข้อมูลนิสิต</div>
       }
       @for (u of pagedStudents(); track u.user_id) {
         <div class="mu-table-row">
@@ -183,7 +183,7 @@
         <div class="mu-th mu-th--actions">จัดการ</div>
       </div>
       @if (filteredAdvisors().length === 0) {
-        <div class="mu-empty">ไม่พบข้อมูลอาจารย์</div>
+        <div class="mu-empty"><i class="ti ti-inbox"></i> ไม่พบข้อมูลอาจารย์</div>
       }
       @for (u of pagedAdvisors(); track u.user_id) {
         <div class="mu-table-row">

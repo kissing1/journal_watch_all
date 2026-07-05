@@ -48,10 +48,10 @@ export class SidebarStaff implements OnInit {
     {
       group: 'เมนูหลัก',
       items: [
-        { label: 'Dashboard',            icon: '🏠', route: '/staff/dashboard' },
-        { label: 'ค้นหาวารสาร',         icon: '🔍', route: '/search'          },
-        { label: 'จัดการ MSU Unwanted', icon: '🚫', route: '/msu-unwanted'    },
-        { label: 'รายงานปัญหา',         icon: '🐛', route: '/bug-reports'     },
+        { label: 'Dashboard',            icon: 'ti ti-home',          route: '/staff/dashboard' },
+        { label: 'ค้นหาวารสาร',         icon: 'ti ti-search',        route: '/search'          },
+        { label: 'จัดการ MSU Unwanted', icon: 'ti ti-ban',           route: '/msu-unwanted'    },
+        { label: 'รายงานปัญหา',         icon: 'ti ti-bug',           route: '/bug-reports'     },
       ],
     },
     {
@@ -59,14 +59,14 @@ export class SidebarStaff implements OnInit {
       items: [
         {
           label: 'คำร้อง Pre-T3 / T3',
-          icon: '📋',
+          icon: 'ti ti-clipboard-text',
           children: [
-            { label: 'คำร้อง Pre-T3', icon: '📋', route: '/staff/pre-t3-request' },
-            { label: 'คำร้อง T3',     icon: '📊', route: '/staff/t3-request'     },
-            { label: 'ประวัติ',        icon: '📁', route: '/staff/history'        },
+            { label: 'คำร้อง Pre-T3', icon: 'ti ti-clipboard-text', route: '/staff/pre-t3-request' },
+            { label: 'คำร้อง T3',     icon: 'ti ti-chart-bar',      route: '/staff/t3-request'     },
+            { label: 'ประวัติ',        icon: 'ti ti-folder',         route: '/staff/history'        },
           ],
         },
-        { label: 'จัดการผู้ใช้งาน', icon: '👥', route: '/staff/user-management' },
+        { label: 'จัดการผู้ใช้งาน', icon: 'ti ti-users', route: '/staff/user-management' },
       ],
     },
   ];

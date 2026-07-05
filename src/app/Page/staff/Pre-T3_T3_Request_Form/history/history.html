@@ -57,12 +57,12 @@
       </div>
     } @else if (filtered().length === 0) {
       <div class="empty-state">
+        <div class="empty-icon"><i class="ti ti-inbox"></i></div>
         <div class="empty-text">ไม่มีข้อมูลในประวัติ</div>
       </div>
     } @else {
       @for (card of filtered(); track card.id) {
-        <div [class]="'req-card req-card--' + card.status"
-             [class.req-card--clickable]="card.itemType === 'PreT3'"
+        <div [class]="'req-card req-card--' + card.status + ' req-card--clickable'"
              (click)="openDetail(card)">
 
           <div class="req-card-top">
@@ -109,9 +109,7 @@
             </div>
           </div>
 
-          @if (card.itemType === 'PreT3') {
-            <div class="req-card-arrow">›</div>
-          }
+          <div class="req-card-arrow">›</div>
         </div>
       }
     }

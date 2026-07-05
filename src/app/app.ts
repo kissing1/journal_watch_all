@@ -8,12 +8,13 @@ import { Sidebar } from './Components/sidebar_user/sidebar';
 import { Sidebar as SidebarAdmin } from './Components/sidebar_admin/sidebar';
 import { SidebarAdvisor } from './Components/sidebar-advisor/sidebar-advisor';
 import { SidebarStaff } from './Components/sidebar-staff/sidebar-staff';
+import { GlobalErrorToast } from './Components/global-error-toast/global-error-toast';
 import { AuthService } from './auth.service';
 
 @Component({
   standalone: true,
   selector: 'app-root',
-  imports: [RouterOutlet, Header, HeaderAdmin, Footer, Sidebar, SidebarAdmin, SidebarAdvisor, SidebarStaff, CommonModule],
+  imports: [RouterOutlet, Header, HeaderAdmin, Footer, Sidebar, SidebarAdmin, SidebarAdvisor, SidebarStaff, GlobalErrorToast, CommonModule],
   templateUrl: './app.html',
   styleUrls: ['./app.scss'],
 })

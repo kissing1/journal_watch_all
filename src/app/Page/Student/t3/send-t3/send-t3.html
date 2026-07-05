@@ -91,7 +91,7 @@
       @if (isLoading()) {
         <div class="pre-t3-empty"><i class="ti ti-hourglass"></i> กำลังโหลดข้อมูล...</div>
       } @else if (preT3List.length === 0) {
-        <div class="pre-t3-empty">📭 ยังไม่มี Pre-T3 ที่อนุมัติแล้ว — กรุณายื่น Pre-T3 และรอการอนุมัติก่อน</div>
+        <div class="pre-t3-empty"><i class="ti ti-inbox"></i> ยังไม่มี Pre-T3 ที่อนุมัติแล้ว — กรุณายื่น Pre-T3 และรอการอนุมัติก่อน</div>
       } @else {
         <div class="pre-t3-list">
           @for (item of preT3List; track item.id) {
@@ -592,7 +592,7 @@
         <div class="modal-body">
 
           <div class="ms-card">
-            <div class="ms-head">🔄 ขั้นตอนการอนุมัติ Pre-T3</div>
+            <div class="ms-head"><i class="ti ti-refresh"></i> ขั้นตอนการอนุมัติ Pre-T3</div>
             <div class="stepper-wrap">
               @for (step of d.steps; track step.label) {
                 <div [class]="'step-item ' + step.status">

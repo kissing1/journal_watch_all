@@ -1620,24 +1620,6 @@ $blue:   #1A5FAB;
   }
 }
 
-.badge-expiry {
-  font-size: 12px;
-  font-weight: 600;
-  padding: 4px 12px;
-  border-radius: 6px;
-  border: 1px solid rgba(28,39,68,0.2);
-  background: rgba(28,39,68,0.06);
-  color: rgba(28,39,68,0.6);
-  font-variant-numeric: tabular-nums;
-  transition: background 0.3s, color 0.3s, border-color 0.3s;
-
-  &--warning {
-    background: rgba(193,0,0,0.08);
-    color: #C10000;
-    border-color: rgba(193,0,0,0.3);
-  }
-}
-
 .badge-unwanted {
   font-size: 12px;
   font-weight: 600;
@@ -2640,7 +2622,7 @@ $blue:   #1A5FAB;
   }
   .badge-field, .badge-db, .badge-q,
   .badge-status, .badge-unwanted,
-  .badge-date, .badge-cache, .badge-expiry {
+  .badge-date, .badge-cache {
     font-size: 9px !important;
     padding: 2px 7px !important;
   }

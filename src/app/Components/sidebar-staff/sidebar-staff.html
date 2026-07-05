@@ -16,7 +16,7 @@
       <div class="user-info">
         <div class="user-name">{{ userName }}</div>
         <div class="user-role">
-          <span class="role-icon">🏛</span>
+          <span class="role-icon"><i class="ti ti-building-bank"></i></span>
           <span class="role-text">{{ userRole }}</span>
         </div>
         <div class="user-email">{{ userEmail }}</div>
@@ -46,7 +46,7 @@
               <button class="nav-item nav-parent"
                       [class.active]="hasActiveChild(item)"
                       (click)="toggleExpand(item.label)">
-                <span class="nav-icon">{{ item.icon }}</span>
+                <span class="nav-icon"><i [class]="item.icon"></i></span>
                 @if (isOpen) {
                   <span class="nav-label">{{ item.label }}</span>
                   <span class="nav-chevron" [class.open]="isExpanded(item.label)">▼</span>
@@ -73,7 +73,7 @@
                  [routerLink]="item.route"
                  [class.active]="isActive(item.route!)"
                  [attr.data-label]="item.label">
-                <span class="nav-icon">{{ item.icon }}</span>
+                <span class="nav-icon"><i [class]="item.icon"></i></span>
                 @if (isOpen) {
                   <span class="nav-label">{{ item.label }}</span>
                   @if (isActive(item.route!)) {
@@ -91,7 +91,7 @@
   <!-- Logout -->
   <div class="logout-wrap">
     <button class="logout-btn" (click)="logout()">
-      <span class="logout-icon">🚪</span>
+      <span class="logout-icon"><i class="ti ti-logout"></i></span>
       @if (isOpen) {
         <span>ออกจากระบบ</span>
       }

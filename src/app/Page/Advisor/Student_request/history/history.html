@@ -71,7 +71,7 @@
       </div>
     } @else if (filtered().length === 0) {
       <div class="empty-state">
-        <div class="empty-icon">📭</div>
+        <div class="empty-icon"><i class="ti ti-inbox"></i></div>
         <div class="empty-text">ไม่มีข้อมูลในประวัติ</div>
       </div>
     } @else {
@@ -188,31 +188,31 @@
             <div class="detail-grid">
               <div class="detail-field">
                 <div class="detail-label">ชื่อ-นามสกุล</div>
-                <div class="detail-value">{{ d.student_info.full_name }}</div>
+                <div class="detail-value">{{ d.student_info?.full_name || card.studentName }}</div>
               </div>
               <div class="detail-field">
                 <div class="detail-label">รหัสนิสิต</div>
-                <div class="detail-value">{{ d.student_info.student_id }}</div>
+                <div class="detail-value">{{ d.student_info?.student_id || card.studentId }}</div>
               </div>
               <div class="detail-field">
                 <div class="detail-label">อีเมล</div>
-                <div class="detail-value">{{ d.student_info.msu_mail }}</div>
+                <div class="detail-value">{{ d.student_info?.msu_mail || card.email }}</div>
               </div>
               <div class="detail-field">
                 <div class="detail-label">เบอร์โทร</div>
-                <div class="detail-value">{{ d.student_info.phone || '—' }}</div>
+                <div class="detail-value">{{ d.student_info?.phone || '—' }}</div>
               </div>
               <div class="detail-field">
                 <div class="detail-label">คณะ</div>
-                <div class="detail-value">{{ d.student_info.faculty || '—' }}</div>
+                <div class="detail-value">{{ d.student_info?.faculty || '—' }}</div>
               </div>
               <div class="detail-field">
                 <div class="detail-label">สาขาวิชา</div>
-                <div class="detail-value">{{ d.student_info.department || '—' }}</div>
+                <div class="detail-value">{{ d.student_info?.department || '—' }}</div>
               </div>
               <div class="detail-field">
                 <div class="detail-label">ระดับการศึกษา</div>
-                <div class="detail-value">{{ d.student_info.degree_level || '—' }}</div>
+                <div class="detail-value">{{ d.student_info?.degree_level || '—' }}</div>
               </div>
             </div>
           } @else {
@@ -446,6 +446,11 @@
         </div>
 
       </div><!-- /modal-body -->
+
+      <!-- ══ MODAL FOOTER ══ -->
+      <div class="modal-footer">
+        <button class="btn-mf btn-mf-print" (click)="printDetail()">🖨 พิมพ์ใบคำร้อง</button>
+      </div>
     </div><!-- /modal -->
   </div><!-- /modal-backdrop -->
 }

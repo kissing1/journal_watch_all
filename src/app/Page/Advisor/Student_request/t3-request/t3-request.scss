@@ -313,8 +313,6 @@ $white:  #FFFFFF;
 }
 
 .btn-cancel  { padding: 9px 18px; border: 1.5px solid $border; background: $white; color: $muted; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: 'Sarabun', sans-serif; &:hover { border-color: $navy; color: $navy; } }
-.btn-draft   { padding: 9px 18px; border: 1.5px solid $border; background: $white; color: $navy;  border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: 'Sarabun', sans-serif; &:hover { background: $bg; } }
-.btn-reject  { padding: 9px 18px; background: $white; color: #991B1B; border: 1.5px solid #FECACA; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: 'Sarabun', sans-serif; &:hover:not(:disabled) { background: #FEE2E2; } &:disabled { opacity: 0.5; cursor: not-allowed; } }
 .btn-approve { display: flex; align-items: center; gap: 8px; padding: 9px 22px; background: #166534; color: $white; border: none; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: 'Sarabun', sans-serif; &:hover:not(:disabled) { background: #14532d; } &:disabled { opacity: 0.5; cursor: not-allowed; } }
 
 .btn-spinner {

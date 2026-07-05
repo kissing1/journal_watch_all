@@ -7,13 +7,18 @@ import { Observable, throwError, BehaviorSubject } from 'rxjs';
 import { catchError, filter, switchMap, take } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { AuthService } from './auth.service';
+import { ErrorNotificationService, SERVER_ERROR_MESSAGE } from './error-notification.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
   private isRefreshing   = false;
   private refreshSubject = new BehaviorSubject<string | null>(null);
 
-  constructor(private auth: AuthService, private router: Router) {}
+  constructor(
+    private auth: AuthService,
+    private router: Router,
+    private errorNotification: ErrorNotificationService,
+  ) {}
 
   intercept(req: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     return next.handle(req).pipe(
@@ -22,6 +27,9 @@ export class AuthInterceptor implements HttpInterceptor {
         // และไม่ redirect ถ้า user ยังไม่ได้ login อยู่ (ปล่อยให้ component จัดการ error เอง)
         if (err.status === 401 && !req.url.includes('/auth/refresh') && this.auth.isLoggedIn) {
           return this.handle401(req, next);
+        }
+        if (err.status === 500) {
+          this.errorNotification.show(SERVER_ERROR_MESSAGE);
         }
         return throwError(() => err);
       }),

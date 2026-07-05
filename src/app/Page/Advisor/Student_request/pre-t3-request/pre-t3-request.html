@@ -39,7 +39,7 @@
     }
     @if (filtered().length === 0 && !isLoading()) {
       <div class="empty-state">
-        <div class="empty-icon">📭</div>
+        <div class="empty-icon"><i class="ti ti-inbox"></i></div>
         <div class="empty-text">ไม่มีคำร้อง Pre-T3 ในขณะนี้</div>
       </div>
     }
@@ -70,7 +70,7 @@
             <div class="date-info">ยื่น {{ req.submittedDate }}</div>
             <div class="days-ago">{{ req.daysAgo }} วันแล้ว</div>
           } @else if (req.status === 'approved') {
-            <span class="status-badge status-approved">✅ อนุมัติแล้ว</span>
+            <span class="status-badge status-approved"><i class="ti ti-circle-check"></i> อนุมัติแล้ว</span>
             <div class="date-info">ลงนาม {{ req.approvedDate }}</div>
           } @else {
             <span class="status-badge status-rejected">❌ ไม่อนุมัติ</span>
@@ -101,7 +101,7 @@
               [class.badge-approved]="req.status === 'approved'"
               [class.badge-rejected]="req.status === 'rejected'">
               @if (req.status === 'pending')  { 🔔 รอลงนามอาจารย์ }
-              @if (req.status === 'approved') { ✅ อนุมัติแล้ว }
+              @if (req.status === 'approved') { <i class="ti ti-circle-check"></i> อนุมัติแล้ว }
               @if (req.status === 'rejected') { ❌ ไม่อนุมัติ }
             </span>
           </div>
@@ -124,31 +124,31 @@
             <div class="detail-grid">
               <div class="detail-field">
                 <div class="detail-label">ชื่อ-นามสกุล</div>
-                <div class="detail-value">{{ d.student_info.full_name }}</div>
+                <div class="detail-value">{{ d.student_info?.full_name || req.studentName }}</div>
               </div>
               <div class="detail-field">
                 <div class="detail-label">รหัสนิสิต</div>
-                <div class="detail-value">{{ d.student_info.msu_mail.replace('@msu.ac.th', '') }}</div>
+                <div class="detail-value">{{ d.student_info?.msu_mail?.replace('@msu.ac.th', '') || req.studentId }}</div>
               </div>
               <div class="detail-field">
                 <div class="detail-label">อีเมล</div>
-                <div class="detail-value">{{ d.student_info.msu_mail }}</div>
+                <div class="detail-value">{{ d.student_info?.msu_mail || req.email }}</div>
               </div>
               <div class="detail-field">
                 <div class="detail-label">เบอร์โทร</div>
-                <div class="detail-value">{{ d.student_info.phone || '—' }}</div>
+                <div class="detail-value">{{ d.student_info?.phone || '—' }}</div>
               </div>
               <div class="detail-field">
                 <div class="detail-label">คณะ</div>
-                <div class="detail-value">{{ d.student_info.faculty || '—' }}</div>
+                <div class="detail-value">{{ d.student_info?.faculty || '—' }}</div>
               </div>
               <div class="detail-field">
                 <div class="detail-label">สาขาวิชา</div>
-                <div class="detail-value">{{ d.student_info.department || '—' }}</div>
+                <div class="detail-value">{{ d.student_info?.department || '—' }}</div>
               </div>
               <div class="detail-field">
                 <div class="detail-label">ระดับการศึกษา</div>
-                <div class="detail-value">{{ d.student_info.degree_level || '—' }}</div>
+                <div class="detail-value">{{ d.student_info?.degree_level || '—' }}</div>
               </div>
             </div>
           } @else {
@@ -204,14 +204,14 @@
             <div class="detail-field">
               <div class="detail-label">สถานะวารสาร</div>
               <div class="detail-value">
-                <span class="badge-active">✅ {{ req.journalStatus }}</span>
+                <span class="badge-active"><i class="ti ti-circle-check"></i> {{ req.journalStatus }}</span>
               </div>
             </div>
             <div class="detail-field">
               <div class="detail-label">HIJACKED JOURNAL</div>
               <div class="detail-value">
                 @if (!req.isHijacked) {
-                  <span class="badge-pass">✅ ไม่ติดรายการ</span>
+                  <span class="badge-pass"><i class="ti ti-circle-check"></i> ไม่ติดรายการ</span>
                 } @else {
                   <span class="badge-fail">❌ ติดรายการ</span>
                 }
@@ -219,7 +219,7 @@
             </div>
             <div class="detail-field">
               <div class="detail-label">ผลการตรวจสอบชื่อ</div>
-              <div class="detail-value"><span class="badge-pass">✅ ผ่านเกณฑ์คุณชื่อ</span></div>
+              <div class="detail-value"><span class="badge-pass"><i class="ti ti-circle-check"></i> ผ่านเกณฑ์คุณชื่อ</span></div>
             </div>
             <div class="detail-field detail-field--wide">
               <div class="detail-label">URL วารสาร</div>
@@ -318,9 +318,8 @@
 
             <div class="modal-actions">
               <button class="btn-cancel" (click)="closeDetail()">ยกเลิก</button>
-              <button class="btn-draft">💾 บันทึกร่าง</button>
               <button class="btn-approve" (click)="openConfirm()" [disabled]="isSubmitting() || !canSubmit">
-                ✅ ลงนาม
+                <i class="ti ti-circle-check"></i> ลงนาม
               </button>
             </div>
           </div>
@@ -337,7 +336,7 @@
     <div class="confirm-modal" (click)="$event.stopPropagation()">
 
       <div class="confirm-icon-wrap" [class.confirm-icon-wrap--approved]="decision() === 'approved'" [class.confirm-icon-wrap--rejected]="decision() === 'rejected'">
-        {{ decision() === 'approved' ? '✅' : '❌' }}
+        @if (decision() === 'approved') { <i class="ti ti-circle-check"></i> } @else { ❌ }
       </div>
 
       <div class="confirm-title">
@@ -368,7 +367,8 @@
         <button class="btn-cancel" (click)="showConfirm.set(false)">ยกเลิก</button>
         <button class="btn-approve" (click)="submitDecision()" [disabled]="isSubmitting()">
           @if (isSubmitting()) { <span class="btn-spinner"></span> กำลังส่ง... }
-          @else { {{ decision() === 'approved' ? '✅ ยืนยัน ลงนาม' : '❌ ยืนยัน ไม่อนุมัติ' }} }
+          @else if (decision() === 'approved') { <i class="ti ti-circle-check"></i> ยืนยัน ลงนาม }
+          @else { ❌ ยืนยัน ไม่อนุมัติ }
         </button>
       </div>
 

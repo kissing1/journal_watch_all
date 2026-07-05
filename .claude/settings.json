@@ -1,7 +1,11 @@
 {
   "permissions": {
     "allow": [
-      "Bash(python3 -c ' *)"
+      "Bash(python3 -c ' *)",
+      "Bash(find src/app -iname \"*interceptor*\")",
+      "Bash(find src *)",
+      "Skill(dataviz)",
+      "Skill(dataviz:*)"
     ]
   }
 }

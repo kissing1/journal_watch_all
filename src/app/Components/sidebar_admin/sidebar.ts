@@ -81,23 +81,23 @@ export class Sidebar implements OnInit {
       {
         group: 'หลัก',
         items: [
-          { label: 'แดชบอร์ด',       icon: '📊', route: this.getDashboardRoute() },
-          { label: 'ค้นหาวารสาร',    icon: '🔍', route: `${prefix}/search` },
-          { label: 'วารสารต้องห้าม', icon: '🚫', route: `${prefix}/msu-unwanted` },
+          { label: 'แดชบอร์ด',       icon: 'ti ti-chart-bar',       route: this.getDashboardRoute() },
+          { label: 'ค้นหาวารสาร',    icon: 'ti ti-search',          route: `${prefix}/search` },
+          { label: 'วารสารต้องห้าม', icon: 'ti ti-ban',             route: `${prefix}/msu-unwanted` },
         ],
       },
       {
         group: 'จัดการ',
         items: [
-          { label: 'จัดการผู้ใช้', icon: '👥', route: `${prefix}/manage-users` },
+          { label: 'จัดการผู้ใช้', icon: 'ti ti-users', route: `${prefix}/manage-users` },
         ],
       },
       {
         group: 'ระบบ',
         items: [
-          { label: 'Backup & Restore',  icon: '💾', route: `${prefix}/backup-restore` },
-          { label: 'บันทึกระบบ',      icon: '📋', route: `${prefix}/system-log` },
-          { label: 'Bug Reports',       icon: '🐛', route: `${prefix}/bug-reports` },
+          { label: 'Backup & Restore',  icon: 'ti ti-device-floppy',   route: `${prefix}/backup-restore` },
+          { label: 'บันทึกระบบ',      icon: 'ti ti-clipboard-text', route: `${prefix}/system-log` },
+          { label: 'Bug Reports',       icon: 'ti ti-bug',             route: `${prefix}/bug-reports` },
         ],
       },
     ];
